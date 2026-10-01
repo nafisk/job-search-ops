@@ -1,11 +1,11 @@
-# LinkedIn Profile Optimization Runbook
+# Software Engineering LinkedIn Profile Optimization Runbook
 
-Give this file, the current resume, and a target-role description to an LLM that can inspect the person's LinkedIn profile. The workflow is deterministic: log in, audit without changing anything, compare LinkedIn with the resume and goals, approve exact changes, apply them in small batches, and verify every saved field.
+Give this file, the current resume, and target software engineering roles to an LLM that can inspect the person's LinkedIn profile. Tailor the review to the person's specialization, level, and career stage. The workflow is deterministic: log in, audit without changing anything, compare LinkedIn with the resume and goals, approve exact changes, apply them in small batches, and verify every saved field.
 
 ## Copy-paste starting prompt
 
 ```text
-Use the LinkedIn Profile Optimization Runbook in the attached file.
+Use the Software Engineering LinkedIn Profile Optimization Runbook in the attached file.
 
 I will log into LinkedIn myself in the browser you are authorized to use. Never ask me to paste my password, authentication code, session cookie, or token.
 
@@ -32,18 +32,18 @@ Minimum inputs:
 
 First identify the person's situation: experienced professional, student/new graduate, career changer, or returning professional. Do not apply experienced-candidate assumptions to someone with limited full-time work history.
 
-Ask these short questions before the audit:
+Ask these short questions before the audit, skipping anything already answered and making career-stage questions conditional:
 
-- Which job titles are you targeting?
-- If the target is finance, which primary lane fits best: investment banking, corporate finance/FP&A, asset management, equity or credit research, commercial banking, wealth management, risk, treasury, accounting/audit, operations, or another lane? Which one or two adjacent lanes are acceptable?
+- Which software engineering job titles and approximate level are you targeting?
+- Which primary specialization fits best: frontend, backend, full-stack, mobile, infrastructure/platform, embedded, or another area? Which related roles are acceptable?
 - Which locations and remote, hybrid, or onsite arrangements are acceptable?
-- What is your graduation month and earliest truthful start date?
-- Which internships, part-time roles, student funds, case competitions, research, class projects, organizations, or leadership roles provide relevant evidence?
+- What is your earliest truthful start date? If you are a student or recent graduate, what is your graduation month and year?
+- Which engineering roles, internships, projects, open-source contributions, research, or technical leadership activities provide relevant evidence? For students and recent graduates, include relevant coursework or student projects where useful.
 - Which licenses, exams, certifications, or programs are earned, passed, registered, scheduled, in progress, or merely planned?
 - Should Open to Work be visible publicly or only to recruiters?
 - Are your current employer and employment dates safe to update publicly?
 - Are there metrics, compensation details, job-search signals, or employers that must remain private?
-- For finance work, are any clients, transactions, portfolios, company financials, investment results, or deal details confidential or nonpublic?
+- Are any code, internal architecture, customer data, security details, or unpublished results confidential or restricted from public disclosure?
 - May I make live changes after you approve each batch, or should I only prepare recommendations?
 
 If the person supplies no target job descriptions, use the target titles and resume to begin. Do not block the audit.
@@ -73,7 +73,7 @@ Complete the checklist in order. For each item record: `current`, `resume/goal c
 - [ ] Location matches the person's real target market.
 - [ ] Industry supports the target role.
 - [ ] Current-position display is accurate or intentionally preserved.
-- [ ] Displayed education is accurate and supports the intended new-grad identity.
+- [ ] Displayed education is accurate and appropriate to the person's career stage and target roles.
 - [ ] Contact information and portfolio links work.
 - [ ] Profile language is appropriate for the target market.
 - [ ] Optional identity, workplace, or education verification availability and privacy implications were reviewed.
@@ -103,7 +103,7 @@ Create two or three headline options only when the person must choose between di
 
 The About section may be broader than the resume, but it must not contradict it.
 
-For a new graduate with limited experience, build the About section from the strongest available proof: internships, supervised research, completed projects, student funds, case competitions, coursework with a concrete deliverable, leadership, and accurately stated credentials. Do not apologize for limited experience or inflate academic work into professional employment.
+For a new graduate with limited experience, build the About section from the strongest available engineering evidence: internships, completed projects, open-source contributions, supervised research, coursework with a concrete deliverable, technical leadership, and accurately stated credentials. Describe the person's actual contribution. Do not apologize for limited experience or inflate academic work into professional employment.
 
 ### 4. Experience
 
@@ -117,7 +117,7 @@ Review every Experience entry:
 - [ ] Technologies listed for the role were actually used there.
 - [ ] Recent relevant work receives more detail than old or unrelated work.
 - [ ] Training programs, volunteering, clubs, and accelerators are not incorrectly presented as employment.
-- [ ] Internships, part-time work, student funds, case competitions, research, and class projects are classified accurately.
+- [ ] Internships, part-time work, open-source contributions, research, and personal or class projects are classified accurately.
 
 If the resume bullets are too compressed for LinkedIn, expand their context without changing the underlying claims.
 
@@ -127,32 +127,32 @@ If the resume bullets are too compressed for LinkedIn, expand their context with
 - [ ] Confirm core target-role skills are present using LinkedIn's standardized labels when possible.
 - [ ] Check which skills are displayed first.
 - [ ] Check skills attached to each Experience entry.
-- [ ] Add supported languages, frameworks, systems, cloud services, domains, and working methods.
+- [ ] Add supported programming languages, frameworks, testing practices, databases, infrastructure, domains, and engineering practices relevant to the target roles.
 - [ ] Remove or demote irrelevant skills that distort the person's positioning.
 - [ ] Do not add skills solely because they appear in a job description.
 - [ ] Every selected skill maps to an Experience, Education, Project, Course, or other defensible evidence item.
-- [ ] The final skills list is consistent with the selected profile copy and the target lane.
+- [ ] The final skills list is consistent with the selected profile copy and target software engineering roles.
 
 The goal is not to fill every available slot. The goal is an accurate skills graph that supports recruiter filters and the profile narrative.
 
-For finance targets, audit only evidence-backed skills such as Financial Modeling, Valuation, Financial Statement Analysis, Accounting, Budgeting, Forecasting, Excel, PowerPoint, Bloomberg, Capital IQ, FactSet, SQL, or Python. Tool familiarity, coursework, project use, and professional use are not interchangeable; describe the real level of use.
+Select engineering skills based on the person's actual work and target specialization, rather than a universal technology checklist. Tool familiarity, coursework, project use, and production experience are not interchangeable; describe the real level of use.
 
-### 6. New-graduate and finance evidence
+### 6. Software engineering experience and evidence
 
 Complete this section when applicable:
 
-- [ ] One primary finance lane and no more than two adjacent lanes are documented.
-- [ ] Graduation date, earliest start date, employment type, location, work authorization, and sponsorship answers are consistent across LinkedIn, resume, and saved applications.
-- [ ] Internships and paid work are prioritized before academic evidence.
-- [ ] Student-managed funds, research, case competitions, class projects, and organizations are used only when they demonstrate a concrete contribution or deliverable.
+- [ ] Target software engineering roles, specialization, and approximate level are documented.
+- [ ] Earliest start date, employment type, location, work authorization, and sponsorship answers are consistent across LinkedIn, resume, and saved applications; graduation timing is checked when relevant.
+- [ ] Evidence is prioritized by relevance, personal contribution, and demonstrated engineering work, with detail appropriate to the person's career stage.
+- [ ] Engineering roles, internships, personal or class projects, open-source contributions, and research demonstrate a concrete contribution or deliverable and accurately distinguish independent, team, and guided work.
 - [ ] Relevant coursework is included only when it adds missing evidence and names what the person actually produced or learned.
 - [ ] GPA, honors, test scores, and coursework are public only by the person's choice and are factually supported.
-- [ ] Finance skills map to a model, memo, analysis, presentation, process, or other defensible artifact.
-- [ ] Client, transaction, portfolio, performance, valuation, and financial-statement details are public-safe.
-- [ ] Investment performance includes the person's role, period, benchmark, and disclosure permission—or is omitted.
+- [ ] Engineering skills map to a defensible implementation, design, test, investigation, operational responsibility, or other concrete work; public source code is not required.
+- [ ] Descriptions and linked artifacts are safe to share and do not expose proprietary code, internal architecture, customer data, security details, or unpublished results without permission.
+- [ ] Claims about reliability, latency, delivery time, cost, usage, or quality include supported scope, measurement context, and personal contribution; team outcomes and goals are distinguished from individual delivered results.
 - [ ] Licenses, designations, exams, and certifications use the issuer's accurate status language; planned credentials are not presented as earned or in progress.
 
-Do not force revenue, return, deal-size, or portfolio-performance metrics. A truthful description of analysis, methodology, deliverable, and decision supported is stronger than a guessed number.
+Do not force engineering metrics or assume every project ran in production. A truthful description of the problem, implementation, tradeoffs, and observed outcome is stronger than a guessed number. Distinguish prototypes, coursework, pilots, and production systems accurately.
 
 ### 7. Open to Work and job preferences
 
@@ -161,7 +161,7 @@ Do not force revenue, return, deal-size, or portfolio-performance metrics. A tru
 - [ ] Remote, hybrid, and onsite preferences are accurate.
 - [ ] Employment types are accurate.
 - [ ] Availability/start timing is accurate.
-- [ ] Graduation and start timing agree with Education, the resume, and saved application answers.
+- [ ] Start timing and, where relevant, graduation timing agree with Education, the resume, and saved application answers.
 - [ ] Visibility is public or recruiters-only according to the person's choice.
 - [ ] Compensation preferences are current and private where applicable.
 
@@ -188,7 +188,7 @@ Never delete a saved resume or application record without approval.
 - [ ] Projects demonstrate relevant work rather than unfinished placeholders.
 - [ ] Courses, organizations, honors, awards, languages, publications, test scores, volunteering, and recommendations are individually audited when present or useful.
 - [ ] Services and Career Break sections are accurate when present and marked not applicable when irrelevant.
-- [ ] Recommendations support the target lane and come from people who directly observed the work.
+- [ ] Recommendations support the target engineering roles and come from people who directly observed the work.
 - [ ] Old student or new-graduate content does not dominate an experienced profile.
 
 For a new graduate, relevant student evidence may appropriately carry more weight; remove it only when stronger experience replaces it. Featured controls may vary by account, region, subscription, or rollout. Mark unavailable controls as unavailable rather than forcing a workaround.
@@ -204,13 +204,13 @@ Do not require optional sections merely to make the profile look complete.
 - [ ] Company-interest signals and follows are treated as separate actions.
 - [ ] No private job-search detail is added to public text.
 - [ ] Visible posts, comments, reactions, and other Activity do not disclose confidential information or contradict the target identity.
-- [ ] Finance content contains no material nonpublic information, confidential client/deal data, restricted research, or unsupported investment-performance claims.
+- [ ] Engineering content and linked artifacts disclose no restricted code, internal architecture, customer data, security details, or unpublished results; performance claims are supported and public-safe.
 
 ### 11. Optional job-search infrastructure
 
 Treat these as separate actions from profile editing:
 
-- [ ] Target searches use the approved primary and adjacent role lanes.
+- [ ] Target searches use the approved software engineering titles, level, and related roles.
 - [ ] Locations, experience level, employment type, industry, and date-posted filters are appropriate.
 - [ ] Existing saved searches and job alerts are current and nonduplicative.
 - [ ] Proposed new alerts have an exact query, filters, frequency, and notification channel.
@@ -246,7 +246,7 @@ Create a compact consistency table:
 | Skills |  |  |  |
 | Metrics and claims |  |  |  |
 | Education and certifications |  |  |  |
-| Graduation and start timing |  |  |  |
+| Start timing and graduation timing, if relevant |  |  |  |
 | Work authorization and sponsorship answers |  |  |  |
 | Portfolio links |  |  |  |
 
@@ -308,8 +308,8 @@ After each batch:
 - [ ] Headline and About communicate one clear target identity.
 - [ ] Experience descriptions are truthful and understandable.
 - [ ] Saved resumes and application data are current.
-- [ ] New-grad education, graduation/start timing, and finance-lane evidence are accurate where applicable.
-- [ ] Finance confidentiality and credential/designation status were checked where applicable.
+- [ ] Engineering experience, project contributions, and start timing are accurate; education and graduation timing were checked where relevant to career stage.
+- [ ] Engineering confidentiality, performance claims, and credential status were checked where applicable.
 - [ ] Privacy and notification choices match the person's instructions.
 - [ ] Every approved change was reopened and verified.
 - [ ] Analytics baseline and change date were recorded.

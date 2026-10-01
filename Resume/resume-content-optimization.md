@@ -1,11 +1,11 @@
-# Resume Content Optimization Runbook
+# Software Engineering Resume Content Optimization Runbook
 
-Give this file and the current resume to an LLM. The goal is to improve the resume's existing content, especially experience bullets. Do not redesign the resume, replace its structure, or rewrite everything unless the person explicitly requests that work.
+Give this file and the current resume to an LLM. The goal is to improve the resume's existing content for software engineering roles, especially experience bullets. Tailor the review to the person's target specialization, level, and career stage. Do not redesign the resume, replace its structure, or rewrite everything unless the person explicitly requests that work.
 
 ## Copy-paste starting prompt
 
 ```text
-Use the Resume Content Optimization Runbook in the attached file.
+Use the Software Engineering Resume Content Optimization Runbook in the attached file.
 
 Start by reading my resume. Assume the existing structure and formatting should remain unless I explicitly ask for a broader overhaul.
 
@@ -25,7 +25,7 @@ Tell me upfront that reaching the right wording may require multiple iterations.
 Use this variation only when the person provides verified supporting material and explicitly authorizes an offline draft:
 
 ```text
-Use the Resume Content Optimization Runbook in the attached file in EVIDENCE-PACK DRAFT mode.
+Use the Software Engineering Resume Content Optimization Runbook in the attached file in EVIDENCE-PACK DRAFT mode.
 
 Read my current resume and the supplied evidence. Produce a complete candidate rewrite and a decision log without waiting for approval between bullets. Do not edit or overwrite my actual resume file.
 
@@ -54,9 +54,10 @@ Tell the person:
 Ask only what is not already clear from the resume:
 
 1. What role and approximate level are you targeting?
-2. Which job or section should we improve first?
-3. Is there a specific job description, or should this remain generally targeted?
-4. Are there any facts, metrics, technologies, or wording that must remain private?
+2. Which software engineering specialization are you targeting, if any: frontend, backend, full-stack, mobile, infrastructure/platform, embedded, or another area?
+3. Which job or section should we improve first?
+4. Is there a specific job description, or should this remain generally targeted?
+5. Are there any facts, metrics, technologies, or wording that must remain private?
 
 Do not block the work because the person lacks a job description. A target role is helpful, but the LLM can still improve clarity, specificity, and impact.
 
