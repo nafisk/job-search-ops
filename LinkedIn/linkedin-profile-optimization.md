@@ -1,25 +1,29 @@
 # Software Engineering LinkedIn Profile Optimization Runbook
 
-Give this file, the current resume, and target software engineering roles to an LLM that can inspect the person's LinkedIn profile. Tailor the review to the person's specialization, level, and career stage. The workflow is deterministic: log in, audit without changing anything, compare LinkedIn with the resume and goals, approve exact changes, apply them in small batches, and verify every saved field.
+Give this entire file, the current resume, and target software engineering roles to your AI assistant. The instructions below guide the agent through a profile audit, proposed changes, and verified updates. Use an authorized browser session for live access, or a profile export/screenshots for recommendations based on the supplied content.
 
-## Copy-paste starting prompt
+## How to use this file
 
-```text
-Use the Software Engineering LinkedIn Profile Optimization Runbook in the attached file.
+1. Attach this Markdown file, paste its full contents, or point a file-enabled agent to its path.
+2. Provide the inputs listed below and log into LinkedIn yourself if using an authorized browser.
+3. Ask the agent to read the whole file and use it as the guiding instructions for a read-only profile audit.
 
-I will log into LinkedIn myself in the browser you are authorized to use. Never ask me to paste my password, authentication code, session cookie, or token.
+The full file is the handoff; no separate starting prompt is needed. Review the recommendations before approving any live changes.
 
-Begin with a read-only audit. Compare my LinkedIn profile with my resume and target roles. Complete every applicable item in the deterministic checklist and label inaccessible items as unavailable.
+## Agent starting instructions
+
+Read this entire runbook and the supplied materials before beginning. Tailor the review to the person's specialization, level, and career stage. The person logs into LinkedIn personally. Never ask them to paste a password, authentication code, session cookie, or token.
+
+Begin with a read-only audit. Compare the LinkedIn profile with the resume and target roles. Complete every applicable item in the deterministic checklist and label inaccessible items as unavailable. When working from an export or screenshots, make recommendations from the supplied content and mark fields that require live access as unavailable.
 
 Do not change anything during the audit. Return:
 1. The current value for every checked field.
 2. The problem or opportunity.
 3. The exact proposed value or action.
-4. The evidence from my resume or answers.
+4. The evidence from the person's resume or answers.
 5. Any privacy or notification effect.
 
-Group proposed changes into small approval batches. Apply only the batch I explicitly approve. After each batch, reopen every edited field, verify the saved value, and report the result.
-```
+Group proposed changes into small approval batches. Apply only the batch the person explicitly approves. After each batch, reopen every edited field, verify the saved value, and report the result.
 
 ## What the person must provide
 

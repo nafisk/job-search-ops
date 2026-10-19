@@ -102,6 +102,8 @@ Application Workflow/support/toolkit/tests/test_profile.py
 Application Workflow/support/toolkit/tests/test_retries.py
 Application Workflow/support/toolkit/tests/test_screening.py
 Application Workflow/support/toolkit/verify_offline.py
+LinkedIn/README.md
 LinkedIn/linkedin-profile-optimization.md
 README.md
+Resume/README.md
 Resume/resume-content-optimization.md

@@ -1,36 +1,30 @@
 # Software Engineering Resume Content Optimization Runbook
 
-Give this file and the current resume to an LLM. The goal is to improve the resume's existing content for software engineering roles, especially experience bullets. Tailor the review to the person's target specialization, level, and career stage. Do not redesign the resume, replace its structure, or rewrite everything unless the person explicitly requests that work.
+Give this entire file and the current resume to your AI assistant. The goal is to improve the resume's existing content for software engineering roles, especially experience bullets. The instructions below guide the agent through the review.
 
-## Copy-paste starting prompt
+## How to use this file
 
-```text
-Use the Software Engineering Resume Content Optimization Runbook in the attached file.
+1. Attach this Markdown file, paste its full contents, or point a file-enabled agent to its path.
+2. Provide your current resume and any target-role context you already have.
+3. Ask the agent to read the whole file and use it as the guiding instructions for improving your resume.
 
-Start by reading my resume. Assume the existing structure and formatting should remain unless I explicitly ask for a broader overhaul.
+The full file is the handoff; no separate starting prompt is needed. For an autonomous candidate draft, also supply verified supporting material and explicitly request **EVIDENCE-PACK DRAFT** mode.
 
-Help me improve the content iteratively:
+## Agent starting instructions
+
+Read this entire runbook and the supplied resume before beginning. Tailor the review to the person's target specialization, level, and career stage. Preserve the existing structure and formatting unless the person explicitly requests a broader overhaul.
+
+Begin in **INTERACTIVE REVIEW** mode unless the person explicitly authorizes another mode:
+
 1. Identify the bullets with the greatest opportunity.
-2. Ask me short, simple questions to uncover missing ownership, context, technical detail, scale, and impact.
-3. Rewrite only the bullets we are currently reviewing.
-4. Give me two or three strong options when the wording involves a meaningful tradeoff.
-5. Explain the difference briefly and wait for my selection or correction.
-6. Never invent experience, metrics, technologies, ownership, or results.
+2. Ask short, simple questions to uncover missing ownership, context, technical detail, scale, and impact.
+3. Rewrite only the bullets currently under review.
+4. Give two or three strong options when the wording involves a meaningful tradeoff, explain the difference briefly, and wait for selection or correction.
+5. Tell the person upfront that reaching the right wording may require multiple iterations. Do not edit the resume file until they approve the wording.
 
-Tell me upfront that reaching the right wording may require multiple iterations. Do not edit the resume file until I approve the wording.
-```
+Never invent experience, metrics, technologies, ownership, or results.
 
-### Optional evidence-pack prompt
-
-Use this variation only when the person provides verified supporting material and explicitly authorizes an offline draft:
-
-```text
-Use the Software Engineering Resume Content Optimization Runbook in the attached file in EVIDENCE-PACK DRAFT mode.
-
-Read my current resume and the supplied evidence. Produce a complete candidate rewrite and a decision log without waiting for approval between bullets. Do not edit or overwrite my actual resume file.
-
-Label the rewrite CANDIDATE — NOT YET PERSON-APPROVED. For every material change, record the supporting source, important qualifier, unresolved conflict, and reason for the change. Omit unsupported claims. End with the short questions I must answer before any wording can be considered final.
-```
+For an explicitly authorized **EVIDENCE-PACK DRAFT**, read the resume and supplied evidence, then produce a complete candidate rewrite and a decision log without waiting for approval between bullets. Do not edit or overwrite the actual resume file. Label the rewrite `CANDIDATE — NOT YET PERSON-APPROVED`. For every material change, record the supporting source, important qualifier, unresolved conflict, and reason for the change. Omit unsupported claims and end with the short questions the person must answer before any wording can be considered final.
 
 ## Default behavior
 
