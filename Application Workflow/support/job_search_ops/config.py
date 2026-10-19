@@ -131,6 +131,7 @@ def load_config(path):
     require(type(value["installation_id"]) is str and re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", value["installation_id"]),
             "installation_id", "expected lowercase identifier")
     root = local_path(value["instance_root"], source.parent, "instance_root", absolute=True)
+    require(root.name != "state", "instance_root", "state is reserved for the managed child; choose another installation folder name")
     require(not root.is_relative_to(REPO_ROOT) and not REPO_ROOT.is_relative_to(root),
             "instance_root", "must be separate from the repository")
     require(root != root.parent and len(root.parts) >= 4, "instance_root", "choose a dedicated private subdirectory")

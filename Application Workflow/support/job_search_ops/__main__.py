@@ -18,9 +18,13 @@ def parser():
     def command(name, description, fields=()):
         p = commands.add_parser(name, help=description)
         p.add_argument("--output", help="Save JSON to this private path instead of stdout")
+        if name in {"run-check", "enqueue", "prepare", "tracking-prepare", "authorize-write", "local-sync", "local-update", "brief-prepare", "brief-sending"}:
+            p.add_argument("--pilot-update-id", help="Only for an explicitly requested manual replacement pilot; never save this flag in schedules")
         for field in fields:
             p.add_argument("--" + field, required=True)
         return p
+    command("run-check", "Check whether the selected workflow may run before accessing sources", ("config", "workflow"))
+    command("role-state", "Read accepted aliases and private referral restrictions before manual actions", ("root", "workbook"))
     command("preferences-plan", "Review a same-installation settings change", ("config", "candidate"))
     command("preferences-apply", "Apply or resume the exact reviewed local settings change", ("config", "plan", "expected-digest"))
     command("preferences-schedule-record", "Record native readback of an existing schedule update", ("config", "update", "workflow", "evidence", "observation"))
@@ -39,10 +43,12 @@ def parser():
     command("setup-plan", "Review selected storage, sources, chats, permissions and schedules without effects", ("config",))
     p = command("doctor", "Check installed tools and current native evidence", ("config",))
     p.add_argument("--evidence"); p.add_argument("--check-staging", action="store_true")
+    p.add_argument("--workflow", choices=("main", "blind"), help="Check only this workflow’s dependencies")
     command("prompts", "Write prompts using verified real resource bindings", ("config",))
     command("runtime-profile", "Resolve the strict toolkit profile with actual resource bindings", ("config",))
     p = command("schedule-plan", "Prepare only selected schedules after verified first passes", ("config",))
     p.add_argument("--evidence")
+    p.add_argument("--workflow", choices=("main", "blind"), help="Prepare only this workflow’s schedule")
     for name, description in (("local-init", "Create and verify the selected private Excel tracker"),
                               ("local-sync", "Merge queued discoveries into the selected private Excel tracker"),
                               ("local-update", "Apply an evidence-backed tracking update to the selected private Excel tracker")):
@@ -76,6 +82,12 @@ def one_observation(args):
 
 
 def run(args):
+    from .setup import execution_context
+    with execution_context(pilot_update_id=getattr(args, "pilot_update_id", None)):
+        return run_command(args)
+
+
+def run_command(args):
     name = args.command
     if name == "preferences-apply":
         from .preferences import apply_preferences
@@ -84,11 +96,12 @@ def run(args):
     if name == "doctor":
         from .doctor import run_doctor
         result = run_doctor(config, load_evidence(args.evidence) if args.evidence else (), verify,
-                            check_staging=args.check_staging)
+                            check_staging=args.check_staging, workflow=args.workflow)
         return result, 0 if result["ready"] else 2
     if config is not None:
         from . import setup
-        if name.startswith("preferences-"):
+        if name == "run-check": result = setup.run_check(config, args.workflow)
+        elif name.startswith("preferences-"):
             from . import preferences
             if name == "preferences-plan":
                 result = preferences.preference_plan(config, load_config(args.candidate))
@@ -108,7 +121,7 @@ def run(args):
         elif name == "init": result = setup.init_instance(config)
         elif name == "prompts": result = setup.prepare_prompts(config)
         elif name == "runtime-profile": result = setup.runtime_profile(config)
-        elif name == "schedule-plan": result = setup.prepare_schedules(config, load_evidence(args.evidence) if args.evidence else (), verify)
+        elif name == "schedule-plan": result = setup.prepare_schedules(config, load_evidence(args.evidence) if args.evidence else (), verify, workflow=args.workflow)
         elif name in {"local-init", "local-sync", "local-update"}:
             require(execution_plan(config)["tracker"]["provider"] == "local_xlsx", "tracker", "local Excel is not selected")
             from . import local_excel
@@ -152,10 +165,19 @@ def run(args):
         from .snapshots import read_data
         return review(read_data(args.snapshot), args.workbook), 0
     if name == "tracking-prepare":
+        from . import setup
         from .google_tracking import prepare
         from .snapshots import read_data
+        installed = load_config(no_symlink(Path(args.root).expanduser().resolve() / "config.json"))
+        require(Path(installed["instance_root"]) == Path(args.root).expanduser().resolve(), "instance", "use the installed root")
+        require(bool(execution_plan(installed)["tracking"]), "tracking", "tracking is not selected")
+        require(execution_plan(installed)["tracker"]["provider"] == "google_sheets", "tracker", "Google Sheets is not selected")
+        binding = setup.load_instance(installed)["resources"].get("tracker:tracker", {})
+        require(binding.get("status") == "verified" and binding.get("resource_id") == args.workbook,
+                "tracker", "tracking must use the verified installed workbook")
         return prepare(args.root, args.workbook, read_data(args.snapshot), read_json(args.plan), args.owner), 0
-    if name == "enqueue": result = queue.enqueue(args.root, args.packet)
+    if name == "role-state": result = sheets.role_state(args.root, args.workbook)
+    elif name == "enqueue": result = queue.enqueue(args.root, args.packet)
     elif name == "pending": result = queue.pending(args.root)
     elif name == "prepare": result = sheets.prepare(args.root, args.workbook, args.snapshot, args.owner)
     elif name == "authorize-write": result = sheets.authorize_write(args.root, args.journal, args.snapshot)

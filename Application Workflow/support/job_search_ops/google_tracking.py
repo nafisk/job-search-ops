@@ -78,6 +78,8 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
     plan = validate_plan(plan, workbook_id, "expected_state_sha256")
     journal_id = q.digest(["google-tracking", plan])
     with q.locked(root) as base:
+        from .setup import require_execution
+        require_execution(root, "main")
         q.acquire_claim(base, workbook_id, owner)
         for path in (base / "writer/journals").glob("*.json"):
             prior = q.read(path)

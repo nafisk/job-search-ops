@@ -38,6 +38,20 @@ python3 -m job_search_ops referrals-commit --config /absolute/private/config.jso
 
 Only verified rows publish the private registry. Confirm each company’s contact/hold, careers URL, scope and observed watchlist row before the helper runs. No empty watchlist is accepted as successful setup for a nonempty selected list.
 
+## Check before an application handoff
+
+Portal proposals can add a restriction to a role already found through email or rated-company research. Both tracker writers save these source facts in private accepted receipts, separately from manual Notes and Referral Contact cells. Accepted aliases map alternate job IDs and verified URLs to that same role across runs.
+
+Read the merged accepted state before opening application pages:
+
+```sh
+python3 -m job_search_ops role-state --root /absolute/private --workbook VERIFIED_WORKBOOK_ID
+```
+
+Here `--root` is the installation directory, and `--workbook` is the installed tracker ID (including its `local:` prefix for Excel). The output is private: `aliases` and `alias_urls` resolve the canonical role, and `referral_restrictions` contains holds, discovered contacts and evidence. Check it alongside the current company watchlist and user instructions; the stricter restriction wins.
+
+A later sighting, edited note or blank contact does not release a hold. There is no automatic release command. Resolve the approved route with the user for the named role before proceeding; never delete accepted receipts to bypass a restriction. [Reports](report.md) show new hold/contact-discovered notices without publishing private contacts.
+
 ## Preserve edits and recover
 
 Existing matching rows are reused; conflicting contacts, holds, notes or companies stop setup without replacement. A completed identical seed is idempotent. After setup, the helper reads the private scope and checks live manual holds; a stricter hold always wins. Adding/removing companies or reconciling manual edits with the frozen seed is a separate reviewed migration. Do not overwrite the list or delete its journal to force reseeding.

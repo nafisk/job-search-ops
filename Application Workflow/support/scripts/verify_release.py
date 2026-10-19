@@ -13,6 +13,11 @@ SUPPORT_ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW_ROOT = SUPPORT_ROOT.parent
 REPO_ROOT = WORKFLOW_ROOT.parent
 INVENTORY = "Application Workflow/support/RELEASE_FILES.txt"
+WORKBOOK_PARTS = {
+    "[Content_Types].xml", "_rels/.rels", "xl/workbook.xml",
+    "xl/_rels/workbook.xml.rels", "xl/styles.xml", "xl/theme/theme1.xml",
+    "xl/sharedStrings.xml", *(f"xl/worksheets/sheet{index}.xml" for index in range(1, 8)),
+}
 
 
 def has_private_binding(text):
@@ -65,10 +70,55 @@ def files(root=None):
     return [root / entry for entry in sorted(entries)]
 
 
+def workbook_privacy_check(archive):
+    """Inspect the entire blank template package, including nonvisible remnants."""
+    names = archive.namelist()
+    assert len(names) == len(set(names)), "Workbook contains duplicate ZIP parts"
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    parts = {}
+    personal_properties = {"creator", "lastModifiedBy", "Company", "Manager", "HyperlinkBase",
+                           "title", "subject", "description", "keywords", "category", "contentStatus"}
+    for name in names:
+        assert not name.startswith("/") and ".." not in Path(name).parts, "Unsafe workbook part path"
+        assert (name.endswith((".xml", ".rels")) and not name.startswith(("customXml/", "xl/embeddings/", "xl/externalLinks/"))
+                and name != "docProps/custom.xml"), "Unreviewed embedded or custom workbook content"
+        raw = archive.read(name).decode("utf-8-sig")
+        assert "<!--" not in raw and "<!DOCTYPE" not in raw, "Workbook contains hidden XML comments or document declarations"
+        node = ET.fromstring(raw)
+        parts[name] = node
+        texts = [raw, "".join(node.itertext())]
+        for element in node.iter():
+            texts.extend(element.attrib.values())
+            if name.startswith("docProps/") and element.tag.rsplit("}", 1)[-1] in personal_properties:
+                assert not "".join(element.itertext()).strip(), "Workbook contains personal document metadata"
+            if name.endswith(".rels"):
+                assert element.get("TargetMode", "").lower() != "external", "Blank workbook contains an external relationship"
+        for text in texts:
+            assert not has_private_binding(unquote(text)), "Workbook XML contains private binding or key signature"
+    # A blank template has no comments, people, custom properties or orphan
+    # worksheets. Unknown parts can retain private text without recognizable
+    # signatures, and an orphan worksheet could disguise a deleted string as
+    # referenced. Update this reviewed inventory only with a template change.
+    assert set(names) == WORKBOOK_PARTS, "Workbook part inventory differs; unreviewed or missing template content"
+    strings = list(parts.get("xl/sharedStrings.xml", []))
+    used = set()
+    for name, node in parts.items():
+        if name.startswith("xl/worksheets/") and name.endswith(".xml"):
+            for cell in node.findall('.//m:c[@t="s"]', ns):
+                value = cell.find("m:v", ns)
+                assert value is not None and value.text is not None, "Missing shared-string index"
+                index = int(value.text)
+                assert 0 <= index < len(strings), "Invalid shared-string index"
+                used.add(index)
+    assert all(index in used or not "".join(value.itertext()).strip()
+               for index, value in enumerate(strings)), "Workbook contains unused shared strings (possible deleted content)"
+
+
 def workbook_check():
     ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
     schema = json.loads((WORKFLOW_ROOT / "sheets/workbook-schema.json").read_text())
     with zipfile.ZipFile(WORKFLOW_ROOT / "sheets/job-search-tracker.xlsx") as z:
+        workbook_privacy_check(z)
         workbook = ET.fromstring(z.read("xl/workbook.xml"))
         names = [s.attrib["name"] for s in workbook.findall("m:sheets/m:sheet", ns)]
         assert names == [t["name"] for t in schema["tabs"]], "Workbook tabs differ from schema"
@@ -117,11 +167,11 @@ def main():
                 target = unquote(urlsplit(target).path)
                 if target and not (path.parent / target).exists(): failures.append(relative + ": broken local link " + target)
     try: workbook_check()
-    except (AssertionError, KeyError, ValueError, OSError, zipfile.BadZipFile) as error: failures.append(str(error))
+    except (AssertionError, KeyError, ValueError, OSError, ET.ParseError, zipfile.BadZipFile) as error: failures.append(str(error))
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1
-    print(f"Distribution verified: {len(paths)} files; reviewed inventory; blank seven-tab workbook; local links; private-binding scan.")
+    print(f"Distribution verified: {len(paths)} files; reviewed inventory; blank seven-tab workbook including hidden-content scan; local links; private-binding scan.")
     return 0
 
 

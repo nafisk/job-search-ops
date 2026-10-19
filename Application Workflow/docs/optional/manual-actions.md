@@ -1,6 +1,6 @@
 # Manual actions
 
-> **Required:** A separate, explicit request naming the roles/companies and action. Application pages and LinkedIn drafts need the supported signed-in browser; public research needs public search/page reads.
+> **Required:** A separate, explicit request naming the roles/companies and action. Application handoffs also need Python 3.10+ and the installation's private accepted role state. Application pages and LinkedIn drafts need the supported signed-in browser; public research needs public search/page reads.
 > **Runs in:** Codex app with the selected browser/tools. These actions are never launched by the daily workflow.
 > **Computer use:** Required for application-page handoffs and LinkedIn drafts. You submit applications and send messages.
 
@@ -10,7 +10,9 @@ These optional modules start only from a new explicit human request identifying 
 
 Open exact accessible employer/ATS application pages in the authorized external browser for the user to fill and submit. Preserve user tabs/edits. Deduplicate existing unresolved handoffs and reservations before allocating capacity; the default ceiling is twenty outstanding pages/reservations, with a smaller requested pilot allowed.
 
-Apply current eligibility and company-wide referral holds first. Verify every role's link and current availability. Use bounded read attempts; inaccessible pages do not count as completed accessible handoffs. Do not autofill, synchronize Simplify, enter fields, upload resumes, accept agreements or submit. A browser tab disappearing is not confirmation. Record actual submission only from the user's statement or independent native confirmation.
+Apply current eligibility and company-wide referral holds first. Run the [private role-state check](../referrals.md#check-before-an-application-handoff) to resolve accepted aliases and read saved role restrictions. An alternate ID/URL is still the same held role; manual Notes or Referral Contact cells do not replace these source facts. A hold remains until the user resolves the approved route for the named role. There is no automatic release, and this handoff request alone does not clear a hold.
+
+Verify every role's link and current availability. Use bounded read attempts; inaccessible pages do not count as completed accessible handoffs. Do not autofill, synchronize Simplify, enter fields, upload resumes, accept agreements or submit. A browser tab disappearing is not confirmation. Record actual submission only from the user's statement or independent native confirmation.
 
 ## Recruiter research
 

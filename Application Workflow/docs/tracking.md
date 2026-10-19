@@ -16,6 +16,9 @@ Use [applications](../support/toolkit/APPLICATIONS.md), [lifecycle](../support/t
 
 A completed tracking pass can include disclosed source exceptions. This does not authorize application opening, recruiter research, drafting, sending, booking or invitations.
 
+Before reading sources, run the [execution check](operations.md) for `main`.
+Pending preference changes require their explicitly requested replacement pilot.
+
 ## Save to Google Sheets
 
 Commands run from `Application Workflow/support/`. `--root` is the installation directory containing `installation.json`, never its `state/` child. Use the complete native snapshot described in [Google Sheets](sheets-protocol.md#1-capture-real-native-sheets-state).
@@ -44,7 +47,9 @@ python3 -m job_search_ops tracking-review --workbook WORKBOOK_ID --snapshot /abs
 
 Allowed fields are Application Status, Notes and Referral Contact. An expected-old-value mismatch stops the plan. Existing role links must match accepted receipts or an independently reviewed adoption baseline. To add a confirmed application absent from the tracker, use the same `new_records` shape shown in [local tracking](local-excel.md#apply-reviewed-tracking-changes); keep `expected_state_sha256` for Google. New rows are marked **Tracking evidence**, with discovery screening not evaluated.
 
-3. Prepare the journal:
+3. Prepare the journal. The command reads the installed `config.json`, requires at
+least one selected tracking source, and checks that Google Sheets and this exact
+verified workbook are bound. A disabled tracking selection cannot create a journal:
 
 ```sh
 python3 -m job_search_ops tracking-prepare --root /absolute/private --workbook WORKBOOK_ID --snapshot /absolute/private/tracking-before.json --plan /absolute/private/tracking-plan.json

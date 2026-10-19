@@ -103,8 +103,8 @@ class TrackingTests(unittest.TestCase):
 
     def test_settled_failure_can_retry_but_mixed_effect_is_conflict(self):
         journal = self.prepare(self.plan(additions=[application()]))
-        sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())
-        settlement = {"journal_id": journal["journal_id"], "verified_at": queue.now(), "kind": "native_terminal_failure", "response": {"error": {"code": 403}}}
+        payload = sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())
+        settlement = {"journal_id": journal["journal_id"], "attempt_id": payload["attempt_id"], "verified_at": queue.now(), "kind": "native_terminal_failure", "response": {"error": {"code": 403}}}
         self.assertEqual(sheets.reconcile(self.root, journal["journal_id"], self.connector.snapshot(), settlement)["status"], "retryable")
         payload = sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())
         self.connector.apply(payload["requests"])

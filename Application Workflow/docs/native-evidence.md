@@ -69,7 +69,10 @@ python3 -m job_search_ops doctor --config /PRIVATE/config.json \
 
 Exit codes are 0 for success/readiness, 2 for a doctor report with missing or failed
 requirements, and 1 for invalid input. All commands accept `--output` for private
-JSON. They perform no connected operation and do not activate schedules.
+JSON. They perform no connected operation and do not activate schedules. Add
+`--workflow main` or `--workflow blind` to `doctor` and `schedule-plan` when checking
+one workflow. The rated-company producer needs its own research/handoff tools;
+missing main-workflow Gmail access does not block its independent schedule.
 
 These checks operate at a **trusted local agent boundary**. They are not signed
 tool attestations: a person who edits the evidence can fabricate it. Their purpose
@@ -144,10 +147,14 @@ the exact `installation_id`, `intent_id`, and `request_digest` from the saved in
   workspace. Record the real workspace, even if it differs from the requested one.
 - A schedule observation retains the actual saved native view and its returned ID.
   `field_checks` maps each required normalized field to `{check: 0, path: "/..."}`
-  in `native_checks`. Fields are `thread_id`, `local_time`, `timezone`, `status`,
+  in `native_checks`. Fields are `thread_id`, `cadence`, `local_time`, `timezone`, `status`,
   `notification_policy`, `prompt_digest`, and `next_run_at`. The prompt field points
   to the returned prompt text; the adapter hashes it. Supported explicit transforms
-  are `rrule_time` for a single BYHOUR/BYMINUTE recurrence,
+  include `rrule_daily` for `cadence` (required, pointing to the native `/rrule`)
+  and `rrule_time` for `local_time`. The rule must be an unbounded daily recurrence
+  with interval 1, one matching hour/minute and zero seconds. Weekly rules,
+  weekday limits, end/count limits and extra recurrence constraints are rejected.
+  Other supported transforms are
   `notification_policy` for native null → meaningful changes, and `uppercase` for
   status. Do not fabricate timing fields a host does not return; leave activation
   unverified and document the host limitation until its actual UI/API can verify it.
@@ -172,6 +179,9 @@ verified configured delivery. Store `accepted_manifest` and its canonical SHA-25
 actual `accepted_manifest_readback` result, directly or in parsed execution stdout.
 A local Excel/public-research/chat installation needs no Google account identity;
 retain its actual local workbook and configured chat binding instead.
+For a replacement pilot, include the current `preferences_update_id` in both
+the accepted manifest captured by the tool and the normalized receipt evidence.
+Adding an update ID only to an older receipt cannot certify the new settings.
 Include `delivery_readback` from the actual destination. Source gaps may remain
 explicit `complete_with_exceptions`; unsaved writes cannot pass acceptance.
 

@@ -53,6 +53,8 @@ python3 -m job_search_ops doctor --config /absolute/private/config.json
 
 After `init` succeeds, use the generated `/absolute/private/config.json` for subsequent commands; it points to the normalized `profile.json`. Reuse those canonical files on restart. Editing drafts later does not update an initialized installation; follow [the preferences update process](preferences.md) for changed choices.
 
+`doctor --workflow main` and `doctor --workflow blind` check each workflow separately; omit the flag for the whole installation. Missing main Gmail does not block the independent rated-company producer. Its central save still requires the central writer to be ready.
+
 Initialization creates private local state, not cloud resources. Preserve existing journals on rerun. Selected unavailable sources stay unavailable; unselected sources are not setup failures. Continue independent permitted work, but do not mark the affected operation verified or enable its dependent schedule.
 
 `doctor` does not inspect LinkedIn subscriptions or mailbox rules. Complete the alert guide's separate received-message/routing check for selected LinkedIn discovery. Setup-only label/filter changes require actual supported tools and the user's selected scope; daily email discovery remains read-only.
@@ -79,6 +81,8 @@ Producers may have narrower filesystem access. Use the [sealed handoff](handoffs
 
 ## 5. Pilot the selected path
 
+Run the [start check](operations.md#routine-operation) before source/account access, using `main` for central/email/referrals and `blind` for rated companies. Initial onboarding runs need no preference-update flag. Later preference changes use the [replacement pilot procedure](preferences.md).
+
 Use a small declared scope for each selected source. Skip unselected branches entirely. A tracking-only pilot checks its selected tracking sources and tracker/report path, without inventing discovery jobs. If no real role qualifies, record that honestly; fixtures must not be inserted as live jobs.
 
 For LinkedIn alerts, verify a genuine alert received after rule creation, its destination outside Inbox, and full-message access through the configured Gmail queries. A read or archived message must still be discoverable. If delivery is pending, retain `awaiting_first_alert`; do not accept the email pilot or enable its dependent schedule. Independent selected branches can proceed.
@@ -89,6 +93,10 @@ Exercise the selected backend's save/readback, duplicate protection and manual-f
 
 For manual mode, create no automation intents and request no scheduling access. Give the user the central chat and a short run instruction. Manual Blind output stays pending until central imports it; explain this without adding a timer.
 
-Only for requested schedules, run `schedule-plan` after required selected checks and first passes are verified. Use `automation_update` to create/read back the chosen main and/or Blind thread heartbeats at the user's times/timezone. Helpers stay unscheduled. Preserve notification preferences and existing unrelated automations; never substitute shell cron. A scheduled Blind source does not itself save rows or schedule central.
+Only for requested schedules, run `schedule-plan` after that workflow's tool checks and first pass are verified. Add `--workflow main` or `--workflow blind` to prepare one independently; omit it to prepare all selected schedules. A pending replacement pilot must pass first.
+
+Use `automation_update` to create/read back the chosen thread heartbeat. Verify its exact chat, prompt, timezone, notifications, activation and **full daily recurrence**: every day at the chosen local time, with no alternate interval, weekday restriction or end condition. The native evidence adapter checks the complete saved rule, not just hour/minute. Each prompt must run the start check before source access; never include `--pilot-update-id` in a timer.
+
+Helpers stay unscheduled. Preserve unrelated automations; never substitute shell cron. A scheduled rated-company producer does not itself save rows or schedule central.
 
 Finish with the actual tracker path/link, selected chats, how to run manually, chosen schedules if any, private state location and unresolved checks. Do not claim full setup while a required selected effect remains unverified.

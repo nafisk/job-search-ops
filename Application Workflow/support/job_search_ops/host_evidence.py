@@ -51,6 +51,23 @@ def assertions_pass(response, assertions):
     return True
 
 
+def daily_recurrence(value):
+    """Accept only an unbounded daily rule at one exact local time."""
+    require(isinstance(value, str), "schedule", "native recurrence must be a full RRULE string")
+    value = value.strip().removeprefix("RRULE:")
+    parts = value.split(";")
+    require(parts and all(part.count("=") == 1 for part in parts), "schedule", "invalid recurrence")
+    pairs = [part.split("=", 1) for part in parts]
+    rule = dict(pairs)
+    require(len(rule) == len(pairs) and set(rule) <= {"FREQ", "INTERVAL", "BYHOUR", "BYMINUTE", "BYSECOND"},
+            "schedule", "recurrence includes unsupported limits, selectors or duplicate fields")
+    require(rule.get("FREQ") == "DAILY" and rule.get("INTERVAL", "1") == "1", "schedule", "expected every-day recurrence")
+    require(all(re.fullmatch(r"\d{1,2}", rule.get(key, "")) for key in ("BYHOUR", "BYMINUTE")), "schedule", "expected one daily time")
+    hour, minute = int(rule["BYHOUR"]), int(rule["BYMINUTE"])
+    require(0 <= hour <= 23 and 0 <= minute <= 59 and rule.get("BYSECOND", "0") == "0", "schedule", "invalid daily time")
+    return f"{hour:02d}:{minute:02d}"
+
+
 def _named_values(value, names):
     if isinstance(value, dict):
         for key, item in value.items():
@@ -216,7 +233,7 @@ def verify(receipt):
         if receipt.capability == "resource.schedule":
             # The agent retains the saved native view and its explicit checked
             # normalization. Exact view fields are verified by JSON pointers.
-            for key in ("thread_id", "local_time", "timezone", "status", "notification_policy", "prompt_digest", "next_run_at"):
+            for key in ("thread_id", "cadence", "local_time", "timezone", "status", "notification_policy", "prompt_digest", "next_run_at"):
                 bindings = evidence.get("field_checks", {})
                 binding = bindings.get(key, {})
                 index = binding.get("check")
@@ -225,12 +242,14 @@ def verify(receipt):
                 actual = pointer(responses[index], binding.get("path"))
                 if key == "prompt_digest":
                     actual = hashlib.sha256(actual.encode()).hexdigest()
-                elif binding.get("transform") == "rrule_time":
-                    hour = re.search(r"(?:^|;)BYHOUR=(\d{1,2})(?:;|$)", actual)
-                    minute = re.search(r"(?:^|;)BYMINUTE=(\d{1,2})(?:;|$)", actual)
-                    if not hour or not minute:
+                elif key == "cadence":
+                    if binding.get("transform") != "rrule_daily":
                         return False
-                    actual = f"{int(hour[1]):02d}:{int(minute[1]):02d}"
+                    if daily_recurrence(actual) != evidence.get("local_time"):
+                        return False
+                    actual = "daily"
+                elif binding.get("transform") == "rrule_time":
+                    actual = daily_recurrence(actual)
                 elif binding.get("transform") == "notification_policy":
                     actual = "meaningful_changes" if actual is None else actual
                 elif binding.get("transform") == "uppercase":
@@ -267,6 +286,8 @@ def verify(receipt):
                 value = evidence.get("tracker_file_sha256")
                 if not isinstance(value, str) or not re.fullmatch(r"[a-f0-9]{64}", value) or manifest.get("tracker_file_sha256") != value:
                     return False
+            if "preferences_update_id" in evidence and manifest.get("preferences_update_id") != evidence["preferences_update_id"]:
+                return False
             if manifest.get("run_id") != receipt.resource_id or not {"accepted_manifest_readback", "delivery_readback"} <= observed:
                 return False
         return True

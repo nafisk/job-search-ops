@@ -12,6 +12,14 @@ The main Job Workflow chat is always the coordinator and sole tracker writer. Em
 
 ## Every run
 
+**Check permission to run before source/account access or dispatch.** From `Application Workflow/support/`:
+
+```sh
+python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow main
+```
+
+If held for a preference pilot, stop ordinary work and follow [the manual pilot procedure](docs/preferences.md). A timer cannot authorize its own pilot. Existing uncertain effects may be read back and reconciled; unaffected rated-company research may continue under its separate `blind` check.
+
 1. **Read the saved choices and unfinished work.** Load the private config, generated runtime profile, resource bindings and journals. Use the read-only setup plan as the branch map; never enable a source because its tools happen to be installed. Verify only the identities, paths and permissions needed for this run. Resolve uncertain writes/sends before repeating them. Keep one writer and preserve existing history. Freeze selected source windows, using their own checkpoints and overlap; display dates in the configured timezone.
 
 2. **Dispatch selected discovery.** If email discovery is enabled, assign [Email Discovery](helpers/email-discovery.md). If portals are enabled, assign [Referral Portal Search](helpers/referral-portals.md). Start independent branches together when available, using saved explicit dispatch authorization, real chat IDs, run ID, scope, policy version and absolute paths. If neither is selected, skip discovery dispatch. Account for ready Blind packets when Blind is enabled; do not launch an unselected source. A selected unavailable helper is a gap, not permission to change topology or duplicate its assignment.

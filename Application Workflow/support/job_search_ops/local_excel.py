@@ -592,6 +592,23 @@ def merge(root, workbook_id, path, node, node_modules, owner="central"):
                 raise q.ProtocolError("An interrupted local tracking update needs local-update with its original plan")
         before = LocalSnapshot(path, workbook_id)
         before.validate_layout()
+        recovered = None
+        with q.locked(root) as base:
+            for saved in (base / "writer/journals").glob("*.json"):
+                prior = q.read(saved)
+                if prior.get("workbook_id") != workbook_id or prior.get("status") != "write_pending":
+                    continue
+                transaction = prior.get("local_transaction", {})
+                if (prior.get("provider") == "local_xlsx" and transaction.get("path") == str(path) and
+                        transaction.get("after_sha256") == before.raw["file_sha256"]):
+                    prior = sheets._load(base, prior["journal_id"])
+                    if prior["owner"] != owner:
+                        raise q.ProtocolError("Local recovery does not own the existing journal")
+                    recovered = prior["journal_id"]
+                    break
+        if recovered is not None:
+            # Readback-only settlement stays available while new work is held.
+            return sheets.verify_and_commit(root, recovered, before)
         journal = sheets.prepare(root, workbook_id, before, owner)
         if journal["status"] == "empty":
             return journal
@@ -680,33 +697,41 @@ def update_tracking(root, workbook_id, path, plan, node, node_modules, owner="ce
     additions = plan.get("new_records", [])
     path = _path(path)
     with _writer_lock(path):
+        update_id = q.digest(plan)
         with q.locked(root) as base:
+            from .setup import require_execution
+            record_path = base / "writer/local-tracking" / (update_id + ".json")
+            for pending in record_path.parent.glob("*.json"):
+                if pending != record_path and q.read(pending).get("status") != "committed":
+                    raise q.ProtocolError("Reconcile the prior local tracking plan first")
+            record = q.read(record_path) if record_path.exists() else None
+            if record:
+                if (record.get("update_id") != update_id or record.get("workbook_id") != workbook_id or
+                        record.get("path") != str(path) or record.get("plan") != plan):
+                    raise q.ProtocolError("Tracking recovery differs from the exact journaled plan/path")
+                claim = q.claim_path(base, workbook_id)
+                if record.get("status") != "committed" and (not claim.exists() or q.read(claim)["owner"] != owner):
+                    raise q.ProtocolError("Tracking recovery no longer owns the workbook")
+                if record["status"] == "committed":
+                    if "tracking_changes" in record["receipt"]:
+                        return record["receipt"]
+                    # Adopt old receipts only with independent role-link evidence.
+                    current = LocalSnapshot(path, workbook_id)
+                    accepted = sheets._accepted_links(base, workbook_id)
+                    for item in google_tracking.describe_updates(current, record["plan"]["updates"]):
+                        if accepted.get(item["job_key"]) != item["url"]:
+                            raise q.ProtocolError("Historical tracking receipt needs role identity review")
+                    return _tracking_receipt(record_path, record, current)
+            before = LocalSnapshot(path, workbook_id)
+            before.validate_layout()
+            if record and record.get("status") == "write_pending" and before.raw["file_sha256"] == record["after_sha256"]:
+                return _tracking_receipt(record_path, record, before)
+            require_execution(root, "main")
             q.acquire_claim(base, workbook_id, owner)
             for pending in (base / "writer/journals").glob("*.json"):
                 other = q.read(pending)
                 if other["workbook_id"] == workbook_id and other["status"] not in {"committed", "cancelled"}:
                     raise q.ProtocolError("Reconcile the outstanding discovery import before tracking edits")
-        update_id = q.digest(plan)
-        record_path = base / "writer/local-tracking" / (update_id + ".json")
-        for pending in record_path.parent.glob("*.json"):
-            if pending != record_path and q.read(pending).get("status") != "committed":
-                raise q.ProtocolError("Reconcile the prior local tracking plan first")
-        record = q.read(record_path) if record_path.exists() else None
-        if record and record["status"] == "committed":
-            if "tracking_changes" in record["receipt"]:
-                return record["receipt"]
-            # Older receipts can be adopted only after checking the saved role
-            # identities against their independent accepted link manifest.
-            current = LocalSnapshot(path, workbook_id)
-            accepted = sheets._accepted_links(base, workbook_id)
-            for item in google_tracking.describe_updates(current, record["plan"]["updates"]):
-                if accepted.get(item["job_key"]) != item["url"]:
-                    raise q.ProtocolError("Historical tracking receipt needs role identity review")
-            return _tracking_receipt(record_path, record, current)
-        before = LocalSnapshot(path, workbook_id)
-        before.validate_layout()
-        if record and before.raw["file_sha256"] == record["after_sha256"]:
-            return _tracking_receipt(record_path, record, before)
         if before.raw["file_sha256"] != plan["expected_file_sha256"]:
             raise q.ProtocolError("Workbook bytes changed since tracking review; review fresh values")
         jobs = sheets._index(before, "Jobs", "Job Key")
@@ -783,11 +808,12 @@ def update_tracking(root, workbook_id, path, plan, node, node_modules, owner="ce
         if file_hash(path) != plan["expected_file_sha256"]:
             raise q.ProtocolError("Workbook changed before tracking publication")
         with q.locked(root) as locked_base:
+            require_execution(root, "main")
             claim = q.claim_path(locked_base, workbook_id)
             if not claim.exists() or q.read(claim)["owner"] != owner:
                 raise q.ProtocolError("Tracking journal no longer owns the workbook")
-        os.replace(candidate, path)
-        _sync_directory(path.parent)
+            os.replace(candidate, path)
+            _sync_directory(path.parent)
         final = LocalSnapshot(path, workbook_id)
         if final.raw["file_sha256"] != after.raw["file_sha256"]:
             raise q.ProtocolError("Workbook changed after tracking publication; receipt withheld")

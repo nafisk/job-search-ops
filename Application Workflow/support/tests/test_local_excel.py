@@ -8,7 +8,8 @@ import unittest
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
 
-from job_search_ops import local_excel as local, queue, sheets
+from job_search_ops import local_excel as local, queue, sheets, setup
+from job_search_ops.config import ConfigError
 from test_pipeline import packet, policies
 
 DEPENDENCIES = Path.home() / ".cache/codex-runtimes/codex-primary-runtime/dependencies"
@@ -87,6 +88,14 @@ class LocalArtifactTests(unittest.TestCase):
         queue.atomic(self.root / "installation.json", {"resources": {"tracker:tracker": self.intent}})
         queue.configure_policies(self.root, WORKBOOK, policies())
 
+    def pilot_hold(self, enabled=True):
+        manifest = queue.read(self.root / "installation.json")
+        if enabled:
+            manifest["preferences_update"] = {"update_id": "manual-pilot", "pilot_required": ["main"]}
+        else:
+            manifest.pop("preferences_update", None)
+        queue.atomic(self.root / "installation.json", manifest)
+
     def initialize(self):
         return local.initialize(self.config, NODE, MODULES)
 
@@ -139,14 +148,45 @@ class LocalArtifactTests(unittest.TestCase):
     def test_publish_before_receipt_failure_recovers_without_second_edit(self):
         self.initialize()
         self.enqueue()
-        with patch.object(sheets, "verify_and_commit", side_effect=OSError("simulated receipt failure")):
+        self.pilot_hold()
+        with setup.execution_context(pilot_update_id="manual-pilot"), patch.object(sheets, "verify_and_commit", side_effect=OSError("simulated receipt failure")):
             with self.assertRaisesRegex(OSError, "receipt failure"):
                 self.sync()
         after_hash = local.file_hash(self.path)
-        with patch.object(local, "_artifact", side_effect=AssertionError("must not export twice")):
+        with patch.object(local, "_artifact", side_effect=AssertionError("must not export twice")), patch.object(sheets, "authorize_write", side_effect=AssertionError("must not authorize a second write")):
             receipt = self.sync()
+        with self.assertRaisesRegex(ConfigError, "replacement pilot pending"):
+            self.sync()
         self.assertEqual(receipt["status"], "saved")
         self.assertEqual(local.file_hash(self.path), after_hash)
+        self.assertEqual(len(local.inspect_workbook(self.path, WORKBOOK).rows("Jobs")), 1)
+        self.assertFalse(queue.pending(self.root))
+
+    def test_interruption_before_publish_retries_only_unchanged_local_file(self):
+        self.initialize()
+        self.enqueue()
+        before_hash = local.file_hash(self.path)
+        original_sync = local._sync_file
+
+        def interrupted(path):
+            if path.name.endswith(".candidate.xlsx"):
+                raise OSError("simulated interruption before publication")
+            return original_sync(path)
+
+        with patch.object(local, "_sync_file", side_effect=interrupted):
+            with self.assertRaisesRegex(OSError, "before publication"):
+                self.sync()
+        self.assertEqual(local.file_hash(self.path), before_hash)
+        journals = list((self.root / "state/writer/journals").glob("*.json"))
+        self.assertEqual(len(journals), 1)
+        interrupted_journal = queue.read(journals[0])
+        self.assertEqual(interrupted_journal["status"], "write_pending")
+        # No connector call exists locally: the exclusive lock and unchanged
+        # original hash establish that this file replacement can be retried.
+        receipt = self.sync()
+        self.assertEqual(receipt["status"], "saved")
+        self.assertEqual(queue.read(journals[0])["attempts"], 2)
+        self.assertNotEqual(queue.read(journals[0])["attempt_id"], interrupted_journal["attempt_id"])
         self.assertEqual(len(local.inspect_workbook(self.path, WORKBOOK).rows("Jobs")), 1)
         self.assertFalse(queue.pending(self.root))
 
@@ -185,13 +225,20 @@ class LocalArtifactTests(unittest.TestCase):
         self.assertEqual(snapshot.rows("Jobs")[0][1]["Source"], "Tracking evidence")
         self.assertEqual(snapshot.rows("Job Sources")[0][1]["Qualification Tier"], "not_screened")
         update = {"workbook_id": WORKBOOK, "expected_file_sha256": local.file_hash(self.path), "updates": [{"job_key": record["job_key"], "field": "Application Status", "old_value": "Applied", "new_value": "Interviewing", "evidence_ref": "fictional interview invitation"}]}
-        with patch.object(local, "_tracking_receipt", side_effect=OSError("receipt interrupted")):
+        self.pilot_hold()
+        with setup.execution_context(pilot_update_id="manual-pilot"), patch.object(local, "_tracking_receipt", side_effect=OSError("receipt interrupted")):
             with self.assertRaisesRegex(OSError, "receipt interrupted"):
                 local.update_tracking(self.root, WORKBOOK, self.path, update, NODE, MODULES)
         with self.assertRaisesRegex(queue.ProtocolError, "interrupted local tracking"):
             self.sync()
+        after_hash = local.file_hash(self.path)
         with patch.object(local, "_artifact", side_effect=AssertionError("must not repeat tracking export")):
             self.assertEqual(local.update_tracking(self.root, WORKBOOK, self.path, update, NODE, MODULES)["status"], "saved")
+        self.assertEqual(local.file_hash(self.path), after_hash)
+        blocked = {"workbook_id": WORKBOOK, "expected_file_sha256": after_hash, "updates": [{"job_key": record["job_key"], "field": "Notes", "old_value": "", "new_value": "held", "evidence_ref": "fictional manual review"}]}
+        with self.assertRaisesRegex(ConfigError, "replacement pilot pending"):
+            local.update_tracking(self.root, WORKBOOK, self.path, blocked, NODE, MODULES)
+        self.pilot_hold(False)
         self.enqueue()
         self.sync()
         final = local.inspect_workbook(self.path, WORKBOOK)

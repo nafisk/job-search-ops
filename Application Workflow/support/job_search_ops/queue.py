@@ -221,6 +221,8 @@ def validate_packet(value):
             if not isinstance(alias, dict):
                 raise ProtocolError("Invalid alias evidence")
             identifier(alias.get("job_key"), "alias job_key")
+            if alias.get("url") is not None:
+                url(alias["url"])
             url(alias.get("evidence_url"))
             text(alias.get("quote"), "alias identity evidence", 12000)
     for collection in ("companies", "coverage"):
@@ -253,6 +255,8 @@ def enqueue(root, packet):
     key = digest([p["source"], p["packet_id"], p["workbook_id"]])
     entry = {"packet_key": key, "packet_sha256": digest(p), "enqueued_at": now(), "packet": p}
     with locked(root) as base:
+        from .setup import require_execution
+        require_execution(root, "blind" if p["source"] == "blind" else "main")
         validate_policy(base, p)
         for status in ("pending", "done"):
             path = base / "queue" / status / f"{key}.json"
@@ -402,10 +406,33 @@ def tracking_summary(receipts, accepted_receipts=None):
     return result
 
 
+def referral_summary(receipts):
+    """Report newly learned restrictions without copying private contacts."""
+    roles = {}
+    for receipt in receipts:
+        for update in receipt.get("referral_updates", []):
+            key = (receipt["workbook_id"], update["job_key"])
+            item = roles.setdefault(key, {field: update[field] for field in ("company", "title", "url")} | {"hold": False, "contact": False})
+            item["hold"] = item["hold"] or update["referral_hold_added"]
+            item["contact"] = item["contact"] or update["referral_contact_added"]
+    result = []
+    for item in roles.values():
+        labels = []
+        if item.pop("hold"):
+            labels.append("Referral hold: obtain an approved route before applying")
+        if item.pop("contact"):
+            labels.append("Referral contact discovered; review private referral restrictions")
+        if labels:
+            result.append(dict(item, change=". ".join(labels)))
+    return result
+
+
 def prepare_brief(root, brief_id):
     """Reserve undelivered saved receipts. This never sends or starts tracking."""
     identifier(brief_id, "brief_id")
     with locked(root) as base:
+        from .setup import require_execution
+        require_execution(root, "main")
         path = base / "delivery" / f"{digest(brief_id)}.json"
         if path.exists():
             return read(path)
@@ -415,7 +442,7 @@ def prepare_brief(root, brief_id):
         delivered = {r for b in briefs for r in b["receipt_ids"]}
         receipts = _saved_receipts(base)
         selected = [r for r in receipts if r["receipt_id"] not in delivered]
-        brief = {"brief_id": brief_id, "status": "prepared", "prepared_at": now(), "receipt_ids": [r["receipt_id"] for r in selected], "receipts": selected, "tracking_summary": tracking_summary(selected, receipts)}
+        brief = {"brief_id": brief_id, "status": "prepared", "prepared_at": now(), "receipt_ids": [r["receipt_id"] for r in selected], "receipts": selected, "tracking_summary": tracking_summary(selected, receipts), "referral_summary": referral_summary(selected)}
         atomic(path, brief)
         return brief
 
@@ -423,6 +450,8 @@ def prepare_brief(root, brief_id):
 def mark_brief_sending(root, brief_id, delivery):
     """Persist intent BEFORE invoking an explicitly authorized sender."""
     with locked(root) as base:
+        from .setup import require_execution
+        require_execution(root, "main")
         path = base / "delivery" / f"{digest(identifier(brief_id))}.json"
         brief = read(path)
         if brief["status"] != "prepared":
@@ -464,6 +493,13 @@ def mark_brief_sending(root, brief_id, delivery):
             for item in tracked:
                 if any(item[field] not in visible for field in ("company", "title", "url", "change")):
                     raise ProtocolError("Rendered brief omits a saved tracking change or its role identity")
+        referrals = brief.get("referral_summary", referral_summary(brief["receipts"]))
+        if referrals:
+            if not isinstance(public_snapshot, dict) or public_snapshot.get("referral_updates") != referrals:
+                raise ProtocolError("Public snapshot referral_updates must match the frozen referral_summary")
+            for item in referrals:
+                if any(item[field] not in visible for field in ("company", "title", "url", "change")):
+                    raise ProtocolError("Rendered brief omits a saved referral restriction or its role identity")
         frozen = dict(delivery, channel=channel, snapshot_sha256=snapshot_hash, bodies=bodies)
         if addresses:
             frozen["recipient"] = addresses[0]

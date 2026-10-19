@@ -38,6 +38,16 @@ Reports consume accepted receipts from every producer and preserve current sourc
 
 ## Routine operation
 
-Before each pass: inspect unfinished journals and owner state, verify the selected backend and relevant identities/permissions, freeze selected scope, dispatch only selected producers, merge ready queue, save through the selected protocol, read back, commit, reconcile selected tracking, prepare the chosen report, and confirm delivery. Use [coordinator](../run.md) for commands and [recovery](upgrade-and-recovery.md) after interruptions.
+Before any source/account access or helper dispatch, run this check from `Application Workflow/support/`:
+
+```sh
+python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow main
+```
+
+Use `main` for central, email and referral runs; use `blind` for the rated-company producer. A pending preference pilot holds the affected workflow even when its timer remains active. Stop that work and follow [preference updates](preferences.md); only an explicitly requested manual pilot may use the exact current `--pilot-update-id`. Never save that flag in an automation prompt. Unaffected sources continue. A helper without private-root access needs central's fresh successful check for its frozen assignment before starting.
+
+After the check: inspect unfinished journals and owner state, verify relevant identities and permissions, freeze scope, dispatch selected producers, merge the queue, save and read back, reconcile selected tracking, prepare the report, and confirm delivery. Readback/reconciliation of an existing uncertain effect remains available during a pilot hold. Use [coordinator](../run.md) for the run and [recovery](upgrade-and-recovery.md) after interruptions.
+
+Use `doctor --workflow main` or `doctor --workflow blind` to check that workflow's tools; the command also needs `--config` and the current evidence bundle. The rated producer needs its public research and handoff capabilities, not main's Gmail or tracker-writing access. Scoped readiness does not clear a pilot gate.
 
 Create no automation resources for manual mode. When scheduled work was chosen, keep the local machine and Codex app available for its local heartbeats. A scheduled Blind run does not create a central timer; queued results await a central import/run. A missed run resumes from durable checkpoint with overlap; it must not silently drop older intervals. Review new dependency/auth/network changes before adopting them. Do not reactivate retired or manual schedules to invoke stored instructions.

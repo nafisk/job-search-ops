@@ -8,6 +8,8 @@
 
 Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
 
+**Before any source/account access**, run `python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow blind`. A failed check holds this assignment. Only an explicitly requested [manual replacement pilot](docs/preferences.md) may supply the current `--pilot-update-id`; never add it to a schedule. If this chat cannot read the private root, obtain central's fresh successful check for this frozen assignment before starting.
+
 This optional producer, run manually or on its own selected schedule, updates the **same configured tracker (local Excel or Google Sheets)** through the central queue and writer. It does not directly mutate Sheets or maintain a competing authoritative workbook. Rated Companies stores the user's target list/provenance; Rated Search Coverage stores current per-company attempts/gaps; Job Sources preserves rated policy evidence alongside email/referral sightings. Local JSON/evidence are durable working state, not a separate master tracker.
 
 The technical source key and saved filename remain `blind` for compatibility. The optional starter comes from a historical Blind 3.5+ list.

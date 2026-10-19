@@ -77,8 +77,29 @@ def _selected(config, selector):
     return execution_plan(config)["selectors"].get(selector, False)
 
 
-def required_capabilities(config):
-    selected = execution_plan(config)["selectors"]
+def workflow_scope(config, workflow=None):
+    """Scope source-producer readiness independently of the central writer."""
+    plan = execution_plan(config)
+    require(workflow in (None, "main", "blind"), "workflow", "unknown readiness scope")
+    if workflow == "blind":
+        require(config["modules"]["blind"], "workflow", "rated-company source is disabled")
+        # The producer researches and queues only; central owns tracker access,
+        # application correspondence and final delivery under its own readiness.
+        plan["selectors"] = {name: name in {"always", "blind", "public_research", "delegation"} or
+                             (name == "scheduled" and config["schedules"]["blind"]["enabled"])
+                             for name in plan["selectors"]}
+        plan["source_files"] = ["rated_companies_path"]
+        plan["staging"] = ["staging/blind"]
+    elif workflow == "main":
+        plan["source_files"] = [name for name in plan["source_files"] if name != "rated_companies_path"]
+        plan["staging"] = [name for name in plan["staging"] if name != "staging/blind"]
+        plan["selectors"]["scheduled"] = config["schedules"]["main"]["enabled"]
+        plan["selectors"]["public_research"] = any(name in plan["discovery"] for name in ("email", "portal"))
+    return plan
+
+
+def required_capabilities(config, workflow=None):
+    selected = workflow_scope(config, workflow)["selectors"]
     result = []
     for original in capability_manifest()["capabilities"]:
         if original["classification"] != "runtime" or not any(selected.get(name, False) for name in original["required_when"]):
@@ -117,11 +138,11 @@ def _expected_identity(config, capability):
     return None
 
 
-def check_staging(config):
+def check_staging(config, workflow=None):
     """Explicitly requested local write/read test; does not attest child-chat grants."""
     root = no_symlink(config["instance_root"])
     results = []
-    for relative in execution_plan(config)["staging"]:
+    for relative in workflow_scope(config, workflow)["staging"]:
         path = no_symlink(root / relative)
         try:
             require(path.is_dir(), "staging", "initialize private instance first")
@@ -137,10 +158,10 @@ def check_staging(config):
     return results
 
 
-def run_doctor(config, observations=(), verify=None, now=None, check_staging=False):
+def run_doctor(config, observations=(), verify=None, now=None, check_staging=False, workflow=None):
     """Report installed/connected/verified separately; never create live readiness."""
     probes = local_probes(config)
-    requirements = required_capabilities(config)
+    requirements = required_capabilities(config, workflow)
     selected = {x["id"] for x in requirements}
     messages_required = config["_profile"]["integrations"].get("messages", {}).get("required", False)
     blocking = selected - ({"messages"} if not messages_required else set())
@@ -219,7 +240,7 @@ def run_doctor(config, observations=(), verify=None, now=None, check_staging=Fal
         ready = state in STAGES and STAGES[state] >= STAGES[capability["required_stage"]]
         checks.append({"capability": name, "state": state, "required_stage": capability["required_stage"],
                        "ready": ready, "blocking": name in blocking, "reason": reason})
-    for source in execution_plan(config)["source_files"]:
+    for source in workflow_scope(config, workflow)["source_files"]:
         path = config["sources"][source]
         available = path is not None and Path(path).is_file() and not Path(path).is_symlink()
         checks.append({"capability": source, "state": "configured" if available else "missing",
@@ -228,13 +249,13 @@ def run_doctor(config, observations=(), verify=None, now=None, check_staging=Fal
     messages_check = next((x for x in checks if x["capability"] == "messages"), None)
     messages_status = "disabled" if messages_check is None else "available" if messages_check["ready"] else "partial"
     report = {"schema_version": 1, "installation_id": config["installation_id"],
-              "checked_at": now_utc(now).isoformat(), "local_probes": probes,
+              "checked_at": now_utc(now).isoformat(), "workflow": workflow, "local_probes": probes,
               "checks": checks, "rejected_observations": rejected, "not_requested_observations": not_requested,
               "ready": all(x["ready"] for x in checks if x["blocking"]) and not blocking_rejections,
               "optional_modules": {"messages": {"status": messages_status, "required": messages_required}},
               "effects": [], "note": "Tool catalog presence alone is not live readiness."}
     if check_staging:
-        report["staging"] = globals()["check_staging"](config)
+        report["staging"] = globals()["check_staging"](config, workflow)
         report["effects"] = ["temporary local staging read/write probes"]
         report["ready"] = report["ready"] and all(x["local_write_readback"] for x in report["staging"])
     return report

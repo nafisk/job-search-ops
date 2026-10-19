@@ -6,6 +6,7 @@ scheduler. The host saves native responses, verifies them, then records bindings
 from __future__ import annotations
 
 from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import asdict
 import copy
 import fcntl
@@ -112,6 +113,46 @@ def _manifest(root, config):
 
 def load_instance(config):
     return _manifest(_root(config), config)
+
+
+_manual_pilot_update = ContextVar("job_search_ops_manual_pilot_update", default=None)
+
+
+@contextmanager
+def execution_context(*, pilot_update_id=None):
+    """Explicit manual-pilot scope; never saved as a permission for future runs."""
+    token = _manual_pilot_update.set(pilot_update_id)
+    try:
+        yield
+    finally:
+        _manual_pilot_update.reset(token)
+
+
+def require_execution(root, workflow, *, pilot_update_id=None):
+    """Block ordinary operations while this workflow's new preferences need a pilot."""
+    require(workflow in {"main", "blind"}, "execution", "unknown workflow")
+    root = no_symlink(Path(root).expanduser().resolve())
+    journal = no_symlink(root / "state/preferences-update.json")
+    if journal.exists():
+        require(read_json(journal).get("status") != "applying", "execution", "finish interrupted preferences-apply before any run")
+    path = no_symlink(root / "installation.json")
+    update = read_json(path).get("preferences_update", {}) if path.exists() else {}
+    explicit = pilot_update_id if pilot_update_id is not None else _manual_pilot_update.get()
+    if explicit is not None:
+        require(isinstance(explicit, str) and explicit == update.get("update_id"),
+                "execution", "manual pilot must name the current preferences_update_id")
+        if workflow in update.get("pilot_required", []):
+            return {"workflow": workflow, "mode": "manual_pilot", "preferences_update_id": explicit}
+    require(workflow not in update.get("pilot_required", []), "execution",
+            "replacement pilot pending; scheduled and ordinary runs are held. For an explicitly requested manual pilot use --pilot-update-id with the current preferences_update_id")
+    return {"workflow": workflow, "mode": "ordinary", "preferences_update_id": update.get("update_id")}
+
+
+def run_check(config, workflow, *, pilot_update_id=None):
+    """Read-only gate before an agent accesses accounts or starts selected work."""
+    load_instance(config)
+    require(workflow == "main" or (workflow == "blind" and config["modules"]["blind"]), "execution", "workflow is disabled")
+    return require_execution(config["instance_root"], workflow, pilot_update_id=pilot_update_id)
 
 
 def _approved_policies(config, workbook_id=None):
@@ -303,7 +344,8 @@ def record_resource(config, kind, key, receipt, verify, *, now=None):
             require(receipt.evidence.get("staging_write_readback") is True, "chat", "producer workspace access must be verified by native evidence")
         if kind == "schedule":
             request = value["request"]
-            for field in ("thread_id", "local_time", "timezone", "status", "notification_policy", "prompt_digest"):
+            require(request.get("cadence") == "daily", "schedule", "expected reviewed daily cadence")
+            for field in ("thread_id", "cadence", "local_time", "timezone", "status", "notification_policy", "prompt_digest"):
                 require(receipt.evidence.get(field) == request.get(field), "schedule", "saved schedule readback differs from intent")
             require(type(receipt.evidence.get("next_run_at")) is str, "schedule", "next run readback is missing")
         value.update(status="verified", resource_id=receipt.resource_id,
@@ -405,7 +447,7 @@ def record_first_pass(config, workflow, receipt, verify, *, now=None):
         from .referrals import require_seed
         require_seed(config)
     plan = execution_plan(config)
-    account_needed = plan["selectors"]["google_tracker"] or plan["selectors"]["gmail_read"] or "calendar" in plan["tracking"]
+    account_needed = workflow == "main" and (plan["selectors"]["google_tracker"] or plan["selectors"]["gmail_read"] or "calendar" in plan["tracking"])
     validate_receipt(receipt, verify, now=now, expected_identity=config["_profile"]["identity"]["account_identity"] if account_needed else None)
     require(receipt.capability == "first_live_pass" and receipt.stage == "operation_verified", "first pass", "wrong receipt")
     evidence = receipt.evidence
@@ -496,7 +538,12 @@ def render_prompts(config, manifest):
         f"Follow {WORKFLOW_ROOT / 'docs/tracking.md'} using only these tracking sources: {', '.join(plan['tracking'])}. "
         "Preserve exact role/event evidence, source dates and manual edits.\n"
         if plan["tracking"] else "Application and interview tracking is disabled; do not read correspondence or calendars for tracking.\n")
-    prompts = {"main": prefix + (
+    def gate(workflow):
+        return (f"Before reading sources, dispatching helpers, or writing the tracker, run `python3 -m job_search_ops run-check --config '{root / 'config.json'}' --workflow {workflow}`. "
+                "Stop this workflow if it is held for a replacement pilot. Scheduled execution must never supply --pilot-update-id or treat itself as a manual pilot. "
+                "Only an explicitly requested manual pilot may use that exact preference-update ID; do not infer approval from a timer.\n")
+
+    prompts = {"main": gate("main") + prefix + (
             f"Read {WORKFLOW_ROOT / 'run.md'} and only the runbooks selected by execution-plan.json.\n"
             f"Coordinator chat: {central}. The coordinator is the sole tracker writer and report owner.\n" + delegation + tracking +
             f"Delivery: {config['report']['delivery']}. " +
@@ -508,7 +555,7 @@ def render_prompts(config, manifest):
         )}
     for name, runbook in (("email", "email-discovery.md"), ("portals", "referral-portals.md")):
         if name in plan["chats"]:
-            prompts[name] = prefix + (
+            prompts[name] = gate("main") + prefix + (
                 f"Read {WORKFLOW_ROOT / 'helpers' / runbook}. Work only the coordinator's exact frozen assignment.\n"
                 f"Coordinator: {central}. Private staging: {root / 'staging' / name}. "
                 "Verify this chat can actually write there; otherwise use its verified bound workspace and report that path. "
@@ -517,7 +564,7 @@ def render_prompts(config, manifest):
                 "Do not write the shared workbook, advance central checkpoints, or send reports.\n"
             )
     if "blind" in plan["chats"]:
-        prompts["blind"] = prefix + (
+        prompts["blind"] = gate("blind") + prefix + (
             f"Read {WORKFLOW_ROOT / 'blind.md'} and its linked runbooks.\n"
             f"Rated-company chat: {_bound(manifest, 'chat:blind')}. Coordinator: {central}. "
             f"Source choices: {config['sources']['rated_companies_path']}. Staging: {root / 'staging' / 'blind'}.\n"
@@ -551,19 +598,23 @@ def prepare_prompts(config):
         return result
 
 
-def prepare_schedules(config, observations=(), verify=None, now=None):
+def prepare_schedules(config, observations=(), verify=None, now=None, workflow=None):
     """Prepare human-readable tool arguments only after verified first live passes."""
     existing = load_instance(config) if (Path(config["instance_root"]) / "installation.json").exists() else {}
     require(not existing.get("preferences_update", {}).get("pending_schedules"), "schedules", "finish preferences-schedule-record for the reviewed existing automation changes before schedule-plan")
     selected = execution_plan(config)["schedules"]
+    if workflow is not None:
+        require(workflow in selected, "schedules", "requested workflow schedule is not selected")
+        selected = [workflow]
     require(not (set(selected) & set(existing.get("preferences_update", {}).get("pilot_required", []))), "schedules", "record a live pilot bound to the current preferences_update_id for changed scheduled scope")
     if not selected:
         return []
     if config["schema_version"] == 2 and "main" in selected and config["discovery"]["portals"]:
         from .referrals import require_seed
         require_seed(config)
-    readiness = run_doctor(config, observations, verify, now)
-    require(readiness["ready"], "schedules", "required capabilities are not operation-ready; inspect doctor report")
+    for name in selected:
+        readiness = run_doctor(config, observations, verify, now, workflow=name)
+        require(readiness["ready"], "schedules", f"{name} capabilities are not operation-ready; inspect its scoped doctor report")
     manifest = load_instance(config)
     for key in _needed_bindings(config):
         _bound(manifest, key)
@@ -574,7 +625,7 @@ def prepare_schedules(config, observations=(), verify=None, now=None):
     proposals = []
     for name in ("main", "blind"):
         schedule = config["schedules"][name]
-        if not schedule["enabled"]:
+        if name not in selected:
             continue
         prompt = Path(paths[name]).read_text(encoding="utf-8")
         request = {"name": "Job Search Ops — " + ("Daily workflow" if name == "main" else "Rated companies"),

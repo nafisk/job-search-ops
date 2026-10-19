@@ -44,7 +44,10 @@ This release supports Messages through the [external Mac Messages MCP](https://g
 
 ## Checks and maintenance
 
-Run `doctor` against selected requirements, then preserve actual file/native evidence for the intended effects. Offline fixtures, tool catalogs and manually asserted flags do not prove live saves or delivery. Unselected sources are not missing dependencies; selected unavailable sources remain disabled/partial with their dependent work held.
+Run `doctor` against selected requirements (`--workflow main` or `--workflow blind`
+for an individual schedule). Run the [execution check](operations.md) before each
+workflow accesses sources; pending preference pilots hold only affected work.
+Then preserve actual file/native evidence for the intended effects. Offline fixtures, tool catalogs and manually asserted flags do not prove live saves or delivery. Unselected sources are not missing dependencies; selected unavailable sources remain disabled/partial with their dependent work held.
 
 Git and shell utilities are operator conveniences. Local Excel authoring, rebuilding the blank template or explicitly exporting XLSX uses the app-provided Node/spreadsheet runtime discovered through `load_workspace_dependencies` and the installed spreadsheet skill. Follow that skill’s operation-start requirement before authoring. Google setup imports shipped assets without a rebuild; never install the private artifact package from public npm or copy another user's cache. Personal skills, Beautiful Soup, Node Simplify decoding, browser automation libraries and custom Messages binaries are not default requirements.
 

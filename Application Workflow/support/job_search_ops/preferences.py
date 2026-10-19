@@ -88,7 +88,8 @@ def _schedule_actions(old, new, manifest, prompts):
             continue
         require(bound.get("status") == "verified", "preferences", "reconcile the existing uncertain schedule intent before updating preferences")
         desired = copy.deepcopy(bound["request"])
-        require(all(key in desired for key in ("thread_id", "local_time", "timezone", "status", "notification_policy", "prompt_digest")), "preferences", "existing schedule lacks verified timing/status; inspect and reconcile its native binding first")
+        require(all(key in desired for key in ("thread_id", "cadence", "local_time", "timezone", "status", "notification_policy", "prompt_digest")), "preferences", "existing schedule lacks verified timing/status; inspect and reconcile its native binding first")
+        require(desired["cadence"] == "daily", "preferences", "existing schedule cadence needs explicit native reconciliation")
         if before["local_time"] != after["local_time"] and after["local_time"] is not None:
             desired["local_time"] = after["local_time"]
         if old["_profile"]["timezone"] != new["_profile"]["timezone"]:
@@ -124,7 +125,8 @@ def _build_plan(old, new, manifest):
     # retain historical acceptance but need a pilot for the new selected scope.
     operational = [item["field"] for item in changes if not item["field"].startswith("config.schedules.")]
     pilots = list(manifest.get("preferences_update", {}).get("pilot_required", []))
-    if operational and "main" not in pilots:
+    main_fields = [field for field in operational if not field.startswith(("config.blind_policy", "config.modules.blind"))]
+    if main_fields and "main" not in pilots:
         pilots.append("main")
     blind_fields = ("config.blind_policy", "config.candidate", "config.modules.blind", "profile.role_policy", "profile.locations", "profile.timezone")
     if new["modules"]["blind"] and any(field.startswith(blind_fields) for field in operational) and "blind" not in pilots:
@@ -272,7 +274,9 @@ def apply_preferences(config_path, plan, expected_digest):
         setup._atomic_json(journal_path, journal)
         return {"status": "applied", "update_id": plan["update_id"], "backup": str(root / "state/preferences-history" / (plan["update_id"] + ".backup.json")),
                 "schedule_actions": plan["schedule_actions"], "connected_effects": [],
-                "next_action": "Use the updated config.json for future runs. Complete any listed scheduler actions through Codex tools; local changes did not activate, pause, replace or delete any schedule."}
+                "pilot_required": list(plan["pilot_required"]),
+                "execution_gate": "Affected scheduled and ordinary operations are held until an explicitly requested replacement pilot is verified. Use run-check; only the manual pilot may supply --pilot-update-id.",
+                "next_action": "Use the updated config.json. Run each required manual pilot with this update ID, record first-pass evidence, and complete listed scheduler reconciliation through Codex tools. Local apply never changes live schedules."}
 
 
 def record_schedule_reconciliation(config, update_id, workflow, receipt, verify, *, now=None):
@@ -293,7 +297,7 @@ def record_schedule_reconciliation(config, update_id, workflow, receipt, verify,
         require(workflow not in update.get("pilot_required", []) or action["request"]["status"] == "PAUSED", "preferences", "record a live pilot bound to this preference update before accepting an active changed schedule")
         require(receipt.resource_id == action["resource_id"], "preferences", "preserve the existing automation ID")
         require(receipt.evidence.get("installation_id") == config["installation_id"] and receipt.evidence.get("preferences_update_id") == update_id, "preferences", "schedule evidence is not bound to this preference update")
-        for key in ("thread_id", "local_time", "timezone", "status", "notification_policy", "prompt_digest"):
+        for key in ("thread_id", "cadence", "local_time", "timezone", "status", "notification_policy", "prompt_digest"):
             require(receipt.evidence.get(key) == action["request"].get(key), "preferences", "saved schedule differs from the reviewed request")
         require(type(receipt.evidence.get("next_run_at")) is str or (action["request"]["status"] == "PAUSED" and "next_run_at" in receipt.evidence and receipt.evidence["next_run_at"] is None), "preferences", "schedule next-run readback is missing")
         binding = manifest["resources"]["schedule:" + workflow]

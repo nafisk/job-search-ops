@@ -8,6 +8,8 @@
 
 Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
 
+**Before any source/account access**, run `python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow main`. A failed check holds this assignment. Only an explicitly requested [manual replacement pilot](../docs/preferences.md) may supply the current `--pilot-update-id`; never add it to a schedule. If this chat cannot read the private root, obtain central's fresh successful check for this frozen assignment before starting.
+
 Read the authoritative file at `sources.referral_companies_path`, the accepted `<installation>/portal-registry.json`, the live Referral Watchlist and [toolkit portals](../support/toolkit/PORTALS.md). [Referral setup](../docs/referrals.md) creates these projections; missing seed/registry is a setup gap, not an empty search. Freeze scope from the private list and overlay stricter live contact/referral holds. Never clear a hold from weaker registry data. Manual scope or contact conflicts require reconciliation. Group verified employer aliases while keeping distinct subsidiaries separate unless explicitly approved.
 
 1. Freeze every configured company in scope; partition disjoint companies among workers. Preserve contact/referral holds and exact company keys. A held application route does not prevent public job discovery.

@@ -134,9 +134,10 @@ class PreferencesTests(unittest.TestCase):
         from job_search_ops.doctor import HostReceipt
         from job_search_ops import host_evidence
         from test_setup import NOW
-        response = {"id": "existing-automation", **action["request"], "prompt": action["prompt"], "next_run_at": None}
+        response = {"id": "existing-automation", **action["request"], "rrule": "FREQ=DAILY;BYHOUR=8;BYMINUTE=30", "prompt": action["prompt"], "next_run_at": None}
         field_checks = {key: {"check": 0, "path": "/" + ("prompt" if key == "prompt_digest" else key)}
                         for key in ("thread_id", "local_time", "timezone", "status", "notification_policy", "prompt_digest", "next_run_at")}
+        field_checks["cadence"] = {"check": 0, "path": "/rrule", "transform": "rrule_daily"}
         evidence = {**action["request"], "installation_id": current["installation_id"], "preferences_update_id": plan["update_id"],
                     "next_run_at": None, "field_checks": field_checks, "operations": ["read_schedule"],
                     "native_checks": [{"operation": "read_schedule", "tool": "mcp__codex_app__automation_update",
