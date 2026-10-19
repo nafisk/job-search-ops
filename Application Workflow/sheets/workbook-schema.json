@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "header_row": 4,
+  "first_data_row": 5,
+  "tabs": [
+    {
+      "name": "Jobs",
+      "headers": [
+        "First Seen",
+        "Last Seen",
+        "Company",
+        "Title",
+        "Job Link",
+        "Application Status",
+        "Source",
+        "Location",
+        "Level",
+        "Referral Contact",
+        "Target Fit",
+        "Fit Reason",
+        "Seen Count",
+        "Notes",
+        "Job Key"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": [
+        "Job Key"
+      ]
+    },
+    {
+      "name": "Daily Summary",
+      "headers": [
+        "Metric",
+        "Value"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    },
+    {
+      "name": "Referral Watchlist",
+      "headers": [
+        "Company",
+        "Referral Contact",
+        "Official Careers Search",
+        "Alert Method",
+        "Targeting Notes"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    },
+    {
+      "name": "How to Use",
+      "headers": [
+        "Topic",
+        "Instructions"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    },
+    {
+      "name": "Rated Companies",
+      "headers": [
+        "Company Key",
+        "Company",
+        "Rating",
+        "Rating As Of",
+        "Careers URL",
+        "Enabled",
+        "Notes",
+        "Checked At"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    },
+    {
+      "name": "Rated Search Coverage",
+      "headers": [
+        "Coverage Key",
+        "Company Key",
+        "Company",
+        "Run ID",
+        "Scope",
+        "Status",
+        "Checked At",
+        "Observed Jobs",
+        "Qualified Jobs",
+        "Notes"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    },
+    {
+      "name": "Job Sources",
+      "headers": [
+        "Source Event Key",
+        "Job Key",
+        "Provider",
+        "Source Job ID",
+        "Policy ID",
+        "Policy Version",
+        "Qualification Tier",
+        "Rating",
+        "Rating As Of",
+        "Observed At",
+        "Checked At",
+        "Job Link",
+        "Disposition",
+        "Evidence Link"
+      ],
+      "frozen_rows": 4,
+      "hidden_columns": []
+    }
+  ],
+  "job_statuses": [
+    "New",
+    "Saved",
+    "Asked for referral",
+    "Referred",
+    "Applied",
+    "Interviewing",
+    "Rejected",
+    "Closed",
+    "Skip"
+  ],
+  "job_providers": [
+    "Official ATS",
+    "LinkedIn",
+    "Simplify"
+  ],
+  "cell_fields": "userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns"
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "installation_id": "example",
+  "profile_path": "profile-v2.json",
+  "instance_root": "/replace/with/a/durable/private/job-search-ops-example",
+  "modules": {
+    "main": true,
+    "blind": false,
+    "calendar": false,
+    "messages": false,
+    "excel_export": false,
+    "manual_outreach": false
+  },
+  "candidate": {
+    "actual_experience_years": 2,
+    "resume_path": null
+  },
+  "blind_policy": null,
+  "sources": {
+    "gmail_queries": [],
+    "initial_lookback_days": 7,
+    "referral_companies_path": "/replace/with/a/durable/private/job-search-ops-example/referral-companies.json",
+    "rated_companies_path": null
+  },
+  "schedules": {
+    "main": {
+      "enabled": false,
+      "local_time": null,
+      "notifications": "failed_runs_only"
+    },
+    "blind": {
+      "enabled": false,
+      "local_time": null,
+      "notifications": "meaningful_changes"
+    }
+  },
+  "report": {
+    "delivery": "chat",
+    "send_opt_in": false
+  },
+  "adapters": {
+    "html_parser": "stdlib",
+    "simplify_decoder": "python",
+    "spreadsheet_templates": "prebuilt"
+  },
+  "tracker": {
+    "provider": "local_xlsx",
+    "path": "/replace/with/a/durable/private/job-search-ops-example/tracker.xlsx"
+  },
+  "discovery": {
+    "email": false,
+    "portals": true
+  },
+  "tracking": {
+    "gmail": false
+  }
+}

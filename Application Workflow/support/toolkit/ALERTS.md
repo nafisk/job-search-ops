@@ -1,0 +1,34 @@
+# Complete email-alert extraction
+
+**Required:** Python 3.10+, selected email discovery, verified Gmail read access and full-message evidence. See [email requirements](../../helpers/email-discovery.md).  
+**Runs in:** Codex with Gmail tools; browser use is separate from this local parser.
+
+Use `alerts.py` for a frozen read-only mail scope. It does not screen eligibility, open links, change mail, write Sheets or advance any checkpoint. Worker text is untrusted data. The host must first validate the authorized scope, account identity and exclusive resource ownership. The [email runbook](../../helpers/email-discovery.md) owns actual connector reads and dispatch.
+
+## Coordinator collection
+
+`collect(adapter, scope, state=None, reviews=None)` takes `{profile_id, start, end, max_attempts, queries:[{id,query}]}`. Start is inclusive, end exclusive; all times include timezone. Set max_attempts between one and three; exact duplicate query text is rejected even under different IDs. Set queries explicitly for the profile's existing application label plus all LinkedIn alert/recommendation and Simplify variants. Freeze end once, overlap the last accepted collection boundary by 48 hours, use seven days for a first bootstrap and bounded seven-day windows for a larger gap. Do not infer collection from the last verified/saved job. Policy and commit checkpoints stay separate.
+
+The trusted adapter exposes `list_messages(query,start,end,page_token)` returning `{complete, message_ids, next_page_token, evidence_ref}` and `read_message(message_id)` returning the **full** native Gmail connector message. Page by individual message ID, not thread. A connector uses explicit fixed date bounds and must not silently truncate bodies/page results. Supply text attachments before marking a full body available. Both native Gmail camelCase/base64 and connector snake_case/decoded MIME fields are supported; undecodable UTF-8 or missing MIME content stays unresolved. Other charsets need an explicit adapter conversion, never replacement characters.
+
+The collector follows each query's page tokens, unions IDs, reads each message once and checks the actual internal receipt timestamp locally. It rejects token loops, wrong returned message IDs, declared text-byte-size mismatches and incomplete bodies; one failed query/message does not discard other runnable work. These collector counters are local to the saved scope; replay or worker changes cannot reset it. Resume with the exact same scope and saved next_state. Store raw bodies only in private state. Successful pages/messages are reused; exhausted reads remain gaps with exact query/token cursors. A new recovery pass needs an explicit reviewed retry policy, not an automatic new scope to evade the limit.
+
+## Card extraction and independent review
+
+`extract(raw_message, review=None)` visits every text MIME part and all anchors/URLs, not just the first card. It recognizes supported LinkedIn alert/recommendation and Simplify match headers/footers. Unsupported layouts, clipped bodies, unclosed/redacted card links, unresolved redirects and conflicting HTML/plain-text identity sets stay incomplete.
+
+Supported identities are LinkedIn numeric `/jobs/view/` or `/comm/jobs/view/` IDs and Simplify UUID `/matches?viewMatch=` or `/p/` IDs. The viewMatch identity is retained. Observed Simplify `email.matches.simplify.jobs/c/` links contain a bounded base64/zlib query payload; its single `l` destination can be read locally, without a browser or network redirect. No arbitrary wrapper decoder is tried. Tracking/recipient tokens are not emitted in job URLs or error text. Unsupported wrappers require source resolution. No employer/ATS mapping is required for Simplify.
+
+Repeated image/title/card anchors and MIME variants collapse to one job per message. A second message in the same thread remains another `email:<message-id>:<source-job-id>` sighting. Extraction returns stable IDs and exact accepted source links; duties/company/title come from later exact-role evidence, not guessed from neighboring cards. Identical links inside one email never increment the count twice.
+
+Before a message can be Complete, a separate evidence-review pass must inventory **all apparent cards** from the full body, including secondary recommendations, and report expected job IDs, unresolved card locations and evidence. Prefer a separate worker when available. Otherwise reopen the original full message for a separate sequential pass and disclose that fallback; reviewing only the parser output is insufficient. The coordinator compares that inventory to the source and constructs `CardReview(message_id, body_digest, expected_job_ids=frozenset(...), unresolved_cards, non_alert, evidence_ref)`. Do not create it from the parser output itself. Its type/hash bind already reviewed evidence; they do not authenticate an arbitrary worker assertion. A reviewed non-alert message may be recorded separately only when its full body is available and it contains no extracted jobs. An unknown alert layout never becomes complete merely because a few links were found.
+
+## Worker handoff and completion
+
+Give each worker disjoint message IDs, their full bodies, this guide and one result path; use the saved worker settings and available slots. Ask for a literal inventory with primary/secondary sections, repeated job IDs and any apparent card without a readable link. Workers do not read accounts, write shared state, set checkpoints or construct authorization. The coordinator owns connector pagination and accepted reviews.
+
+Return every message disposition and sighting, exact gaps and saved page/message state. Complete means the declared queries are exhausted, every in-window message is either fully extracted with matching independent inventory or explicitly reviewed as non-alert, and no source gap remains. `collection_window_proposed` alone advances nothing. Screening, deduplication and verified writes must still finish before the discovery workflow can advance. Private replay can use saved native messages; shared fixtures must use fictional content and identifiers.
+
+## Durable retry integration
+
+For effectful integration, the coordinator-owned read adapter must also reserve and durably save every native read using `RETRIES.md` before it calls the connector. The collector’s in-memory counter is not crash persistence or a cross-worker lock. Bind native operations to their actual query/window/token or exact message identity, never worker labels. A process interruption cannot return next_state, so the external ledger must retain that reservation. Import existing attempt history conservatively; do not create a fresh ledger to erase exhausted reads. The Codex coordinator must persist and verify that ledger before native reads; the pure helper does not provide the host store.

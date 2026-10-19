@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "installation_id": "example",
+  "profile_path": "profile.json",
+  "instance_root": "/replace/with/a/durable/private/job-search-ops-example",
+  "modules": {
+    "main": true,
+    "blind": true,
+    "calendar": false,
+    "messages": false,
+    "excel_export": false,
+    "manual_outreach": false
+  },
+  "candidate": {
+    "actual_experience_years": 2,
+    "resume_path": null
+  },
+  "blind_policy": {
+    "version": "rated-v1",
+    "max_required_years": 2,
+    "stretch_required_years": 3,
+    "exclude_explicit_senior": true,
+    "min_rating": 3.5,
+    "excluded_title_terms": [
+      "staff",
+      "principal",
+      "lead",
+      "manager",
+      "director",
+      "head"
+    ]
+  },
+  "sources": {
+    "gmail_queries": [
+      "from:linkedin.com",
+      "from:simplify.jobs"
+    ],
+    "initial_lookback_days": 7,
+    "referral_companies_path": "/replace/with/a/durable/private/job-search-ops-example/referral-companies.json",
+    "rated_companies_path": "/replace/with/a/durable/private/job-search-ops-example/rated-companies.json"
+  },
+  "schedules": {
+    "main": {
+      "enabled": true,
+      "local_time": "06:00",
+      "notifications": "failed_runs_only"
+    },
+    "blind": {
+      "enabled": true,
+      "local_time": "07:00",
+      "notifications": "meaningful_changes"
+    }
+  },
+  "report": {
+    "delivery": "chat",
+    "send_opt_in": false
+  },
+  "adapters": {
+    "html_parser": "stdlib",
+    "simplify_decoder": "python",
+    "spreadsheet_templates": "prebuilt"
+  }
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "company": "Example Software",
+    "rating": 3.8,
+    "url": "https://example.invalid/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Fictional format example; not verified on Blind",
+    "rating_as_of": "unknown",
+    "enabled": true,
+    "notes": "Fictional company. Replace with your own reviewed targets before running."
+  }
+]

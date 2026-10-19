@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "profile_id": "example-sam",
+  "identity": {
+    "display_name": "Sam Example",
+    "account_identity": "sam@example.invalid",
+    "report_recipient": "sam+digest@example.invalid"
+  },
+  "timezone": "Asia/Tokyo",
+  "role_policy": {
+    "version": "example-v1",
+    "families": [
+      "applied AI"
+    ],
+    "preferred_levels": [
+      "senior individual contributor"
+    ],
+    "excluded_duties": [
+      "mobile-only"
+    ],
+    "excluded_levels": [
+      "management"
+    ],
+    "excluded_employers": [],
+    "experience": {
+      "max_required_years": 6,
+      "preferred_required_years": 5,
+      "senior_low_experience_exception": true,
+      "unknown_minimum": "review",
+      "ambiguous_range": "review"
+    }
+  },
+  "locations": {
+    "onsite_regions": [
+      "Tokyo"
+    ],
+    "remote_countries": [
+      "Japan"
+    ],
+    "residency_region": "Tokyo, Japan",
+    "allow_relocation": true
+  },
+  "trackers": {
+    "jobs": {
+      "workbook_id": "SYNTHETIC_SAM_JOBS",
+      "worksheet": "Roles",
+      "header_row": 3,
+      "columns": {
+        "company": {
+          "index": 4,
+          "header": "Company"
+        },
+        "title": {
+          "index": 2,
+          "header": "Title"
+        },
+        "job_link": {
+          "index": 1,
+          "header": "URL"
+        },
+        "status": {
+          "index": 7,
+          "header": "Decision"
+        }
+      }
+    }
+  },
+  "capacity": {
+    "application_pages": 8,
+    "initial_application_total": 4,
+    "next_application_additional": 2,
+    "outreach_drafts": 12,
+    "workers": 0,
+    "recruiter_target": 40,
+    "recruiter_stretch_target": 80
+  },
+  "integrations": {
+    "mail": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "fictional-mail-sam",
+      "expected_identity": "sam@example.invalid"
+    },
+    "sheets": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "fictional-sheets-sam",
+      "expected_identity": "sam@example.invalid"
+    },
+    "calendar": {
+      "enabled": true,
+      "required": false,
+      "connection_ref": "fictional-calendar-sam",
+      "expected_identity": "sam@example.invalid"
+    },
+    "messages": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "fictional-messages-sam",
+      "expected_identity": "sam@example.invalid"
+    }
+  },
+  "source_access": {
+    "google": "connector_only",
+    "public_portals": [
+      "background",
+      "builtin_browser"
+    ],
+    "authenticated_browser": "edge",
+    "email_job_browser": "edge",
+    "read_attempts": 2
+  },
+  "private": {
+    "state_root": "../../job-search-private/example-sam/state",
+    "refs": {
+      "applicant_facts": "../../job-search-private/example-sam/applicant.json",
+      "interview_source_checks": "../../job-search-private/example-sam/source-checks.md"
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "profile_id": "example-alex",
+  "identity": {
+    "display_name": "Alex Example",
+    "account_identity": "alex@example.invalid",
+    "report_recipient": "alex+brief@example.invalid"
+  },
+  "timezone": "Europe/London",
+  "role_policy": {
+    "version": "example-v1",
+    "families": [
+      "backend",
+      "full-stack"
+    ],
+    "preferred_levels": [
+      "intermediate"
+    ],
+    "excluded_duties": [
+      "pure research"
+    ],
+    "excluded_levels": [
+      "principal"
+    ],
+    "excluded_employers": [
+      "Fictional Excluded Ltd"
+    ],
+    "experience": {
+      "max_required_years": 3,
+      "preferred_required_years": 2,
+      "senior_low_experience_exception": false,
+      "unknown_minimum": "review",
+      "ambiguous_range": "review"
+    }
+  },
+  "locations": {
+    "onsite_regions": [
+      "London"
+    ],
+    "remote_countries": [
+      "United Kingdom"
+    ],
+    "residency_region": "London, United Kingdom",
+    "allow_relocation": false
+  },
+  "trackers": {
+    "jobs": {
+      "workbook_id": "SYNTHETIC_ALEX_JOBS",
+      "worksheet": "Opportunities",
+      "header_row": 1,
+      "columns": {
+        "company": {
+          "index": 1,
+          "header": "Employer"
+        },
+        "title": {
+          "index": 2,
+          "header": "Role"
+        },
+        "job_link": {
+          "index": 3,
+          "header": "Posting"
+        },
+        "status": {
+          "index": 4,
+          "header": "Stage"
+        }
+      }
+    }
+  },
+  "capacity": {
+    "application_pages": 10,
+    "initial_application_total": 2,
+    "next_application_additional": 3,
+    "outreach_drafts": 5,
+    "workers": 2,
+    "recruiter_target": 25,
+    "recruiter_stretch_target": 50
+  },
+  "integrations": {
+    "mail": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "fictional-mail-alex",
+      "expected_identity": "alex@example.invalid"
+    },
+    "sheets": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "fictional-sheets-alex",
+      "expected_identity": "alex@example.invalid"
+    },
+    "calendar": {
+      "enabled": false,
+      "required": false,
+      "connection_ref": null,
+      "expected_identity": null
+    },
+    "messages": {
+      "enabled": false,
+      "required": false,
+      "connection_ref": null,
+      "expected_identity": null
+    }
+  },
+  "source_access": {
+    "google": "connector_only",
+    "public_portals": [
+      "background",
+      "builtin_browser"
+    ],
+    "authenticated_browser": "chrome",
+    "email_job_browser": "chrome",
+    "read_attempts": 3
+  },
+  "private": {
+    "state_root": "../../job-search-private/example-alex/state",
+    "refs": {
+      "applicant_facts": "../../job-search-private/example-alex/applicant.json",
+      "referral_scope": "../../job-search-private/example-alex/referrals.json",
+      "approved_copy": "../../job-search-private/example-alex/copy.md"
+    }
+  }
+}

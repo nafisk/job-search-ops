@@ -1,0 +1,929 @@
+[
+  {
+    "company": "Anthropic",
+    "rating": 4.8,
+    "url": "https://www.anthropic.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Jane Street",
+    "rating": 4.7,
+    "url": "https://www.janestreet.com/join-jane-street/open-roles/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Hudson River Trading",
+    "rating": 4.4,
+    "url": "https://www.hudsonrivertrading.com/work-at-hrt/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "OpenAI",
+    "rating": 4.4,
+    "url": "https://openai.com/careers/search/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Figma",
+    "rating": 4.3,
+    "url": "https://www.figma.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Nvidia",
+    "rating": 4.3,
+    "url": "https://jobs.nvidia.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Elastic",
+    "rating": 4.2,
+    "url": "https://www.elastic.co/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Google",
+    "rating": 4.2,
+    "url": "https://www.google.com/about/careers/applications/jobs/results/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Netflix",
+    "rating": 4.2,
+    "url": "https://jobs.netflix.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Duolingo",
+    "rating": 4.1,
+    "url": "https://careers.duolingo.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Notion",
+    "rating": 4.1,
+    "url": "https://www.notion.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Palantir",
+    "rating": 4.1,
+    "url": "https://www.palantir.com/careers/open-positions/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Plaid",
+    "rating": 4.1,
+    "url": "https://plaid.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Riot Games",
+    "rating": 4.1,
+    "url": "https://www.riotgames.com/en/work-with-us/jobs",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Slack",
+    "rating": 4.1,
+    "url": "https://slack.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Two Sigma",
+    "rating": 4.1,
+    "url": "https://www.twosigma.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Adobe",
+    "rating": 4,
+    "url": "https://careers.adobe.com/us/en",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Chime",
+    "rating": 4,
+    "url": "https://careers.chime.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Credit Karma",
+    "rating": 4,
+    "url": "https://www.creditkarma.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Datadog",
+    "rating": 4,
+    "url": "https://careers.datadoghq.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "MongoDB",
+    "rating": 4,
+    "url": "https://www.mongodb.com/company/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Nuro",
+    "rating": 4,
+    "url": "https://www.nuro.ai/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Optiver",
+    "rating": 4,
+    "url": "https://www.optiver.com/join-us/jobs/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Point72",
+    "rating": 4,
+    "url": "https://careers.point72.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Apple",
+    "rating": 3.9,
+    "url": "https://www.apple.com/careers/us/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Asana",
+    "rating": 3.9,
+    "url": "https://asana.com/jobs",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Brex",
+    "rating": 3.9,
+    "url": "https://www.brex.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Confluent",
+    "rating": 3.9,
+    "url": "https://careers.confluent.io/open-positions",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "CrowdStrike",
+    "rating": 3.9,
+    "url": "https://www.crowdstrike.com/en-us/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "DRW",
+    "rating": 3.9,
+    "url": "https://www.drw.com/work-at-drw",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Microsoft",
+    "rating": 3.9,
+    "url": "https://careers.microsoft.com/v2/global/en/home.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "The Trade Desk",
+    "rating": 3.9,
+    "url": "https://careers.thetradedesk.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Waymo",
+    "rating": 3.9,
+    "url": "https://careers.withwaymo.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Affirm",
+    "rating": 3.8,
+    "url": "https://www.affirm.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Airbnb",
+    "rating": 3.8,
+    "url": "https://careers.airbnb.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Akamai",
+    "rating": 3.8,
+    "url": "https://www.akamai.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Autodesk",
+    "rating": 3.8,
+    "url": "https://www.autodesk.com/careers/overview",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Box",
+    "rating": 3.8,
+    "url": "https://careers.box.com/en/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Bridgewater",
+    "rating": 3.8,
+    "url": "https://www.bridgewater.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Chicago Trading Co.",
+    "rating": 3.8,
+    "url": "https://www.chicagotrading.com/careers-at-ctc/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Databricks",
+    "rating": 3.8,
+    "url": "https://www.databricks.com/company/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Gusto",
+    "rating": 3.8,
+    "url": "https://gusto.com/about/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "LinkedIn",
+    "rating": 3.8,
+    "url": "https://careers.linkedin.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Match Group",
+    "rating": 3.8,
+    "url": "https://mtch.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Pure Storage",
+    "rating": 3.8,
+    "url": "https://www.everpuredata.com/company/careers.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Reddit",
+    "rating": 3.8,
+    "url": "https://redditinc.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Roblox",
+    "rating": 3.8,
+    "url": "https://careers.roblox.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Salesforce",
+    "rating": 3.8,
+    "url": "https://www.salesforce.com/company/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "ServiceNow",
+    "rating": 3.8,
+    "url": "https://careers.servicenow.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Snowflake",
+    "rating": 3.8,
+    "url": "https://careers.snowflake.com/us/en",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Thumbtack",
+    "rating": 3.8,
+    "url": "https://www.thumbtack.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Twitch",
+    "rating": 3.8,
+    "url": "https://careers.twitch.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "VMware",
+    "rating": 3.8,
+    "url": "https://www.broadcom.com/company/careers/teams",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Workday",
+    "rating": 3.8,
+    "url": "https://www.workday.com/en-us/company/careers/life-at-workday.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Zillow",
+    "rating": 3.8,
+    "url": "https://www.zillow.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "AMD",
+    "rating": 3.7,
+    "url": "https://careers.amd.com/careers-home/jobs",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "AppLovin",
+    "rating": 3.7,
+    "url": "https://www.applovin.com/en/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Block",
+    "rating": 3.7,
+    "url": "https://block.xyz/careers/jobs",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Cadence",
+    "rating": 3.7,
+    "url": "https://www.cadence.com/en_US/home/company/life-at-cadence/careers.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Electronic Arts",
+    "rating": 3.7,
+    "url": "https://www.ea.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Etsy",
+    "rating": 3.7,
+    "url": "https://careers.etsy.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "HubSpot",
+    "rating": 3.7,
+    "url": "https://www.hubspot.com/careers/jobs",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Meta",
+    "rating": 3.7,
+    "url": "https://www.metacareers.com/jobs/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "PagerDuty",
+    "rating": 3.7,
+    "url": "https://careers.pagerduty.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Redfin",
+    "rating": 3.7,
+    "url": "https://careers.rocket.com/us/en/teams/real-estate",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Uber",
+    "rating": 3.7,
+    "url": "https://jobs.uber.com/en/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Verkada",
+    "rating": 3.7,
+    "url": "https://www.verkada.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "eBay",
+    "rating": 3.7,
+    "url": "https://careers.ebayinc.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Abnormal Security",
+    "rating": 3.6,
+    "url": "https://abnormal.ai/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Airtable",
+    "rating": 3.6,
+    "url": "https://airtable.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Anyscale",
+    "rating": 3.6,
+    "url": "https://www.anyscale.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Cisco",
+    "rating": 3.6,
+    "url": "https://careers.cisco.com/global/en",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Cloudflare",
+    "rating": 3.6,
+    "url": "https://www.cloudflare.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Dell",
+    "rating": 3.6,
+    "url": "https://enterpriseplatform.dell.com/hcmUI/CandidateExperience/en/sites/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Discord",
+    "rating": 3.6,
+    "url": "https://discord.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Dropbox",
+    "rating": 3.6,
+    "url": "https://www.dropbox.jobs/en/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Expedia Group",
+    "rating": 3.6,
+    "url": "https://careers.expediagroup.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "GitHub",
+    "rating": 3.6,
+    "url": "https://www.github.careers/experienced-professionals",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "HashiCorp",
+    "rating": 3.6,
+    "url": "https://www.hashicorp.com/en/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Instacart",
+    "rating": 3.6,
+    "url": "https://www.instacart.careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Intuit",
+    "rating": 3.6,
+    "url": "https://www.intuit.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Nutanix",
+    "rating": 3.6,
+    "url": "https://careers.nutanix.com/en/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Pinterest",
+    "rating": 3.6,
+    "url": "https://www.pinterestcareers.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Samsara",
+    "rating": 3.6,
+    "url": "https://www.samsara.com/company/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Splunk",
+    "rating": 3.6,
+    "url": "https://careers.cisco.com/global/en/splunk",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Udemy",
+    "rating": 3.6,
+    "url": "https://about.udemy.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Amplitude",
+    "rating": 3.5,
+    "url": "https://amplitude.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Citadel",
+    "rating": 3.5,
+    "url": "https://www.citadel.com/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Coinbase",
+    "rating": 3.5,
+    "url": "https://www.coinbase.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Fivetran",
+    "rating": 3.5,
+    "url": "https://www.fivetran.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Intel",
+    "rating": 3.5,
+    "url": "https://jobs.intel.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Lyft",
+    "rating": 3.5,
+    "url": "https://www.lyft.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Marqeta",
+    "rating": 3.5,
+    "url": "https://www.marqeta.com/company/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Okta",
+    "rating": 3.5,
+    "url": "https://www.okta.com/company/careers/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Robinhood",
+    "rating": 3.5,
+    "url": "https://careers.robinhood.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "ServiceTitan",
+    "rating": 3.5,
+    "url": "https://www.servicetitan.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Snap",
+    "rating": 3.5,
+    "url": "https://careers.snap.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Strava",
+    "rating": 3.5,
+    "url": "https://www.strava.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Stripe",
+    "rating": 3.5,
+    "url": "https://stripe.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Synopsys",
+    "rating": 3.5,
+    "url": "https://careers.synopsys.com/",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Twilio",
+    "rating": 3.5,
+    "url": "https://jobs.twilio.com/careers",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Visa",
+    "rating": 3.5,
+    "url": "https://corporate.visa.com/en/careers.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  },
+  {
+    "company": "Yahoo",
+    "rating": 3.5,
+    "url": "https://www.yahooinc.com/careers/search.html",
+    "rating_origin": "user_supplied",
+    "rating_source": "Historical user-supplied Blind 3.5+ list; not freshly verified",
+    "rating_as_of": "unknown",
+    "enabled": true
+  }
+]

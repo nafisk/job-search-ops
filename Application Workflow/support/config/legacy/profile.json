@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "profile_id": "example",
+  "identity": {
+    "display_name": "Alex Example",
+    "account_identity": "alex@example.invalid",
+    "report_recipient": "alex@example.invalid"
+  },
+  "timezone": "UTC",
+  "role_policy": {
+    "version": "core-v1",
+    "families": [
+      "backend",
+      "full-stack"
+    ],
+    "preferred_levels": [
+      "intermediate"
+    ],
+    "excluded_duties": [
+      "pure research"
+    ],
+    "excluded_levels": [
+      "staff",
+      "principal",
+      "lead",
+      "manager",
+      "director",
+      "head"
+    ],
+    "excluded_employers": [
+      "Fictional Excluded Ltd"
+    ],
+    "experience": {
+      "max_required_years": 2,
+      "preferred_required_years": 2,
+      "senior_low_experience_exception": true,
+      "unknown_minimum": "include",
+      "ambiguous_range": "review"
+    }
+  },
+  "locations": {
+    "onsite_regions": [
+      "London"
+    ],
+    "remote_countries": [
+      "United Kingdom"
+    ],
+    "residency_region": "London, United Kingdom",
+    "allow_relocation": false
+  },
+  "trackers": {},
+  "capacity": {
+    "application_pages": 10,
+    "initial_application_total": 2,
+    "next_application_additional": 3,
+    "outreach_drafts": 5,
+    "workers": 2,
+    "recruiter_target": 25,
+    "recruiter_stretch_target": 50
+  },
+  "integrations": {
+    "mail": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "my-gmail-connector",
+      "expected_identity": "alex@example.invalid"
+    },
+    "sheets": {
+      "enabled": true,
+      "required": true,
+      "connection_ref": "my-google-drive-connector",
+      "expected_identity": "alex@example.invalid"
+    },
+    "calendar": {
+      "enabled": false,
+      "required": false,
+      "connection_ref": null,
+      "expected_identity": null
+    },
+    "messages": {
+      "enabled": false,
+      "required": false,
+      "connection_ref": null,
+      "expected_identity": null
+    },
+    "browser": {
+      "enabled": false,
+      "required": false,
+      "connection_ref": null,
+      "expected_identity": null
+    }
+  },
+  "source_access": {
+    "google": "connector_only",
+    "public_portals": [
+      "background",
+      "builtin_browser"
+    ],
+    "authenticated_browser": "chrome",
+    "email_job_browser": "chrome",
+    "read_attempts": 3
+  },
+  "private": {
+    "state_root": "/replace/with/a/durable/private/job-search-ops-example/state",
+    "refs": {}
+  }
+}

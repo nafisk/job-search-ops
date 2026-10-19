@@ -1,0 +1,22 @@
+# Referral portal producer
+
+> **Required when selected:** Your private company list, accepted portal registry, Referral Watchlist, search policy, Python 3.10+, public search/page reads, the supported Codex browser and a [producer handoff](../docs/handoffs.md#producer-handoff).
+> **Runs in:** Codex app; the central chat saves results.
+> **Computer use:** Dynamic pages need browser interaction. Restricted pages additionally need an authorized signed-in browser and your login.
+
+**Selection check:** Read this installation’s saved choices and execution plan first. Run only when referral-portal discovery is selected and this assignment is authorized. Otherwise return “not selected” without connecting tools, searching sources, or creating resources. A missing permission for a selected source is a scoped access gap; it does not authorize an alternative account or tool.
+
+Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
+
+Read the authoritative file at `sources.referral_companies_path`, the accepted `<installation>/portal-registry.json`, the live Referral Watchlist and [toolkit portals](../support/toolkit/PORTALS.md). [Referral setup](../docs/referrals.md) creates these projections; missing seed/registry is a setup gap, not an empty search. Freeze scope from the private list and overlay stricter live contact/referral holds. Never clear a hold from weaker registry data. Manual scope or contact conflicts require reconciliation. Group verified employer aliases while keeping distinct subsidiaries separate unless explicitly approved.
+
+1. Freeze every configured company in scope; partition disjoint companies among workers. Preserve contact/referral holds and exact company keys. A held application route does not prevent public job discovery.
+2. Use official public careers pages and observed ATS endpoints first. A saved URL/endpoint is a starting point, not proof its filters or board identity still work. Verify employer identity, location/filter effects, complete pagination/traversal, clean reopen and layout/empty-result safeguards before treating a portal recipe as validated.
+3. Background retrieval may use `curl`/Python standard-library helpers or supported web tools. Preserve TLS checks. Do not extract private cookies, export browser credentials or call private authenticated endpoints. Greenhouse, Lever, Ashby and Workday routes must come from current observed evidence.
+4. Use the supported Codex built-in browser for JavaScript shells, partial text, filters, pagination or contradictory templates. Other authenticated interactive work uses the user's authorized external browser. Google mail/sheets remain connector-only. Inventory owned tabs and preserve existing user tabs and handoffs.
+5. Enumerate the entire declared scope unless a verified incremental adapter proves equivalence. Record query/filter/page coverage, terminal pagination evidence and original check dates. No result from a partial page is a verified zero. Absence is Closed only with positive closure evidence or a complete authoritative comparison covering that specific role.
+6. Verify exact official descriptions and all matching criteria; keep overall minimums separate from specialty/degree alternatives. Label target and stretch based on configured search policy, without rewriting factual tenure. Unread/ambiguous descriptions remain unresolved. Every candidate gets a decision and evidence.
+7. At most three attempts per exact source operation across methods/workers; reserve a browser fallback after incomplete retrieval. Save exact cursor/URL, attempted methods, reason and next action. Continue other companies after failures.
+8. Follow the [producer handoff](../docs/handoffs.md#producer-handoff), keeping local staging until central archival is acknowledged if the shared root is not writable. Prepare one producer packet for the completed scope with source `portal`, per-policy decisions, stable identities, observed canonical URLs, referral metadata and honest coverage. Producers do not write either tracker backend. Return the queue receipt, totals and exceptions to the coordinator.
+
+If the shared queue is writable, run `python3 -m job_search_ops enqueue --root /absolute/private --packet /absolute/private/referral-packet.json`. Central merging deduplicates against email/rated sources and preserves Job Sources provenance. An unchanged replay must not create another row or inflate sightings.

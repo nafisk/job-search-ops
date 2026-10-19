@@ -1,0 +1,718 @@
+{
+  "schema_version": 1,
+  "policy": "Every retained import, subprocess and tool operation must map to this inventory. Installation is distinct from connection and successful operation. No credentials or original account bindings belong here.",
+  "capabilities": [
+    {
+      "id": "python",
+      "classification": "runtime",
+      "required_when": [
+        "always"
+      ],
+      "required_stage": "installed",
+      "provider": "selected local Python",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "python3"
+      ],
+      "setup": "Use Python 3.10+ on a POSIX host with fcntl and IANA timezone data. No third-party toolkit packages.",
+      "limits": [
+        "Windows/cloud are not certified."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "curl",
+      "classification": "optional",
+      "required_when": [],
+      "required_stage": "installed",
+      "provider": "public HTTP CLI",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "curl"
+      ],
+      "setup": "Optional public HTTP CLI; use an already supported native public HTTP reader instead when available. https://curl.se/download.html",
+      "limits": [
+        "No Google alternate auth, cookies or credential export."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Use verified native public HTTP with TLS and bounded timeouts; do not install curl solely to pass core readiness."
+    },
+    {
+      "id": "host_filesystem",
+      "classification": "runtime",
+      "required_when": [
+        "always"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Codex local host",
+      "verification_operations": [
+        "workspace_probe",
+        "private_state_probe"
+      ],
+      "tool_operations": [
+        "exec_command",
+        "apply_patch",
+        "write_stdin",
+        "clock__curr_time"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Verify actual private root and producer workspace grants with scoped write/readback, atomic-file support and exclusive writer ownership.",
+      "limits": [],
+      "permitted_effects": [
+        "local private read/write"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "chat_coordination",
+      "classification": "runtime",
+      "required_when": [
+        "always"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Codex app",
+      "verification_operations": [
+        "thread_read",
+        "workspace_probe"
+      ],
+      "tool_operations": [
+        "mcp__codex_app__list_projects",
+        "mcp__codex_app__create_thread",
+        "mcp__codex_app__read_thread"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Create or adopt the selected central and helper chats under explicit setup authorization; verify each actual workspace. No unselected chat is required.",
+      "limits": [],
+      "permitted_effects": [
+        "authorized chat creation and dispatch"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "chat_delegation",
+      "classification": "runtime",
+      "required_when": [
+        "delegation"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Codex app",
+      "verification_operations": [
+        "authorized_handoff"
+      ],
+      "tool_operations": [
+        "mcp__codex_app__send_message_to_thread",
+        "mcp__codex_app__wait_threads"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Verify dispatch authorization and an actual scoped handoff only for the selected helper chats.",
+      "limits": [],
+      "permitted_effects": [
+        "authorized helper dispatch"
+      ],
+      "fallback": "Keep the selected helper branch partial; do not dispatch an unselected chat."
+    },
+    {
+      "id": "collaboration",
+      "classification": "optional",
+      "required_when": [],
+      "required_stage": "connected",
+      "provider": "Codex collaboration",
+      "verification_operations": [
+        "tool_catalog"
+      ],
+      "tool_operations": [
+        "collaboration.spawn_agent",
+        "collaboration.send_message",
+        "collaboration.followup_task",
+        "collaboration.list_agents",
+        "collaboration.wait_agent"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Inspect actual worker/model capacity and per-worker grants when choosing parallel research. Sequential verification is supported; selected helper chats do not require sub-agents.",
+      "limits": [],
+      "permitted_effects": [
+        "scoped worker dispatch"
+      ],
+      "fallback": "Run independent checks sequentially; preserve the same frozen scope, retries and source coverage."
+    },
+    {
+      "id": "schedule_management",
+      "classification": "runtime",
+      "required_when": [
+        "scheduled"
+      ],
+      "required_stage": "connected",
+      "provider": "Codex app",
+      "verification_operations": [
+        "tool_catalog"
+      ],
+      "tool_operations": [
+        "mcp__codex_app__automation_update"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Bind supported automation create/view/update. Create only after verified live pass, then read back timing, chat, status, notifications and next run.",
+      "limits": [],
+      "permitted_effects": [
+        "explicit new-installation schedule creation/update"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "gmail_read",
+      "classification": "runtime",
+      "required_when": [
+        "gmail_read"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Gmail connector",
+      "verification_operations": [
+        "get_profile",
+        "list_labels",
+        "search_email_ids",
+        "read_email"
+      ],
+      "tool_operations": [
+        "mcp__codex_apps__gmail__get_profile",
+        "mcp__codex_apps__gmail__list_labels",
+        "mcp__codex_apps__gmail__search_email_ids",
+        "mcp__codex_apps__gmail__batch_read_email",
+        "mcp__codex_apps__gmail__search_emails",
+        "mcp__codex_apps__gmail__batch_read_email_threads",
+        "mcp__codex_apps__gmail__read_email"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Connect Gmail only for selected alert discovery, Gmail tracking, or authorized self-email. Verify identity, individual message pagination and full MIME readback. Configure alert queries only when alert discovery is selected.",
+      "limits": [
+        "Equivalent schemas may be bound by the native host adapter. Label/attachment writes are not implied."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials.",
+      "conditional_verification_operations": {
+        "gmail_tracking": [
+          "sent_readback"
+        ]
+      }
+    },
+    {
+      "id": "gmail_send",
+      "classification": "runtime",
+      "required_when": [
+        "email_delivery"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Gmail connector",
+      "verification_operations": [
+        "send_email",
+        "sent_readback"
+      ],
+      "tool_operations": [
+        "mcp__codex_apps__gmail__send_email",
+        "mcp__codex_apps__gmail__read_email"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Explicitly opt in to the named brief recipient. Verify bounded test/first-pass send with exact Sent readback and uncertain-send reconciliation.",
+      "limits": [],
+      "permitted_effects": [
+        "authorized brief only"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "google_sheets",
+      "classification": "runtime",
+      "required_when": [
+        "google_tracker"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Google Drive/Sheets connector",
+      "verification_operations": [
+        "get_profile",
+        "get_spreadsheet_metadata",
+        "get_spreadsheet_cells",
+        "batch_update_spreadsheet",
+        "effective_link_readback"
+      ],
+      "tool_operations": [
+        "mcp__codex_apps__google_drive__get_profile",
+        "mcp__codex_apps__google_drive__get_spreadsheet_metadata",
+        "mcp__codex_apps__google_drive__get_spreadsheet_cells",
+        "mcp__codex_apps__google_drive__get_spreadsheet_range",
+        "mcp__codex_apps__google_drive__batch_update_spreadsheet"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Verify one shared workbook for main and Blind, header schema/basic filters/validation and authorized write/readback. Single coordinator writer.",
+      "limits": [
+        "Native readback does not imply atomic revision comparison."
+      ],
+      "permitted_effects": [
+        "journaled tracker writes"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "drive_setup",
+      "classification": "runtime",
+      "required_when": [
+        "google_tracker"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Google Drive connector",
+      "verification_operations": [
+        "file_metadata",
+        "native_workbook_create_or_import",
+        "schema_readback"
+      ],
+      "tool_operations": [
+        "Google Drive file metadata/search",
+        "Google Drive create folder",
+        "Google Drive native import/copy",
+        "Google Drive parent metadata update"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Import sanitized template or create native workbook with declared schema; save returned ID, read native schema. Folders/index are optional.",
+      "limits": [],
+      "permitted_effects": [
+        "explicit private setup resources"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "public_research",
+      "classification": "runtime",
+      "required_when": [
+        "public_research"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "host public search/open and bounded public HTTP",
+      "verification_operations": [
+        "public_search",
+        "public_open",
+        "bounded_http"
+      ],
+      "tool_operations": [
+        "web__run search_query/open",
+        "verified native public HTTP reader or optional curl"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Verify supported public search/open and public HTTP with TLS, bounded timeouts and shared retry ledger.",
+      "limits": [
+        "Source gaps remain gaps; no authenticated fallback bypass."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "public_browser",
+      "classification": "runtime",
+      "required_when": [
+        "public_research"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Codex supported browser",
+      "verification_operations": [
+        "browser_inventory",
+        "public_navigation"
+      ],
+      "tool_operations": [
+        "mcp__cua_repl.js"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Inspect and use actual in-app browser; verify task-owned tab navigation and controls.",
+      "limits": [
+        "One browser controller, even with different tabs."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "authenticated_browser",
+      "classification": "runtime",
+      "required_when": [
+        "authenticated_browser"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Chrome/Edge through supported browser bridge",
+      "verification_operations": [
+        "browser_inventory",
+        "account_identity",
+        "exact_job_navigation"
+      ],
+      "tool_operations": [
+        "mcp__cua_repl.js"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "For selected authenticated job access or separately requested manual application/recruiter work, verify the supported browser bridge, session and expected identity. Public research and native Gmail do not themselves require authenticated Chrome. LinkedIn alert onboarding verifies its signed-in setup separately.",
+      "limits": [
+        "No autofill, uploads or submission."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "calendar",
+      "classification": "runtime",
+      "required_when": [
+        "calendar"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "Calendar connector",
+      "verification_operations": [
+        "get_profile",
+        "list_calendars",
+        "search_events",
+        "read_event"
+      ],
+      "tool_operations": [
+        "mcp__codex_apps__google_calendar__get_profile",
+        "mcp__codex_apps__google_calendar__list_calendars",
+        "mcp__codex_apps__google_calendar__search_events",
+        "mcp__codex_apps__google_calendar__batch_read_event",
+        "mcp__codex_apps__google_calendar__read_event"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Connect and select exact calendar; verify bounded event reads.",
+      "limits": [
+        "No booking or RSVP."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "messages",
+      "classification": "runtime",
+      "required_when": [
+        "messages"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "optional upstream macOS Messages MCP",
+      "verification_operations": [
+        "mcp_handshake",
+        "read_only_tool_catalog",
+        "db_access",
+        "exact_conversation_read"
+      ],
+      "tool_operations": [
+        "tool_check_db_access",
+        "tool_check_addressbook (only when contact resolution is selected)",
+        "tool_find_contact (configured contact only)",
+        "tool_get_recent_messages (configured conversation and date window)"
+      ],
+      "packages": [
+        "user-selected upstream mac-messages-mcp release and its resolved dependencies; not bundled"
+      ],
+      "executables": [
+        "upstream-supported launcher such as uvx; separate optional install"
+      ],
+      "setup": "Optional only: follow https://github.com/carterlasalle/mac_messages_mcp and https://learn.chatgpt.com/docs/extend/mcp. Register local stdio, record the installed version, allow only reviewed read tools, and verify the configured conversation/date window. No custom wrapper, Swift build or local decoder is required. See Application Workflow/docs/messages.md.",
+      "limits": [
+        "macOS and user-granted database access required; no permissions are changed by the checker.",
+        "Sending, scheduling, availability probes, contact writes and audio fetching/transcription are outside this workflow.",
+        "Saved Apple transcript text is used only if an installed tool actually exposes it; unsupported decoding remains a gap.",
+        "A bounded page, contact search or truncated result never proves complete conversation coverage."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Leave Messages disabled until verified, or report its selected source as partial/unavailable. Continue core job discovery and shared-tracker work; never broaden to other conversations."
+    },
+    {
+      "id": "node",
+      "classification": "runtime",
+      "required_when": [
+        "artifact_tool"
+      ],
+      "required_stage": "installed",
+      "provider": "conditional Node runtime",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "node"
+      ],
+      "setup": "Core Simplify decoding uses Python zlib. Discover supported bundled Node for local Excel storage or optional artifact rebuild/export; do not require Node for pure Python toolkit tests.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "artifact_tool",
+      "classification": "runtime",
+      "required_when": [
+        "artifact_tool"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "app-provided spreadsheet runtime",
+      "verification_operations": [
+        "runtime_discovery",
+        "workbook_export",
+        "render_readback"
+      ],
+      "tool_operations": [
+        "mcp__codex_app__load_workspace_dependencies",
+        "mcp__node_repl.js",
+        "view_image"
+      ],
+      "packages": [
+        "app-managed @oai/artifact-tool",
+        "app-managed skia-canvas",
+        "app-managed @oai/walnut"
+      ],
+      "executables": [],
+      "setup": "Use the host-provided bundled runtime for local Excel storage or optional rebuild/export; never install the private artifact package from npm. Local Excel is a storage backend, not merely an export option.",
+      "limits": [
+        "Recorded audit version 2.8.99 is not a universal minimum.",
+        "Prebuilt template/native Sheets daily operations do not need rebuild tooling."
+      ],
+      "permitted_effects": [
+        "authorized local workbook creation, editing and export"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "manual_outreach",
+      "classification": "runtime",
+      "required_when": [
+        "manual_outreach"
+      ],
+      "required_stage": "connected",
+      "provider": "optional manual workflows",
+      "verification_operations": [
+        "tool_catalog"
+      ],
+      "tool_operations": [
+        "browser composers",
+        "optional Gmail draft create/list/update/readback"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Include only after explicit scoped manual request. Bound StatusDates.gs onEdit is optional; API writes need explicit date logic.",
+      "limits": [
+        "No sends/invitations; no automatic dispatch."
+      ],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "environment_installer",
+      "classification": "setup",
+      "required_when": [],
+      "required_stage": "installed",
+      "provider": "optional upstream MCP launcher",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "uv/uvx only when chosen for optional Messages"
+      ],
+      "setup": "Use the upstream installation route selected by the user, e.g. https://docs.astral.sh/uv/getting-started/installation/. Core Python helpers need no package installer.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "offline_tests",
+      "classification": "test",
+      "required_when": [],
+      "required_stage": "installed",
+      "provider": "Python unittest",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "selected Python"
+      ],
+      "setup": "Run synthetic tests with Python -B and temp writable directories. No accounts or pytest are needed.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "messages_live_test",
+      "classification": "test",
+      "required_when": [],
+      "required_stage": "installed",
+      "provider": "explicit optional private smoke check",
+      "verification_operations": [],
+      "tool_operations": [
+        "installed Messages MCP handshake/catalog and scoped read tools"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Only after optional source authorization, verify a bounded configured-conversation read, pagination and identity through the actual MCP. See Application Workflow/docs/messages.md. Saved transcripts are checked only when available; no shipped wrapper or decoder is assumed.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report the optional source as disabled/partial; core setup can continue."
+    },
+    {
+      "id": "operator_helpers",
+      "classification": "operator",
+      "required_when": [],
+      "required_stage": "installed",
+      "provider": "operator conveniences",
+      "verification_operations": [],
+      "tool_operations": [],
+      "packages": [],
+      "executables": [
+        "git",
+        "rg",
+        "cat",
+        "sed",
+        "cp",
+        "mkdir",
+        "shasum",
+        "shell"
+      ],
+      "setup": "Git is useful for cloning/upgrades; use maintained Python equivalents for copy/hash/locking. Do not assume Homebrew/login-shell settings.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "skills",
+      "classification": "setup",
+      "required_when": [],
+      "required_stage": "connected",
+      "provider": "host instruction prerequisites",
+      "verification_operations": [],
+      "tool_operations": [
+        "Google Drive/Sheets skill",
+        "spreadsheet skill",
+        "optional OpenAI Docs/plugin-management for setup troubleshooting"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Use supported Google Drive/Sheets and spreadsheet skills where their host capabilities require them; do not hardcode personal skill-cache paths. Personal writing/coding skills are not adopter dependencies.",
+      "limits": [],
+      "permitted_effects": [
+        "read"
+      ],
+      "fallback": "Report missing capability and hold only affected work; never bypass permissions or use alternate Google credentials."
+    },
+    {
+      "id": "local_workbook",
+      "classification": "runtime",
+      "required_when": [
+        "local_tracker"
+      ],
+      "required_stage": "operation_verified",
+      "provider": "private XLSX through the shipped local adapter",
+      "verification_operations": [
+        "file_schema_readback",
+        "effective_link_readback"
+      ],
+      "tool_operations": [
+        "job_search_ops local-init/local-sync/local-update",
+        "local_excel.inspect_workbook"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Use the selected private XLSX path. Initialize through the artifact runtime, reserve a local tracker intent, bind actual reopened file evidence, and verify current local schema and hyperlink targets. No Google account is needed.",
+      "limits": [
+        "Close the workbook in Excel before writes; conflicting or unsupported workbook features stop the affected write."
+      ],
+      "permitted_effects": [
+        "authorized local workbook creation and journaled writes"
+      ],
+      "fallback": "Keep the selected local branch blocked; do not silently switch to Google or overwrite an unknown file."
+    },
+    {
+      "id": "linkedin_alert_setup",
+      "classification": "setup",
+      "required_when": [],
+      "required_stage": "connected",
+      "provider": "selected LinkedIn browser and mailbox setup controls",
+      "verification_operations": [
+        "saved_alert_settings",
+        "saved_routing_rule",
+        "received_alert_routing",
+        "configured_reader_readback"
+      ],
+      "tool_operations": [
+        "supported signed-in LinkedIn browser: inspect/create chosen search alerts",
+        "Gmail native list_labels/create_label: selected setup only",
+        "Gmail native filter read/create only if exposed; otherwise user follows Gmail settings steps",
+        "Outlook selected native folder/rule tools or supported browser: organization only",
+        "selected Gmail search/full-message reads for post-rule delivery proof"
+      ],
+      "packages": [],
+      "executables": [],
+      "setup": "Follow Application Workflow/docs/linkedin-alerts.md when LinkedIn email discovery is selected. Reuse equivalent alerts/rules, preview a narrow scope, save private readiness evidence, and verify an actual received alert outside Inbox. This setup guide is separate from doctor; this release consumes Gmail only.",
+      "limits": [
+        "Label creation does not prove native filter capability or automatic routing.",
+        "No new dependency, credential flow, permanent chat or schedule is implied.",
+        "Setup mutation authorization does not extend to daily discovery.",
+        "Outlook folders are not currently inputs to the shipped Gmail reader."
+      ],
+      "permitted_effects": [
+        "explicitly selected LinkedIn alert creation/configuration",
+        "explicitly selected mailbox label/folder/rule setup",
+        "readback of selected settings and actual alert delivery"
+      ],
+      "fallback": "Give precise user settings steps when a required mutation tool is absent. Keep awaiting_first_alert or reader gaps visible; do not fabricate a doctor receipt, switch accounts or create forwarding automatically."
+    }
+  ],
+  "forbidden_fallbacks": [
+    "gws or alternate Google credentials",
+    "exported browser cookies",
+    "Messages sends or availability probing",
+    "automatic application autofill/upload/submit"
+  ],
+  "replacements": [
+    {
+      "historical": "legacy HTML/parser and Simplify decoder scripts",
+      "current": "maintained Python standard-library components; no bs4 or Node decoder installation"
+    },
+    {
+      "historical": "custom Messages wrapper and Swift decoder bundle",
+      "current": "optional upstream MCP link plus actual scoped capability checks; saved transcripts only when exposed"
+    },
+    {
+      "historical": "dated workbook builders",
+      "current": "blank prebuilt workbook plus native schema verification"
+    }
+  ]
+}

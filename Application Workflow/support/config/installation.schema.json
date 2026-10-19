@@ -1,0 +1,458 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/job-search-ops/installation.schema.json",
+  "$comment": "Editor aid only. config.py also checks cross-field policy, private paths, toolkit profile, timezones and permissions without third-party dependencies.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "installation_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,63}$"
+    },
+    "profile_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "instance_root": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "type": "boolean"
+        },
+        "blind": {
+          "type": "boolean"
+        },
+        "calendar": {
+          "type": "boolean"
+        },
+        "messages": {
+          "type": "boolean"
+        },
+        "excel_export": {
+          "type": "boolean"
+        },
+        "manual_outreach": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "main",
+        "blind",
+        "calendar",
+        "messages",
+        "excel_export",
+        "manual_outreach"
+      ]
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "actual_experience_years": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "resume_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "actual_experience_years",
+        "resume_path"
+      ]
+    },
+    "blind_policy": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "max_required_years": {
+          "type": "number",
+          "minimum": 0
+        },
+        "stretch_required_years": {
+          "type": "number",
+          "minimum": 0
+        },
+        "exclude_explicit_senior": {
+          "type": "boolean"
+        },
+        "min_rating": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "excluded_title_terms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "version",
+        "max_required_years",
+        "stretch_required_years",
+        "exclude_explicit_senior",
+        "min_rating",
+        "excluded_title_terms"
+      ]
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gmail_queries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "initial_lookback_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "referral_companies_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rated_companies_path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "gmail_queries",
+        "initial_lookback_days",
+        "referral_companies_path",
+        "rated_companies_path"
+      ]
+    },
+    "schedules": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "local_time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            "notifications": {
+              "enum": [
+                "meaningful_changes",
+                "failed_runs_only"
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "local_time",
+            "notifications"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "local_time": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "blind": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "local_time": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "pattern": "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$"
+            },
+            "notifications": {
+              "enum": [
+                "meaningful_changes",
+                "failed_runs_only"
+              ]
+            }
+          },
+          "required": [
+            "enabled",
+            "local_time",
+            "notifications"
+          ],
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "enabled": {
+                    "const": true
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "local_time": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "main",
+        "blind"
+      ]
+    },
+    "report": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "delivery": {
+          "enum": [
+            "chat",
+            "email"
+          ]
+        },
+        "send_opt_in": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "delivery",
+        "send_opt_in"
+      ]
+    },
+    "adapters": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "html_parser": {
+          "const": "stdlib"
+        },
+        "simplify_decoder": {
+          "const": "python"
+        },
+        "spreadsheet_templates": {
+          "enum": [
+            "prebuilt",
+            "artifact_tool"
+          ]
+        }
+      },
+      "required": [
+        "html_parser",
+        "simplify_decoder",
+        "spreadsheet_templates"
+      ]
+    },
+    "tracker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "google_sheets",
+            "local_xlsx"
+          ]
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "provider",
+        "path"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "provider": {
+                "const": "google_sheets"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "path": {
+                "type": "null"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "path": {
+                "type": "string",
+                "pattern": "^/.+\\.xlsx$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "email": {
+          "type": "boolean"
+        },
+        "portals": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "portals"
+      ]
+    },
+    "tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "gmail": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "gmail"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "installation_id",
+    "profile_path",
+    "instance_root",
+    "modules",
+    "candidate",
+    "blind_policy",
+    "sources",
+    "schedules",
+    "report",
+    "adapters"
+  ],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "schema_version": {
+            "const": 1
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "tracker": false,
+          "discovery": false,
+          "tracking": false,
+          "blind_policy": {
+            "type": "object"
+          },
+          "candidate": {
+            "properties": {
+              "actual_experience_years": {
+                "type": "number"
+              }
+            }
+          },
+          "schedules": {
+            "properties": {
+              "main": {
+                "properties": {
+                  "local_time": {
+                    "type": "string"
+                  }
+                }
+              },
+              "blind": {
+                "properties": {
+                  "local_time": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "required": [
+          "tracker",
+          "discovery",
+          "tracking"
+        ],
+        "properties": {
+          "modules": {
+            "properties": {
+              "main": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
