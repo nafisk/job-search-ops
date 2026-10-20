@@ -17,20 +17,7 @@ python3 -B scripts/verify_release.py
 python3 -m job_search_ops --help
 ```
 
-These commands use fictional data and do not contact accounts, create cloud resources, send messages or change schedules. Local Excel integration checks may create disposable local workbook files. They check configuration and private paths, resumable setup, tool readiness, conditional tool/resource selection, local-file safeguards, native-shaped Sheet responses, cross-source deduplication, Blind policy provenance, manual field preservation, interrupted writes and delivery checkpoints. Regression tests also cover attempt-bound settlement, durable role aliases, sticky
-referral holds, the pending-pilot execution gate, complete daily recurrence, scoped
-schedule readiness and disabled tracking. Tracking tests exercise accepted aliases
-through the public Google commands and actual Excel files, including an old
-prepared journal. Report tests cover cancelled quiet briefs, later receipts and
-actionable failures with no new jobs; prompt tests execute quoted private paths.
-Filesystem tests reject differently capitalized repository locations before setup
-writes private data. Alias-URL tests cover saved and previously accepted alternate
-URLs in both trackers, plus shared conflict guards. Pending-identity tests permute
-three-source bridges before row allocation and preserve accepted rows and per-source
-policies. Tracking tests compare Google and Excel row values; setup/update tests
-compare generated artifacts and preserve interrupted-update recovery. Export tests
-reject repository destinations reached through alternate capitalization. The toolkit tests cover parsing,
-screening, source coverage, tracking and recovery.
+These maintainer checks use fictional data and do not contact accounts, create cloud resources, send messages or change schedules. The original suites cover setup and selected tools, tracker writes, source screening and deduplication, manual edits, recovery and delivery checkpoints. Local Excel checks use disposable workbook files; toolkit checks cover parsing, screening, source coverage, tracking and recovery.
 
 The package check rejects unlisted files and symlinks, tolerates but excludes normal Python caches, and verifies local links, private-binding exclusions and the blank seven-tab workbook against its schema. The workbook check inspects the reviewed XML parts, metadata,
 relationships and unused shared strings to catch hidden or deleted content;

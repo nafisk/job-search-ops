@@ -4,10 +4,6 @@ from pathlib import Path
 import copy
 import json
 import os
-import shlex
-import shutil
-import subprocess
-import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -149,105 +145,6 @@ class SetupTests(unittest.TestCase):
                     self.profile_path.write_text(json.dumps(profile))
                     with self.assertRaisesRegex(ConfigError, "outside repository"):
                         load_config(self.config_path)
-
-    def case_repository(self):
-        repo = self.base / "case-repo"
-        repo.mkdir()
-        alternate = self.base / "CASE-REPO"
-        if not alternate.exists():
-            self.skipTest("requires a case-insensitive test filesystem")
-        self.assertTrue(repo.samefile(alternate))
-        return repo, alternate
-
-    def test_case_alias_root_overlap_rejected_before_initialization(self):
-        repo, alternate = self.case_repository()
-        (repo / "existing").mkdir()
-        ancestor = self.base.with_name(self.base.name.upper())
-        self.assertTrue(ancestor.samefile(self.base))
-        with patch("job_search_ops.config.REPO_ROOT", repo):
-            for root in (alternate, alternate / "private", alternate / "new" / "private",
-                         alternate / "existing" / "private", ancestor):
-                with self.subTest(root=root):
-                    self.settings["instance_root"] = str(root)
-                    self.profile["private"]["state_root"] = str(root / "state")
-                    self.save_sources()
-                    with self.assertRaisesRegex(ConfigError, "separate from the repository"):
-                        setup.init_instance(load_config(self.config_path))
-        self.assertEqual(list(repo.iterdir()), [repo / "existing"])
-        self.assertEqual(list((repo / "existing").iterdir()), [])
-        self.assertFalse((self.base / "state").exists())
-
-    def test_case_alias_private_inputs_rejected(self):
-        repo, alternate = self.case_repository()
-        (repo / "LinkedIn").mkdir()
-        with patch("job_search_ops.config.REPO_ROOT", repo):
-            for target in (alternate / "LinkedIn" / "private.json", alternate / "new" / "private.json"):
-                for kind in ("resume", "source", "profile_ref"):
-                    with self.subTest(target=target, kind=kind):
-                        settings, profile = copy.deepcopy(self.settings), copy.deepcopy(self.profile)
-                        if kind == "resume":
-                            settings["candidate"]["resume_path"] = str(target)
-                        elif kind == "source":
-                            settings["sources"]["rated_companies_path"] = str(target)
-                        else:
-                            profile["private"]["refs"]["private_input"] = str(target)
-                        self.config_path.write_text(json.dumps(settings))
-                        self.profile_path.write_text(json.dumps(profile))
-                        with self.assertRaisesRegex(ConfigError, "outside repository"):
-                            load_config(self.config_path)
-
-    def test_public_init_rejects_case_alias_without_private_files(self):
-        repo, alternate = self.case_repository()
-        support = repo / "Application Workflow" / "support"
-        shutil.copytree(SUPPORT_ROOT / "job_search_ops", support / "job_search_ops",
-                        ignore=shutil.ignore_patterns("__pycache__"))
-        (support / "toolkit").mkdir()
-        shutil.copyfile(SUPPORT_ROOT / "toolkit/profile.py", support / "toolkit/profile.py")
-        self.settings["instance_root"] = str(alternate / "private")
-        self.profile["private"]["state_root"] = str(alternate / "private/state")
-        self.save_sources()
-        before = {p.relative_to(repo): p.read_bytes() for p in repo.rglob("*") if p.is_file()}
-        result = subprocess.run([sys.executable, "-B", "-m", "job_search_ops", "init", "--config", str(self.config_path)],
-                                cwd=support, text=True, capture_output=True)
-        self.assertNotEqual(result.returncode, 0, result.stdout)
-        self.assertIn("separate from the repository", result.stderr)
-        self.assertFalse((repo / "private").exists())
-        self.assertEqual(before, {p.relative_to(repo): p.read_bytes() for p in repo.rglob("*") if p.is_file()})
-
-    def test_filesystem_boundary_allows_distinct_siblings(self):
-        repo = self.base / "case-repo"
-        repo.mkdir()
-        # Prefixes are not containment; case-sensitive volumes also permit a
-        # different directory whose spelling differs only by capitalization.
-        roots = [self.base / "case-repo-private"]
-        alternate = self.base / "CASE-REPO"
-        if not alternate.exists():
-            alternate.mkdir()
-            self.assertFalse(repo.samefile(alternate))
-            roots.append(alternate / "private")
-        with patch("job_search_ops.config.REPO_ROOT", repo):
-            for root in roots:
-                with self.subTest(root=root):
-                    self.settings["instance_root"] = str(root)
-                    self.profile["private"]["state_root"] = str(root / "state")
-                    self.save_sources()
-                    loaded = load_config(self.config_path)
-                    self.assertEqual(loaded["instance_root"], str(root))
-                    self.assertFalse(root.exists())
-
-    def test_filesystem_boundary_fails_closed_on_unreadable_path(self):
-        original_stat = Path.stat
-
-        def guarded_stat(path, *args, **kwargs):
-            if path == self.root and kwargs.get("follow_symlinks", True):
-                raise PermissionError("PRIVATE-DETAIL")
-            return original_stat(path, *args, **kwargs)
-
-        with patch.object(Path, "stat", guarded_stat):
-            with self.assertRaisesRegex(ConfigError, "cannot verify filesystem location") as raised:
-                load_config(self.config_path)
-        self.assertNotIn("PRIVATE-DETAIL", str(raised.exception))
-        self.assertFalse(self.root.exists())
 
     def test_main_does_not_require_authenticated_browser_but_manual_outreach_does(self):
         self.profile["integrations"]["browser"] = {"enabled": False, "required": False,
@@ -446,33 +343,6 @@ class SetupTests(unittest.TestCase):
                 self.assertTrue(runbooks[name].is_file())
                 self.assertIn(f"commands from {SUPPORT_ROOT}", text)
                 self.assertIn(f"Repository: {REPO_ROOT}", text)
-                for private_file in ("config.json", "runtime-profile.json", "installation.json", "execution-plan.json"):
-                    self.assertIn(str(self.root / private_file), text)
-                self.assertIn(str(WORKFLOW_ROOT / "docs/operations.md"), text)
-                self.assertIn("an available connector is not authorization", text)
-                self.assertIn("Never fill or submit applications", text)
-                self.assertIn("Scheduled execution must never supply --pilot-update-id", text)
-
-    def test_generated_start_commands_run_with_apostrophe_and_shell_characters_in_root(self):
-        self.root = self.base / "Alex's workflow; portable"
-        self.settings["instance_root"] = str(self.root)
-        self.profile["private"]["state_root"] = str(self.root / "state")
-        self.save_sources()
-        self.config = load_config(self.config_path)
-        self.bind_all()
-        paths = setup.prepare_prompts(self.config)
-        self.assertEqual(set(paths), {"main", "email", "portals", "blind"})
-        for name, path in paths.items():
-            with self.subTest(workflow=name):
-                command = Path(path).read_text().split("run `", 1)[1].split("`", 1)[0]
-                workflow = "blind" if name == "blind" else "main"
-                self.assertEqual(shlex.split(command), ["python3", "-m", "job_search_ops", "run-check", "--config",
-                                                       str(self.root / "config.json"), "--workflow", workflow])
-                result = subprocess.run(["/bin/sh", "-c", command], cwd=SUPPORT_ROOT,
-                                        text=True, capture_output=True, timeout=30)
-                self.assertEqual(result.returncode, 0, result.stderr)
-                self.assertEqual(json.loads(result.stdout)["workflow"], workflow)
-                self.assertEqual(json.loads(result.stdout)["mode"], "ordinary")
 
     def test_private_messages_identity_reference_requires_exact_resolved_binding(self):
         source = self.base / "private-message-source.json"

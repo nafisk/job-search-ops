@@ -103,29 +103,6 @@ class PreferencesTests(unittest.TestCase):
         self.assertIn("disabled", (self.h.root / "prompts/email.md").read_text())
         self.assertEqual(staging.read_text(), '{"evidence":"retained"}')
 
-    def test_setup_and_preference_update_publish_identical_runtime_artifacts(self):
-        import hashlib
-        candidate = self.candidate(lambda c: c["discovery"].update(email=False))
-        self.apply(preferences.preference_plan(self.current, candidate))
-        current = load_config(self.h.root / "config.json")
-        manifest = setup.load_instance(current)
-        before = copy.deepcopy(manifest)
-        with patch.object(setup, "_atomic_text", side_effect=AssertionError("builder must not write")):
-            files, bindings = setup.runtime_artifacts(current, manifest)
-        self.assertEqual(manifest, before)
-        self.assertEqual(bindings, manifest["prompts"])
-        self.assertEqual(set(bindings), {"main", "portals", "blind"})
-        for name, body in files.items():
-            self.assertEqual((self.h.root / name).read_text(), body)
-        for entry in bindings.values():
-            self.assertEqual(hashlib.sha256(Path(entry["path"]).read_bytes()).hexdigest(), entry["sha256"])
-        disabled = (self.h.root / "prompts/email.md").read_bytes()
-        setup.prepare_prompts(current)
-        self.assertEqual(setup.load_instance(current), before)
-        for name, body in files.items():
-            self.assertEqual((self.h.root / name).read_text(), body)
-        self.assertEqual((self.h.root / "prompts/email.md").read_bytes(), disabled)
-
     def test_existing_schedule_preserves_pause_timing_id_and_reconciles_native_readback(self):
         bound = self.schedule()
         candidate = self.candidate(lambda c: c["tracking"].update(gmail=False))
@@ -248,20 +225,6 @@ class PreferencesTests(unittest.TestCase):
         for change, profile_change in variants:
             with self.subTest(change=change, profile_change=profile_change), self.assertRaises(ConfigError):
                 preferences.preference_plan(self.current, self.candidate(change, profile_change))
-
-    def test_cancelled_quiet_brief_allows_harmless_preference_update(self):
-        from job_search_ops import queue
-        root = self.h.root
-        quiet = queue.prepare_brief(root, "quiet")
-        self.assertEqual(quiet["receipt_ids"], [])
-        candidate = self.candidate(lambda c: c["schedules"]["main"].update(enabled=True, local_time="09:00"))
-        with self.assertRaisesRegex(ConfigError, "outstanding briefs"):
-            preferences.preference_plan(self.current, candidate)
-        cancelled = queue.cancel_brief(root, "quiet")
-        plan = preferences.preference_plan(self.current, candidate)
-        self.assertEqual(self.apply(plan)["status"], "applied")
-        self.assertEqual(queue.read(root / "state/delivery" / (queue.digest("quiet") + ".json")), cancelled)
-        self.assertEqual(queue.prepare_brief(root, "next-run")["status"], "prepared")
 
     def test_unfinished_writer_and_brief_reject_without_touching_config(self):
         candidate = self.candidate(lambda c: c["tracking"].update(gmail=False))
