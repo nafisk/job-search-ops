@@ -437,12 +437,26 @@ def prepare_brief(root, brief_id):
         if path.exists():
             return read(path)
         briefs = [read(p) for p in (base / "delivery").glob("*.json")]
-        if any(b["status"] != "delivered" for b in briefs):
-            raise ProtocolError("An earlier brief is reserved/uncertain; reconcile it before another")
-        delivered = {r for b in briefs for r in b["receipt_ids"]}
+        if any(b["status"] not in {"delivered", "cancelled"} for b in briefs):
+            raise ProtocolError("An earlier brief is reserved/uncertain; reconcile delivery or cancel it before any send attempt")
+        delivered = {r for b in briefs if b["status"] == "delivered" for r in b["receipt_ids"]}
         receipts = _saved_receipts(base)
         selected = [r for r in receipts if r["receipt_id"] not in delivered]
         brief = {"brief_id": brief_id, "status": "prepared", "prepared_at": now(), "receipt_ids": [r["receipt_id"] for r in selected], "receipts": selected, "tracking_summary": tracking_summary(selected, receipts), "referral_summary": referral_summary(selected)}
+        atomic(path, brief)
+        return brief
+
+
+def cancel_brief(root, brief_id):
+    """Release an unattempted report reservation without acknowledging receipts."""
+    with locked(root) as base:
+        path = base / "delivery" / f"{digest(identifier(brief_id))}.json"
+        brief = read(path)
+        if brief["status"] == "cancelled":
+            return brief
+        if brief["status"] != "prepared" or "attempted_at" in brief or "delivery_intent" in brief:
+            raise ProtocolError("Only an unattempted prepared brief can be cancelled; reconcile any send attempt")
+        brief.update(status="cancelled", cancelled_at=now())
         atomic(path, brief)
         return brief
 
@@ -454,6 +468,8 @@ def mark_brief_sending(root, brief_id, delivery):
         require_execution(root, "main")
         path = base / "delivery" / f"{digest(identifier(brief_id))}.json"
         brief = read(path)
+        if brief["status"] == "cancelled":
+            raise ProtocolError("Brief was cancelled; use a fresh brief ID")
         if brief["status"] != "prepared":
             raise ProtocolError("Brief already attempted; reconcile delivery before retry")
         channel = delivery.get("channel", "email")

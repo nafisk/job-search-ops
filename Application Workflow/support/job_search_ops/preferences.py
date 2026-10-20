@@ -152,7 +152,7 @@ def _check_idle(root, plan):
         for path in sorted((root / "state" / folder).glob("*.json")):
             require(read_json(no_symlink(path)).get("status") in {"committed", "cancelled"}, "preferences", "reconcile unfinished tracker writes before changing preferences")
     for path in sorted((root / "state/delivery").glob("*.json")):
-        require(read_json(no_symlink(path)).get("status") == "delivered", "preferences", "finish or reconcile outstanding briefs before changing preferences")
+        require(read_json(no_symlink(path)).get("status") in {"delivered", "cancelled"}, "preferences", "finish or reconcile outstanding briefs, or cancel an unattempted brief, before changing preferences")
     # Pending source evidence remains attached to the exact old screening rules.
     # Drain first instead of silently reinterpreting it under new criteria.
     criteria = ("config.discovery", "config.modules.blind", "config.blind_policy", "config.sources", "profile.role_policy", "profile.locations", "config.candidate")

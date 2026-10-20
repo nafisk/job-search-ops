@@ -69,6 +69,7 @@ def parser():
     command("cancel-unattempted", "Cancel an unattempted journal after inspection", ("root", "journal", "owner"))
     command("release-claim", "Release a resolved workbook writer claim", ("root", "workbook", "owner"))
     command("brief-prepare", "Reserve newly saved roles for one brief", ("root", "brief"))
+    command("brief-cancel", "Release an unattempted brief without acknowledging receipts", ("root", "brief"))
     command("brief-sending", "Record an intended delivery before sending", ("root", "brief", "delivery"))
     command("brief-delivered", "Commit exact successful delivery evidence", ("root", "brief", "evidence"))
     return root
@@ -186,6 +187,7 @@ def run_command(args):
     elif name == "cancel-unattempted": result = sheets.cancel_unattempted(args.root, args.journal, args.owner)
     elif name == "release-claim": result = queue.release_claim(args.root, args.workbook, args.owner)
     elif name == "brief-prepare": result = queue.prepare_brief(args.root, args.brief)
+    elif name == "brief-cancel": result = queue.cancel_brief(args.root, args.brief)
     elif name == "brief-sending": result = queue.mark_brief_sending(args.root, args.brief, read_json(args.delivery))
     elif name == "brief-delivered": result = queue.confirm_brief_delivery(args.root, args.brief, read_json(args.evidence))
     else: raise ConfigError("command: unsupported operation")

@@ -4,6 +4,8 @@ from pathlib import Path
 import copy
 import json
 import os
+import shlex
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -343,6 +345,27 @@ class SetupTests(unittest.TestCase):
                 self.assertTrue(runbooks[name].is_file())
                 self.assertIn(f"commands from {SUPPORT_ROOT}", text)
                 self.assertIn(f"Repository: {REPO_ROOT}", text)
+
+    def test_generated_start_commands_run_with_apostrophe_and_shell_characters_in_root(self):
+        self.root = self.base / "Alex's workflow; portable"
+        self.settings["instance_root"] = str(self.root)
+        self.profile["private"]["state_root"] = str(self.root / "state")
+        self.save_sources()
+        self.config = load_config(self.config_path)
+        self.bind_all()
+        paths = setup.prepare_prompts(self.config)
+        self.assertEqual(set(paths), {"main", "email", "portals", "blind"})
+        for name, path in paths.items():
+            with self.subTest(workflow=name):
+                command = Path(path).read_text().split("run `", 1)[1].split("`", 1)[0]
+                workflow = "blind" if name == "blind" else "main"
+                self.assertEqual(shlex.split(command), ["python3", "-m", "job_search_ops", "run-check", "--config",
+                                                       str(self.root / "config.json"), "--workflow", workflow])
+                result = subprocess.run(["/bin/sh", "-c", command], cwd=SUPPORT_ROOT,
+                                        text=True, capture_output=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(json.loads(result.stdout)["workflow"], workflow)
+                self.assertEqual(json.loads(result.stdout)["mode"], "ordinary")
 
     def test_private_messages_identity_reference_requires_exact_resolved_binding(self):
         source = self.base / "private-message-source.json"

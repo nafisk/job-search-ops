@@ -45,7 +45,17 @@ python3 -m job_search_ops tracking-review --workbook WORKBOOK_ID --snapshot /abs
 }
 ```
 
-Allowed fields are Application Status, Notes and Referral Contact. An expected-old-value mismatch stops the plan. Existing role links must match accepted receipts or an independently reviewed adoption baseline. To add a confirmed application absent from the tracker, use the same `new_records` shape shown in [local tracking](local-excel.md#apply-reviewed-tracking-changes); keep `expected_state_sha256` for Google. New rows are marked **Tracking evidence**, with discovery screening not evaluated.
+Allowed fields are Application Status, Notes and Referral Contact. An expected-old-value mismatch stops the plan. Existing role links must match accepted receipts or an independently reviewed adoption baseline.
+
+Before deciding an application is new, read its accepted identity history:
+
+```sh
+python3 -m job_search_ops role-state --root /absolute/private --workbook WORKBOOK_ID
+```
+
+This private result maps alternate IDs and URLs to the saved canonical Job Key. Both tracking writers check that history. A `new_records` entry matching either accepted alias is rejected with its canonical key; use that key and fresh reviewed old values in `updates`. Alias-key updates also return canonical guidance. Conflicting key/URL mappings require identity reconciliation. The writer does not silently convert an addition into an update or replace the canonical link, status, Notes or Referral Contact.
+
+Only for a confirmed application absent from this history and the tracker, use the same `new_records` shape shown in [local tracking](local-excel.md#apply-reviewed-tracking-changes); keep `expected_state_sha256` for Google. New rows are marked **Tracking evidence**, with discovery screening not evaluated.
 
 3. Prepare the journal. The command reads the installed `config.json`, requires at
 least one selected tracking source, and checks that Google Sheets and this exact

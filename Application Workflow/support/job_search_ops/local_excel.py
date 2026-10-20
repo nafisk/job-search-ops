@@ -742,6 +742,7 @@ def update_tracking(root, workbook_id, path, plan, node, node_modules, owner="ce
             if accepted.get(key) != url or url in destinations:
                 raise q.ProtocolError("Tracking requires independent accepted role URLs and unique destinations")
             destinations.add(url)
+        google_tracking.validate_identities(base, workbook_id, before, plan, accepted)
         changes, coordinates = [], set()
         for item in plan["updates"]:
             if item["job_key"] not in jobs:
@@ -752,15 +753,9 @@ def update_tracking(root, workbook_id, path, plan, node, node_modules, owner="ce
                 raise q.ProtocolError("Duplicate tracking target or changed old value")
             coordinates.add((row, column))
             changes.append({"tab": "Jobs", "row": row, "column": column, "before": sheets.native(item["old_value"]), "after": sheets.native(item["new_value"])})
-        known_urls = {row["url"] for row in before.state()["Jobs"]["rows"]}
-        known_keys = set(jobs)
         next_rows = {name: max((row for row, _ in before.rows(name)), default=3) + 1 for name in ("Jobs", "Job Sources")}
         policy = q.read(base / "approved-policies.json")
         for item in additions:
-            if item["job_key"] in known_keys or item["url"] in known_urls:
-                raise q.ProtocolError("Tracking record already exists; use an expected-old-value update")
-            known_keys.add(item["job_key"])
-            known_urls.add(item["url"])
             date = sheets.serial(item["observed_at"], policy["timezone"])
             fields = dict(zip(sheets.JOBS, [date, date, item["company"], item["title"], sheets.hyperlink(item["url"]), item["status"], "Tracking evidence", "", "", "", "", "Application evidence; discovery screening not evaluated", 1, "Tracked application: " + item["evidence_ref"], item["job_key"]]))
             event = q.digest(["tracking", item["job_key"], item["evidence_ref"]])

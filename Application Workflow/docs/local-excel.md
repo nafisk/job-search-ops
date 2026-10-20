@@ -64,7 +64,9 @@ When a confirmed application is absent from the tracker, use `updates: []` and a
 }]
 ```
 
-New records require both application evidence and a verified role identity/link; the allowed statuses are Applied, Interviewing, Rejected and Closed. They are labeled **Tracking evidence** with `not_screened` provenance. They are not qualified discovery recommendations. Duplicate keys or role URLs are rejected, and later discovery of the same role merges into that row. Keep unmatched email facts in the private run record and brief until the role identity can be verified.
+New records require both application evidence and a verified role identity/link; the allowed statuses are Applied, Interviewing, Rejected and Closed. They are labeled **Tracking evidence** with `not_screened` provenance. They are not qualified discovery recommendations.
+
+Read the private accepted aliases using [role-state](tracking.md#save-to-google-sheets), substituting the local workbook ID. A duplicate key, URL or previously accepted alternate ID/URL is rejected before changing the workbook. Use the returned canonical Job Key and fresh expected old values to update the existing row; the original role link and unrelated manual fields stay intact. Conflicting identities require reconciliation. Later discovery merges into the accepted row. Keep unmatched email facts in the private run record and brief until the role identity can be verified.
 
 ## Save proof and recovery
 

@@ -372,6 +372,84 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(queue.prepare_brief(self.root, "brief-2")["receipt_ids"], [second["receipt_id"]])
         self.assertNotIn("send_email", json.dumps(second))
 
+    def test_cancel_quiet_brief_through_cli_allows_later_report(self):
+        def cli(*args):
+            process = subprocess.run([sys.executable, "-B", "-m", "job_search_ops", *args], capture_output=True, text=True)
+            self.assertEqual(process.returncode, 0, process.stderr)
+            return json.loads(process.stdout)
+        quiet = cli("brief-prepare", "--root", str(self.root), "--brief", "quiet")
+        self.assertEqual(quiet["receipt_ids"], [])
+        cancelled = cli("brief-cancel", "--root", str(self.root), "--brief", "quiet")
+        self.assertEqual(cancelled["status"], "cancelled")
+        self.assertEqual(cli("brief-cancel", "--root", str(self.root), "--brief", "quiet"), cancelled)
+        self.assertEqual(cli("brief-prepare", "--root", str(self.root), "--brief", "quiet"), cancelled)
+        with self.assertRaisesRegex(queue.ProtocolError, "cancelled; use a fresh"):
+            queue.mark_brief_sending(self.root, "quiet", {})
+        _, saved = self.save(packet())
+        fresh = cli("brief-prepare", "--root", str(self.root), "--brief", "next-run")
+        self.assertEqual(fresh["receipt_ids"], [saved["receipt_id"]])
+
+    def test_cancel_brief_restores_all_receipts_without_delivery(self):
+        _, first = self.save(packet())
+        queue.prepare_brief(self.root, "cancel-me")
+        _, second = self.save(packet("blind", "new-packet", "example:req-2", "new-event"))
+        queue.cancel_brief(self.root, "cancel-me")
+        fresh = queue.prepare_brief(self.root, "fresh")
+        self.assertEqual(set(fresh["receipt_ids"]), {first["receipt_id"], second["receipt_id"]})
+        self.assertFalse(any(b.get("delivery_evidence") for b in [queue.read(p) for p in (self.root / "state/delivery").glob("*.json")]))
+        roles = [job for receipt in fresh["receipts"] for job in receipt["new_jobs"]]
+        snapshot = self.root / "restored-public.json"
+        snapshot.write_text(json.dumps({"roles": roles}))
+        body = self.root / "restored-body.md"
+        rendered = "\n".join(" ".join(job[field] for field in ("company", "title", "url")) for job in roles)
+        body.write_text(rendered)
+        queue.mark_brief_sending(self.root, "fresh", {"channel": "chat", "thread_id": "central", "snapshot_path": str(snapshot), "chat_body_path": str(body)})
+        raw = {"thread": {"id": "central"}, "turns": [{"status": "completed", "completedAt": int(time.time()), "items": [{"type": "agentMessage", "phase": "final_answer", "id": "restored-final", "text": rendered}]}]}
+        queue.confirm_brief_delivery(self.root, "fresh", {"native_chat_readback": raw, "verified_at": queue.now()})
+        self.assertEqual(queue.prepare_brief(self.root, "after-delivery")["receipt_ids"], [])
+
+    def test_cancel_is_available_during_pending_preference_pilot(self):
+        from job_search_ops.config import ConfigError
+        queue.prepare_brief(self.root, "held")
+        queue.atomic(self.root / "installation.json", {"preferences_update": {"update_id": "pending", "pilot_required": ["main"]}})
+        with self.assertRaisesRegex(ConfigError, "replacement pilot pending"):
+            queue.prepare_brief(self.root, "ordinary")
+        process = subprocess.run([sys.executable, "-B", "-m", "job_search_ops", "brief-cancel", "--root", str(self.root), "--brief", "held"], capture_output=True, text=True)
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertEqual(json.loads(process.stdout)["status"], "cancelled")
+
+    def test_empty_actionable_failure_can_deliver_and_never_cancel_after_attempt(self):
+        brief = queue.prepare_brief(self.root, "source-failed")
+        self.assertEqual(brief["receipts"], [])
+        snapshot = self.root / "failure-public.json"
+        snapshot.write_text(json.dumps({"source_gaps": ["Email discovery needs sign-in"]}))
+        body = self.root / "failure-body.txt"
+        rendered = "Email discovery needs sign-in. Restore access before the next run."
+        body.write_text(rendered)
+        intent = {"recipient": "person@example.com", "subject": "Source access needs attention", "snapshot_path": str(snapshot), "plain_body_path": str(body)}
+        queue.mark_brief_sending(self.root, "source-failed", intent)
+        # A sender timeout leaves this same durable sending state; never release it.
+        with self.assertRaisesRegex(queue.ProtocolError, "unattempted prepared"):
+            queue.cancel_brief(self.root, "source-failed")
+        with self.assertRaises(queue.ProtocolError):
+            queue.prepare_brief(self.root, "retry")
+        readback = {"id": "failure-message", "internal_date": str(int(time.time() * 1000)), "label_ids": ["SENT"], "payload": {"headers": [{"name": "To", "value": intent["recipient"]}, {"name": "Subject", "value": intent["subject"]}], "mime_type": "text/plain", "body": {"content": rendered}}}
+        delivered = queue.confirm_brief_delivery(self.root, "source-failed", {"native_sent_readback": readback, "verified_at": queue.now()})
+        self.assertEqual(delivered["status"], "delivered")
+        with self.assertRaisesRegex(queue.ProtocolError, "unattempted prepared"):
+            queue.cancel_brief(self.root, "source-failed")
+        self.assertEqual(queue.prepare_brief(self.root, "next-report")["receipt_ids"], [])
+
+    def test_brief_preserves_accepted_tier_for_configured_rated_base(self):
+        custom = policies()
+        custom["blind"]["base_required_years"] = 3
+        queue.configure_policies(self.root, WORKBOOK, custom)
+        role = packet("blind")
+        role["jobs"][0]["qualification"]["tier"] = "core"
+        self.save(role)
+        brief = queue.prepare_brief(self.root, "three-year-core")
+        self.assertEqual(brief["receipts"][0]["new_jobs"][0]["tier"], "core")
+
     def test_partial_insertion_is_conflict_not_double_insertion(self):
         self.connector = NativeConnector(rows=5)
         self.save(packet())

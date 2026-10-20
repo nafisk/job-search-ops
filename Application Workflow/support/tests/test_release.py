@@ -106,7 +106,7 @@ class WorkbookPrivacyTests(unittest.TestCase):
     def test_deleted_unused_shared_string_is_rejected_without_known_signature(self):
         text = '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><si><t>Fictional deleted private note</t></si></sst>'
         with self.package({'xl/sharedStrings.xml': text}) as package:
-            with self.assertRaisesRegex(AssertionError, 'unused shared strings'):
+            with self.assertRaisesRegex(ValueError, 'unused shared strings'):
                 release.workbook_privacy_check(package)
 
     def test_personal_metadata_and_external_relationships_are_rejected(self):
@@ -118,7 +118,7 @@ class WorkbookPrivacyTests(unittest.TestCase):
         ]
         for name, body, error in cases:
             with self.subTest(name=name), self.package({name: body}) as package:
-                with self.assertRaisesRegex(AssertionError, error):
+                with self.assertRaisesRegex(ValueError, error):
                     release.workbook_privacy_check(package)
 
     def test_xml_attribute_entities_and_nonvisible_parts_are_scanned(self):
@@ -126,16 +126,16 @@ class WorkbookPrivacyTests(unittest.TestCase):
         private = '/' + 'Users' + '/' + 'private-person' + '/resume.pdf'
         encoded = private.replace('/', '&#47;')
         with self.package({'xl/custom.xml': '<unused private="' + encoded + '" />'}) as package:
-            with self.assertRaisesRegex(AssertionError, 'private binding'):
+            with self.assertRaisesRegex(ValueError, 'private binding'):
                 release.workbook_privacy_check(package)
         with self.package({'xl/custom.xml': '<unused><!-- fictional removed note --></unused>'}) as package:
-            with self.assertRaisesRegex(AssertionError, 'hidden XML'):
+            with self.assertRaisesRegex(ValueError, 'hidden XML'):
                 release.workbook_privacy_check(package)
 
     def test_orphan_comment_with_private_author_and_note_is_rejected(self):
         comment = '<comments xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><authors><author>Fictional Private Person</author></authors><commentList><comment ref="A1" authorId="0"><text><t>Fictional old referral note</t></text></comment></commentList></comments>'
         with self.package({'xl/comments1.xml': comment}) as package:
-            with self.assertRaisesRegex(AssertionError, 'part inventory'):
+            with self.assertRaisesRegex(ValueError, 'part inventory'):
                 release.workbook_privacy_check(package)
 
     def test_orphan_worksheet_cannot_make_deleted_shared_string_look_used(self):
@@ -148,5 +148,82 @@ class WorkbookPrivacyTests(unittest.TestCase):
         ET.SubElement(ET.SubElement(strings, '{' + namespace + '}si'), '{' + namespace + '}t').text = 'Fictional deleted private note'
         orphan = '<worksheet xmlns="' + namespace + '"><sheetData><row r="1"><c r="A1" t="s"><v>' + str(index) + '</v></c></row></sheetData></worksheet>'
         with self.package({'xl/sharedStrings.xml': ET.tostring(strings), 'xl/worksheets/sheet8.xml': orphan}) as package:
-            with self.assertRaisesRegex(AssertionError, 'part inventory'):
+            with self.assertRaisesRegex(ValueError, 'part inventory'):
                 release.workbook_privacy_check(package)
+
+
+class ReleaseOptimizationTests(unittest.TestCase):
+    """The public checker/exporter must enforce validation with optimized Python."""
+    def setUp(self):
+        import shutil
+        import tempfile
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.base = Path(self.temporary.name).resolve()
+        self.root = self.base / 'source'
+        for name in (release.REPO_ROOT / release.INVENTORY).read_text().splitlines():
+            target = self.root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(release.REPO_ROOT / name, target)
+        self.scripts = self.root / 'Application Workflow/support/scripts'
+        self.workbook = self.root / 'Application Workflow/sheets/job-search-tracker.xlsx'
+        self.original = self.workbook.read_bytes()
+
+    def mutate_part(self, part, change):
+        import io
+        import zipfile
+        with zipfile.ZipFile(io.BytesIO(self.original)) as source:
+            entries = [(item, source.read(item)) for item in source.infolist()]
+        with zipfile.ZipFile(self.workbook, 'w') as out:
+            for item, content in entries:
+                out.writestr(item, change(content) if item.filename == part else content)
+
+    def command(self, script, mode, *args):
+        import os
+        import subprocess
+        import sys
+        env = os.environ.copy()
+        env.pop('PYTHONOPTIMIZE', None)
+        flags = []
+        if mode == 'env':
+            env['PYTHONOPTIMIZE'] = '1'
+        elif mode != 'normal':
+            flags.append(mode)
+        return subprocess.run([sys.executable, *flags, '-B', str(self.scripts / script), *map(str, args)],
+                              env=env, cwd=self.scripts.parent, capture_output=True, text=True)
+
+    def test_public_commands_reject_private_content_and_bad_schema_under_optimization(self):
+        import xml.etree.ElementTree as ET
+        def private_attribute(content):
+            node = ET.fromstring(content)
+            node.set('deleted-note', '/' + 'Users' + '/' + 'synthetic-private-person' + '/resume.pdf')
+            return ET.tostring(node)
+        def wrong_tab(content):
+            node = ET.fromstring(content)
+            node.find('{*}sheets/{*}sheet').set('name', 'Wrong tab')
+            return ET.tostring(node)
+        for case, part, mutation, expected in (
+            ('private', 'xl/worksheets/sheet1.xml', private_attribute, 'private binding'),
+            ('schema', 'xl/workbook.xml', wrong_tab, 'Workbook tabs differ'),
+        ):
+            self.mutate_part(part, mutation)
+            for mode in ('normal', 'env', '-O', '-OO'):
+                with self.subTest(case=case, mode=mode):
+                    checked = self.command('verify_release.py', mode)
+                    self.assertNotEqual(checked.returncode, 0, checked.stdout)
+                    self.assertIn(expected, checked.stderr)
+                    self.assertNotIn('Distribution verified', checked.stdout)
+                    destination = self.base / (case + mode + '.zip')
+                    exported = self.command('export_release.py', mode, destination)
+                    self.assertNotEqual(exported.returncode, 0, exported.stdout)
+                    self.assertIn(expected, exported.stderr)
+                    self.assertFalse(destination.exists())
+
+    def test_valid_package_exports_with_optimized_python(self):
+        for mode in ('env', '-O', '-OO'):
+            with self.subTest(mode=mode):
+                destination = self.base / ('valid' + mode + '.zip')
+                result = self.command('export_release.py', mode, destination)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertTrue(destination.is_file())
+                self.assertIn('Distribution verified', result.stdout)

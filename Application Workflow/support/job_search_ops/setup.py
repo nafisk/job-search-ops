@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import shlex
 import stat
 
 from .config import ConfigError, REPO_ROOT, SUPPORT_ROOT, WORKFLOW_ROOT, execution_plan, no_symlink, public_settings, read_json, require, toolkit_profile_module
@@ -539,7 +540,8 @@ def render_prompts(config, manifest):
         "Preserve exact role/event evidence, source dates and manual edits.\n"
         if plan["tracking"] else "Application and interview tracking is disabled; do not read correspondence or calendars for tracking.\n")
     def gate(workflow):
-        return (f"Before reading sources, dispatching helpers, or writing the tracker, run `python3 -m job_search_ops run-check --config '{root / 'config.json'}' --workflow {workflow}`. "
+        command = shlex.join(["python3", "-m", "job_search_ops", "run-check", "--config", str(root / "config.json"), "--workflow", workflow])
+        return (f"Before reading sources, dispatching helpers, or writing the tracker, run `{command}`. "
                 "Stop this workflow if it is held for a replacement pilot. Scheduled execution must never supply --pilot-update-id or treat itself as a manual pilot. "
                 "Only an explicitly requested manual pilot may use that exact preference-update ID; do not infer approval from a timer.\n")
 

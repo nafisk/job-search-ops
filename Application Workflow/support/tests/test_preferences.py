@@ -226,6 +226,20 @@ class PreferencesTests(unittest.TestCase):
             with self.subTest(change=change, profile_change=profile_change), self.assertRaises(ConfigError):
                 preferences.preference_plan(self.current, self.candidate(change, profile_change))
 
+    def test_cancelled_quiet_brief_allows_harmless_preference_update(self):
+        from job_search_ops import queue
+        root = self.h.root
+        quiet = queue.prepare_brief(root, "quiet")
+        self.assertEqual(quiet["receipt_ids"], [])
+        candidate = self.candidate(lambda c: c["schedules"]["main"].update(enabled=True, local_time="09:00"))
+        with self.assertRaisesRegex(ConfigError, "outstanding briefs"):
+            preferences.preference_plan(self.current, candidate)
+        cancelled = queue.cancel_brief(root, "quiet")
+        plan = preferences.preference_plan(self.current, candidate)
+        self.assertEqual(self.apply(plan)["status"], "applied")
+        self.assertEqual(queue.read(root / "state/delivery" / (queue.digest("quiet") + ".json")), cancelled)
+        self.assertEqual(queue.prepare_brief(root, "next-run")["status"], "prepared")
+
     def test_unfinished_writer_and_brief_reject_without_touching_config(self):
         candidate = self.candidate(lambda c: c["tracking"].update(gmail=False))
         before = (self.h.root / "config.json").read_bytes()

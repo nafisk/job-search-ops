@@ -72,6 +72,33 @@ def describe_updates(snapshot, updates):
     return result
 
 
+def validate_identities(base, workbook_id, snapshot, plan, accepted_links=None):
+    """Resolve accepted identities before accepting any tracking append.
+
+    An existing role still needs an expected-old-value update. A new-record
+    proposal cannot implicitly replace its manual status, notes or canonical URL.
+    """
+    accepted = sheets._accepted_links(base, workbook_id) if accepted_links is None else accepted_links
+    aliases, urls, _ = sheets._role_history(base, workbook_id, accepted)
+    jobs = sheets._index(snapshot, "Jobs", "Job Key")
+    for item in plan["updates"]:
+        canonical = aliases.get(item["job_key"], item["job_key"])
+        if canonical != item["job_key"]:
+            raise q.ProtocolError(f"Tracking update uses an accepted alias; review canonical Job Key {canonical} and its expected old value")
+        if canonical not in jobs:
+            raise q.ProtocolError("Tracking job key is missing")
+    for item in plan.get("new_records", []):
+        matches = {mapping[value] for mapping, value in ((aliases, item["job_key"]), (urls, item["url"])) if value in mapping}
+        if len(matches) > 1:
+            raise q.ProtocolError("Conflicting tracking identity: accepted job key and URL resolve to different canonical roles")
+        if matches:
+            canonical = matches.pop()
+            raise q.ProtocolError(f"Tracking record already exists as canonical Job Key {canonical}; review an expected-old-value update")
+        # Also reject duplicate identity proposals within this exact plan.
+        aliases[item["job_key"]] = item["job_key"]
+        urls[item["url"]] = item["job_key"]
+
+
 def prepare(root, workbook_id, snapshot, plan, owner="central"):
     if owner != "central" or workbook_id.startswith("local:"):
         raise q.ProtocolError("Only the central coordinator plans Google tracking edits")
@@ -106,6 +133,7 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
                 raise q.ProtocolError("Tracking requires independent accepted role URLs and unique destinations")
             links[key] = {"url": url}
             destinations.add(url)
+        validate_identities(base, workbook_id, snap, plan, accepted)
         changes, coordinates = [], set()
         def put(tab, row, field, value):
             table = snap.summary if tab == "Daily Summary" else snap.tables[tab]
@@ -129,10 +157,7 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
         insertion_starts = dict(next_rows)
         addition_rows = []
         for item in plan.get("new_records", []):
-            if item["job_key"] in links or item["url"] in destinations:
-                raise q.ProtocolError("Tracking record already exists; use an expected-old-value update")
             links[item["job_key"]] = {"url": item["url"]}
-            destinations.add(item["url"])
             date = sheets.serial(item["observed_at"], policy["timezone"])
             fields = dict(zip(sheets.JOBS, [date, date, item["company"], item["title"], sheets.hyperlink(item["url"]), item["status"], "Tracking evidence", "", "", "", "", "Application evidence; discovery screening not evaluated", 1, "Tracked application: " + item["evidence_ref"], item["job_key"]]))
             event = q.digest(["tracking", item["job_key"], item["evidence_ref"]])

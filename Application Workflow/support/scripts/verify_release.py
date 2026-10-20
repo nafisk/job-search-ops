@@ -70,48 +70,54 @@ def files(root=None):
     return [root / entry for entry in sorted(entries)]
 
 
+def require(condition, message):
+    """Release validation must also run under Python optimization."""
+    if not condition:
+        raise ValueError(message)
+
+
 def workbook_privacy_check(archive):
     """Inspect the entire blank template package, including nonvisible remnants."""
     names = archive.namelist()
-    assert len(names) == len(set(names)), "Workbook contains duplicate ZIP parts"
+    require(len(names) == len(set(names)), "Workbook contains duplicate ZIP parts")
     ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
     parts = {}
     personal_properties = {"creator", "lastModifiedBy", "Company", "Manager", "HyperlinkBase",
                            "title", "subject", "description", "keywords", "category", "contentStatus"}
     for name in names:
-        assert not name.startswith("/") and ".." not in Path(name).parts, "Unsafe workbook part path"
-        assert (name.endswith((".xml", ".rels")) and not name.startswith(("customXml/", "xl/embeddings/", "xl/externalLinks/"))
-                and name != "docProps/custom.xml"), "Unreviewed embedded or custom workbook content"
+        require(not name.startswith("/") and ".." not in Path(name).parts, "Unsafe workbook part path")
+        require(name.endswith((".xml", ".rels")) and not name.startswith(("customXml/", "xl/embeddings/", "xl/externalLinks/"))
+                and name != "docProps/custom.xml", "Unreviewed embedded or custom workbook content")
         raw = archive.read(name).decode("utf-8-sig")
-        assert "<!--" not in raw and "<!DOCTYPE" not in raw, "Workbook contains hidden XML comments or document declarations"
+        require("<!--" not in raw and "<!DOCTYPE" not in raw, "Workbook contains hidden XML comments or document declarations")
         node = ET.fromstring(raw)
         parts[name] = node
         texts = [raw, "".join(node.itertext())]
         for element in node.iter():
             texts.extend(element.attrib.values())
             if name.startswith("docProps/") and element.tag.rsplit("}", 1)[-1] in personal_properties:
-                assert not "".join(element.itertext()).strip(), "Workbook contains personal document metadata"
+                require(not "".join(element.itertext()).strip(), "Workbook contains personal document metadata")
             if name.endswith(".rels"):
-                assert element.get("TargetMode", "").lower() != "external", "Blank workbook contains an external relationship"
+                require(element.get("TargetMode", "").lower() != "external", "Blank workbook contains an external relationship")
         for text in texts:
-            assert not has_private_binding(unquote(text)), "Workbook XML contains private binding or key signature"
+            require(not has_private_binding(unquote(text)), "Workbook XML contains private binding or key signature")
     # A blank template has no comments, people, custom properties or orphan
     # worksheets. Unknown parts can retain private text without recognizable
     # signatures, and an orphan worksheet could disguise a deleted string as
     # referenced. Update this reviewed inventory only with a template change.
-    assert set(names) == WORKBOOK_PARTS, "Workbook part inventory differs; unreviewed or missing template content"
+    require(set(names) == WORKBOOK_PARTS, "Workbook part inventory differs; unreviewed or missing template content")
     strings = list(parts.get("xl/sharedStrings.xml", []))
     used = set()
     for name, node in parts.items():
         if name.startswith("xl/worksheets/") and name.endswith(".xml"):
             for cell in node.findall('.//m:c[@t="s"]', ns):
                 value = cell.find("m:v", ns)
-                assert value is not None and value.text is not None, "Missing shared-string index"
+                require(value is not None and value.text is not None, "Missing shared-string index")
                 index = int(value.text)
-                assert 0 <= index < len(strings), "Invalid shared-string index"
+                require(0 <= index < len(strings), "Invalid shared-string index")
                 used.add(index)
-    assert all(index in used or not "".join(value.itertext()).strip()
-               for index, value in enumerate(strings)), "Workbook contains unused shared strings (possible deleted content)"
+    require(all(index in used or not "".join(value.itertext()).strip()
+               for index, value in enumerate(strings)), "Workbook contains unused shared strings (possible deleted content)")
 
 
 def workbook_check():
@@ -121,7 +127,7 @@ def workbook_check():
         workbook_privacy_check(z)
         workbook = ET.fromstring(z.read("xl/workbook.xml"))
         names = [s.attrib["name"] for s in workbook.findall("m:sheets/m:sheet", ns)]
-        assert names == [t["name"] for t in schema["tabs"]], "Workbook tabs differ from schema"
+        require(names == [t["name"] for t in schema["tabs"]], "Workbook tabs differ from schema")
         shared = []
         if "xl/sharedStrings.xml" in z.namelist():
             shared = ["".join(si.itertext()) for si in ET.fromstring(z.read("xl/sharedStrings.xml"))]
@@ -134,13 +140,13 @@ def workbook_check():
                 return v.text if v is not None else ""
             cells = sheet.findall("m:sheetData/m:row/m:c", ns)
             headers = [value(c) for c in cells if re.fullmatch(r"[A-Z]+4", c.attrib["r"])]
-            assert headers == tab["headers"], f"{tab['name']} header mismatch"
-            assert not any(c.get("t") == "e" for c in cells), "Workbook contains formula error"
+            require(headers == tab["headers"], f"{tab['name']} header mismatch")
+            require(not any(c.get("t") == "e" for c in cells), "Workbook contains formula error")
             if tab["name"] not in ("Daily Summary", "How to Use"):
-                assert not any(value(c) for c in cells if int(re.search(r"\d+", c.attrib["r"])[0]) >= 5), "Template contains private/sample rows"
+                require(not any(value(c) for c in cells if int(re.search(r"\d+", c.attrib["r"])[0]) >= 5), "Template contains private/sample rows")
     sys.path.insert(0, str(SUPPORT_ROOT))
     from job_search_ops.sheets import workbook_schema
-    assert schema == workbook_schema(), "Python and template schemas differ"
+    require(schema == workbook_schema(), "Python and template schemas differ")
 
 
 def main():
@@ -167,7 +173,7 @@ def main():
                 target = unquote(urlsplit(target).path)
                 if target and not (path.parent / target).exists(): failures.append(relative + ": broken local link " + target)
     try: workbook_check()
-    except (AssertionError, KeyError, ValueError, OSError, ET.ParseError, zipfile.BadZipFile) as error: failures.append(str(error))
+    except (KeyError, ValueError, OSError, ET.ParseError, zipfile.BadZipFile) as error: failures.append(str(error))
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1

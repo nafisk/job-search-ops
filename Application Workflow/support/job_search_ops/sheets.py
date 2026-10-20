@@ -631,6 +631,9 @@ def authorize_write(root, journal_id, fresh_snapshot):
             raise q.ProtocolError("Workbook geometry changed since tracking planning; cancel and re-plan")
         if actual != journal["before_state"]:
             raise q.ProtocolError("User edit, sort, or other change since planning; cancel unattempted plan and re-plan")
+        if journal.get("operation") == "tracking":
+            from .google_tracking import validate_identities
+            validate_identities(base, journal["workbook_id"], view, journal["tracking_plan"])
         recorded_at = q.now()
         attempt = journal["attempts"] + 1
         attempt_id = q.digest([journal_id, journal["workbook_id"], attempt, recorded_at])
