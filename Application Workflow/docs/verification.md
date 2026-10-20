@@ -22,7 +22,10 @@ referral holds, the pending-pilot execution gate, complete daily recurrence, sco
 schedule readiness and disabled tracking. Tracking tests exercise accepted aliases
 through the public Google commands and actual Excel files, including an old
 prepared journal. Report tests cover cancelled quiet briefs, later receipts and
-actionable failures with no new jobs; prompt tests execute quoted private paths. The toolkit tests cover parsing,
+actionable failures with no new jobs; prompt tests execute quoted private paths.
+Filesystem tests reject differently capitalized repository locations before setup
+writes private data. Alias-URL tests cover saved and previously accepted alternate
+URLs in both trackers, plus shared conflict guards. The toolkit tests cover parsing,
 screening, source coverage, tracking and recovery.
 
 The package check rejects unlisted files and symlinks, tolerates but excludes normal Python caches, and verifies local links, private-binding exclusions and the blank seven-tab workbook against its schema. The workbook check inspects the reviewed XML parts, metadata,

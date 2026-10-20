@@ -61,6 +61,31 @@ def no_symlink(path):
     return path
 
 
+def filesystem_contains(directory, path):
+    """Compare filesystem identities, including a not-yet-created descendant.
+
+    Walking existing ancestors catches case aliases on case-insensitive volumes
+    without conflating distinct directories on case-sensitive volumes. A missing
+    directory cannot contain an existing repository when checking the reverse.
+    """
+    try:
+        try:
+            boundary = Path(directory).stat()
+        except FileNotFoundError:
+            return False
+        path = Path(path)
+        for ancestor in (path, *path.parents):
+            try:
+                actual = ancestor.stat()
+            except FileNotFoundError:
+                continue
+            if (actual.st_dev, actual.st_ino) == (boundary.st_dev, boundary.st_ino):
+                return True
+        return False
+    except OSError:
+        raise ConfigError("path: cannot verify filesystem location") from None
+
+
 def local_path(value, base, field, *, absolute=False):
     text(value, field)
     require(not any(s in value for s in ("~", "$", "://")), field, "use an explicit local path")
@@ -132,7 +157,7 @@ def load_config(path):
             "installation_id", "expected lowercase identifier")
     root = local_path(value["instance_root"], source.parent, "instance_root", absolute=True)
     require(root.name != "state", "instance_root", "state is reserved for the managed child; choose another installation folder name")
-    require(not root.is_relative_to(REPO_ROOT) and not REPO_ROOT.is_relative_to(root),
+    require(not filesystem_contains(REPO_ROOT, root) and not filesystem_contains(root, REPO_ROOT),
             "instance_root", "must be separate from the repository")
     require(root != root.parent and len(root.parts) >= 4, "instance_root", "choose a dedicated private subdirectory")
     profile_path = local_path(value["profile_path"], source.parent, "profile_path")
@@ -146,7 +171,7 @@ def load_config(path):
     require(Path(resolved["state_root"]) == root / "state", "private.state_root", "must match instance_root/state")
     for name, ref in resolved.items():
         no_symlink(ref)
-        require(not Path(ref).is_relative_to(REPO_ROOT), "private reference", "must be outside repository")
+        require(not filesystem_contains(REPO_ROOT, ref), "private reference", "must be outside repository")
 
     keys(value["modules"], " ".join(MODULES), "modules")
     require(all(type(v) is bool for v in value["modules"].values()), "modules", "expected booleans")
@@ -200,7 +225,7 @@ def load_config(path):
     resume = value["candidate"]["resume_path"]
     if resume is not None:
         resume = local_path(resume, source.parent, "candidate.resume_path", absolute=True)
-        require(not resume.is_relative_to(REPO_ROOT), "candidate.resume_path", "must remain outside repository")
+        require(not filesystem_contains(REPO_ROOT, resume), "candidate.resume_path", "must remain outside repository")
         value["candidate"]["resume_path"] = str(resume)
     if legacy or value["modules"]["blind"] or value["blind_policy"] is not None:
         keys(value["blind_policy"], "version max_required_years stretch_required_years exclude_explicit_senior min_rating excluded_title_terms", "blind_policy")
@@ -226,7 +251,7 @@ def load_config(path):
         ref = value["sources"][name]
         if ref is not None:
             ref = local_path(ref, source.parent, f"sources.{name}")
-            require(not ref.is_relative_to(REPO_ROOT), f"sources.{name}", "private source choices must be outside repository")
+            require(not filesystem_contains(REPO_ROOT, ref), f"sources.{name}", "private source choices must be outside repository")
             value["sources"][name] = str(ref)
 
     keys(value["schedules"], "main blind", "schedules")

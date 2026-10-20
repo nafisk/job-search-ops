@@ -449,10 +449,14 @@ def prepare(root, workbook_id, snapshot, owner):
                     mapped.add(key)
                 if key in aliases:
                     mapped.add(aliases[key])
-                if job["url"] in existing_urls:
-                    mapped.add(existing_urls[job["url"]])
-                if job["url"] in alias_urls:
-                    mapped.add(alias_urls[job["url"]])
+                # Verified alternate URLs can identify a saved role even when
+                # every identifier in this source's packet is new.
+                identity_urls = [job["url"]] + [alias["url"] for alias in job.get("aliases", []) if alias.get("url")]
+                for url in identity_urls:
+                    if url in existing_urls:
+                        mapped.add(existing_urls[url])
+                    if url in alias_urls:
+                        mapped.add(alias_urls[url])
                 if len(mapped) > 1:
                     raise q.ProtocolError("Conflicting cross-source identity mapping")
                 canonical_key = next(iter(mapped), key)

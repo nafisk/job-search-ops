@@ -115,6 +115,77 @@ class RoleMergeTests(unittest.TestCase):
         later["jobs"][0]["url"] = "https://alternate.example/jobs/9"
         self.assertEqual(self.save(later)[1]["new_jobs"], [])
 
+    def test_new_ids_resolve_verified_alias_urls_without_changing_saved_role(self):
+        original = packet("email")
+        alternate_url = "https://alternate.example/jobs/9"
+        original["jobs"][0].update(aliases=[alias(url=alternate_url)], referral_hold=True)
+        self.save(original)
+        manual = {"Application Status": "Saved", "Notes": "Personal note", "Referral Contact": "My contact"}
+        for field, value in manual.items():
+            self.native.set("Jobs", 4, field, value)
+        for number, saved_url in enumerate((original["jobs"][0]["url"], alternate_url), start=2):
+            with self.subTest(saved_url=saved_url):
+                later = packet("portal", f"new-id-{number}", f"new:req-{number}", f"new-event-{number}")
+                alias_key = f"unseen:req-{number}"
+                later["jobs"][0]["aliases"] = [alias(alias_key, saved_url)]
+                _, receipt = self.save(later)
+                self.assertEqual(receipt["new_jobs"], [])
+                self.assertEqual(receipt["new_source_events"], 1)
+                rows = sheets.Snapshot(self.native.snapshot(), WORKBOOK).state()["Jobs"]["rows"]
+                self.assertEqual(len(rows), 1)
+                self.assertEqual(rows[0]["url"], original["jobs"][0]["url"])
+                self.assertEqual(rows[0]["values"]["Seen Count"], number)
+                for field, value in manual.items():
+                    self.assertEqual(rows[0]["values"][field], value)
+                state = sheets.role_state(self.root, WORKBOOK)
+                self.assertEqual(state["aliases"][later["jobs"][0]["job_key"]], "example:req-1")
+                self.assertEqual(state["aliases"][alias_key], "example:req-1")
+                self.assertEqual(state["alias_urls"][later["jobs"][0]["url"]], "example:req-1")
+                self.assertTrue(state["referral_restrictions"][0]["referral_hold"])
+        self.assertEqual(queue.pending(self.root), [])
+
+    def test_same_batch_verified_alias_url_merges_new_identifiers(self):
+        first = packet("email", "first")
+        first["jobs"][0]["aliases"] = [alias(url="https://alternate.example/jobs/9")]
+        later = packet("portal", "later", "new:req-2", "later-event")
+        later["jobs"][0]["aliases"] = [alias("unseen:req-3", "https://alternate.example/jobs/9")]
+        queue.enqueue(self.root, first)
+        _, receipt = self.save(later)
+        self.assertEqual(len(receipt["new_jobs"]), 1)
+        self.assertEqual(receipt["new_source_events"], 2)
+        rows = sheets.Snapshot(self.native.snapshot(), WORKBOOK).rows("Jobs")
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][1]["Seen Count"], 2)
+        state = sheets.role_state(self.root, WORKBOOK)
+        for key in ("example:req-1", "alternate:req-9", "new:req-2", "unseen:req-3"):
+            self.assertEqual(state["aliases"][key], rows[0][1]["Job Key"])
+
+    def test_conflicting_verified_alias_urls_leave_saved_roles_and_packet_intact(self):
+        first = packet()
+        second = packet("email", "second", "example:req-2", "second-event")
+        self.save(first)
+        self.save(second)
+        before = self.native.snapshot()
+        conflict = packet("portal", "conflict-urls", "new:req-3", "conflict-event")
+        conflict["jobs"][0]["aliases"] = [alias(f"unseen:req-{number}", proposal["jobs"][0]["url"]) for number, proposal in enumerate((first, second))]
+        queue.enqueue(self.root, conflict)
+        with self.assertRaisesRegex(queue.ProtocolError, "Conflicting cross-source identity"):
+            sheets.prepare(self.root, WORKBOOK, self.native.snapshot(), "central")
+        self.assertEqual(self.native.snapshot(), before)
+        self.assertEqual(len(queue.pending(self.root)), 1)
+        self.assertNotIn("new:req-3", sheets.role_state(self.root, WORKBOOK)["aliases"])
+
+    def test_verified_alias_url_still_requires_matching_company(self):
+        first = packet()
+        self.save(first)
+        later = packet("portal", "wrong-company", "new:req-2", "wrong-company-event")
+        later["jobs"][0].update(company="Another Company", aliases=[alias("unseen:req-3", first["jobs"][0]["url"])])
+        queue.enqueue(self.root, later)
+        with self.assertRaisesRegex(queue.ProtocolError, "Company conflicts"):
+            sheets.prepare(self.root, WORKBOOK, self.native.snapshot(), "central")
+        self.assertEqual(len(queue.pending(self.root)), 1)
+        self.assertNotIn("new:req-2", sheets.role_state(self.root, WORKBOOK)["aliases"])
+
     def test_uncommitted_alias_and_hold_are_not_accepted_history(self):
         self.save(packet("email"))
         proposed = packet("portal", "not-saved", event="not-saved-event")
@@ -169,6 +240,36 @@ class RoleMergeTests(unittest.TestCase):
 
 @unittest.skipUnless(RUNTIME, "Bundled XLSX runtime unavailable")
 class LocalRoleMergeTests(unittest.TestCase):
+    def test_actual_excel_new_ids_merge_through_saved_alias_urls(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            path = root / "tracker.xlsx"
+            workbook = "local:fictional-installation"
+            config = {"instance_root": str(root), "installation_id": "fictional-installation", "tracker": {"provider": "local_xlsx", "path": str(path)}}
+            intent = {"intent_id": "fictional-intent", "request_digest": "fixture-request", "request": config["tracker"]}
+            queue.atomic(root / "installation.json", {"resources": {"tracker:tracker": intent}})
+            queue.configure_policies(root, workbook, policies())
+            local_excel.initialize(config, NODE, MODULES)
+            initial = packet("email")
+            initial["workbook_id"] = workbook
+            alternate_url = "https://alternate.example/jobs/9"
+            initial["jobs"][0]["aliases"] = [alias(url=alternate_url)]
+            queue.enqueue(root, initial)
+            local_excel.merge(root, workbook, path, NODE, MODULES)
+            for number, saved_url in enumerate((initial["jobs"][0]["url"], alternate_url), start=2):
+                later = packet("portal", f"later-{number}", f"new:req-{number}", f"later-event-{number}")
+                later["workbook_id"] = workbook
+                later["jobs"][0]["aliases"] = [alias(f"unseen:req-{number}", saved_url)]
+                queue.enqueue(root, later)
+                receipt = local_excel.merge(root, workbook, path, NODE, MODULES)
+                self.assertEqual(receipt["new_jobs"], [])
+                rows = local_excel.inspect_workbook(path, workbook).state()["Jobs"]["rows"]
+                self.assertEqual(len(rows), 1)
+                self.assertEqual(rows[0]["url"], initial["jobs"][0]["url"])
+                self.assertEqual(rows[0]["values"]["Seen Count"], number)
+                self.assertEqual(sheets.role_state(root, workbook)["aliases"][f"new:req-{number}"], "example:req-1")
+            self.assertEqual(queue.pending(root), [])
+
     def test_actual_excel_alias_merge_keeps_manual_cells_and_records_portal_hold(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()

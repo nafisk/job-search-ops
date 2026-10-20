@@ -20,7 +20,7 @@ Proceed through tracker, discovery, tracking, execution and delivery choices one
 | Manual or scheduled execution | Timezone for all displayed dates; times and notification preferences only for requested main/Blind schedules. Helpers never get timers. |
 | Chat or self-email | Ask recipient and explicit send opt-in only for email. |
 
-For a new installation, choose an existing durable parent outside the repository and create a dedicated private installation directory with owner-only permissions (`0700`). Save draft settings and copied source files with owner-only permissions (`0600`). Check existing ownership/permissions before reusing a directory; do not overwrite another installation.
+For a new installation, choose an existing durable parent outside the repository and create a dedicated private installation directory with owner-only permissions (`0700`). Save draft settings and copied source files with owner-only permissions (`0600`). Setup checks actual filesystem locations, including differently capitalized paths and not-yet-created children, to keep private data outside the repository. Check existing ownership/permissions before reusing a directory; do not overwrite another installation.
 
 Use **`draft-config.json` and `draft-profile.json`** for the initial inputs. Set the draft config's `profile_path` to the draft profile and `instance_root` to the selected private directory. Reserve **`config.json` and `profile.json` for the normalized snapshots created by `init`**; writing raw drafts under those names can fail initialization. Keep this setup location durable, including when runs are manual.
 
