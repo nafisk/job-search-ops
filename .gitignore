@@ -1,1 +1,27 @@
 .DS_Store
+
+# Generated Python / local tools
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+*.egg-info/
+.pytest_cache/
+
+# Personal runtime data belongs outside this repository.
+.env
+.env.*
+!.env.example
+private/
+state/
+staging/
+runs/
+receipts/
+credentials*.json
+token*.json
+*.pem
+*.key
+
+# Workbook rebuild previews are local inspection artifacts.
+Application Workflow/sheets/previews/
