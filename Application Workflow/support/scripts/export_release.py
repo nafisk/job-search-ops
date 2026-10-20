@@ -11,6 +11,9 @@ import zipfile
 
 import verify_release
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from job_search_ops.config import filesystem_contains
+
 
 def export(destination):
     destination = Path(destination).expanduser().absolute()
@@ -18,7 +21,7 @@ def export(destination):
         raise ValueError('choose a new .zip file outside the repository')
     if any(path.is_symlink() for path in (destination, *destination.parents)):
         raise ValueError('export path must not contain symlinks')
-    if destination.is_relative_to(verify_release.REPO_ROOT):
+    if filesystem_contains(verify_release.REPO_ROOT, destination):
         raise ValueError('save the export outside the repository')
     if verify_release.main():
         raise ValueError('release validation failed; no export created')

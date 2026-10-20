@@ -191,19 +191,13 @@ def _json_body(value):
 
 
 def _writes(new, plan):
-    root = Path(new["instance_root"])
     manifest = copy.deepcopy(plan["manifest_before"])
-    prompts = setup.render_prompts(new, manifest)
     values = {"config.json": public_settings(new), "profile.json": new["_profile"],
-              "state/approved-policies.json": plan["new_policies"],
-              "execution-plan.json": execution_plan(new), "runtime-profile.json": setup._runtime_profile(new, manifest)}
+              "state/approved-policies.json": plan["new_policies"]}
     writes = {name: _json_body(value) for name, value in values.items()}
-    manifest["prompts"] = {}
-    for name, body in prompts.items():
-        relative = "prompts/" + name + ".md"
-        writes[relative] = body
-        manifest["prompts"][name] = {"path": str(root / relative), "sha256": hashlib.sha256(body.encode()).hexdigest()}
-    for name in set(plan["manifest_before"].get("prompts", {})) - set(prompts):
+    files, manifest["prompts"] = setup.runtime_artifacts(new, manifest)
+    writes.update(files)
+    for name in set(plan["manifest_before"].get("prompts", {})) - set(manifest["prompts"]):
         writes["prompts/" + name + ".md"] = "This source is disabled in execution-plan.json. Do not run it or use its accounts. Existing evidence and bindings are retained for history.\n"
     manifest.update(config_digest=setup.digest(public_settings(new)), profile_digest=setup.digest(new["_profile"]))
     manifest["preferences_update"] = {"update_id": plan["update_id"], "digest": plan["new_digest"],

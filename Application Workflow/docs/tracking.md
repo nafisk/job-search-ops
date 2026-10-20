@@ -21,7 +21,7 @@ Pending preference changes require their explicitly requested replacement pilot.
 
 ## Save to Google Sheets
 
-Commands run from `Application Workflow/support/`. `--root` is the installation directory containing `installation.json`, never its `state/` child. Use the complete native snapshot described in [Google Sheets](sheets-protocol.md#1-capture-real-native-sheets-state).
+Commands run from `Application Workflow/support/`. `--root` is the installation directory containing `installation.json`, never its `state/` child. Use the complete native snapshot described in [snapshot capture](native-evidence.md#assemble-a-google-sheets-snapshot).
 
 1. Capture the real tracker and inspect exact identities and current manual fields:
 
@@ -66,7 +66,7 @@ python3 -m job_search_ops tracking-prepare --root /absolute/private --workbook W
 ```
 
 4. Capture fresh native state. Run `authorize-write --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/tracking-fresh.json`, send its exact batch once using native Sheets tools, then obtain complete readback and run `commit --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/tracking-after.json`. These are `python3 -m job_search_ops` commands. Keep the tracker idle during the write: Google provides no conditional cell transaction protecting a simultaneous human edit to the same field.
-5. After a timeout, follow [reconciliation](sheets-protocol.md#3-reconcile-uncertain-outcomes); do not send the batch again. Only exact verified saved state creates a tracking receipt.
+5. After a timeout, follow [uncertain-write recovery](upgrade-and-recovery.md#uncertain-google-sheets-write); do not send the batch again. Only exact verified saved state creates a tracking receipt.
 
 ## Save to Excel and report
 

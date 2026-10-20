@@ -10,17 +10,9 @@ This guide covers discovery writes and the common authorize/readback/recovery st
 
 ## 1. Capture real native Sheets state
 
-Read metadata to resolve current sheet IDs and grid row counts. Read native CellData for all managed columns from row 4 through the last allocated row of **Jobs**, **Job Sources**, **Rated Companies**, and **Rated Search Coverage**, plus **Daily Summary A4:B12**. Divide large reads into contiguous bounded chunks. Retain the original responses and request ranges; omitted trailing empty CellData is normal.
+Follow the complete [snapshot capture procedure](native-evidence.md#assemble-a-google-sheets-snapshot) for metadata, native CellData, request masks and read coverage. Use it for the initial state, fresh authorization read and final readback.
 
-Request this cell field mask:
-
-```text
-userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns
-```
-
-Use `sheets.combine_snapshot(metadata, cell_responses, read_ranges, cell_fields)` or the CLI snapshot assembler. It accepts actual native connector responses, including `structuredContent` wrappers. The resulting native JSON carries `_read_ranges` and `_cell_fields`, recording what was actually requested. These fields must not be invented to cover unread cells. A value-only range response is insufficient. Every required header must be present once on row 4. Header names and sheet IDs, not remembered numeric IDs, control writes.
-
-The seven-tab schema is `Application Workflow/sheets/workbook-schema.json`. Jobs keeps the original fourteen columns and a hidden managed **Job Key** column; the initializer places it in O. The writer resolves the named column after a user reorder. It does not migrate an old workbook implicitly.
+**Before proceeding:** confirm the actual workbook identity, complete managed ranges and row-4 headers. Value-only responses are insufficient. Never label an unread range as empty or invent request coverage. The writer resolves named columns after a user reorder; it does not migrate an old workbook implicitly.
 
 ## 2. Prepare, refresh, authorize, then invoke the connector
 
@@ -41,19 +33,9 @@ Only successful readback installs a private saved receipt and moves packets from
 
 ## 3. Reconcile uncertain outcomes
 
-After a timeout or interruption, do not call the connector again. Read actual native state and call `sheets.reconcile(root, journal_id, snapshot)`:
+**After a timeout or interruption, do not send the batch again or release its packets.** Keep the journal/owner claim, capture fresh native state and follow [uncertain Google Sheets write recovery](upgrade-and-recovery.md#uncertain-google-sheets-write). That is the authoritative reconciliation and settlement procedure.
 
-- Exact planned state: verify and commit the existing write, with no second mutation.
-- Exact before-state: mark `awaiting_settlement`; an unchanged snapshot cannot prove that a timed-out call will not land later. No automatic retry is allowed. A changed grid size is a conflict even if the visible cells are unchanged, because blank inserted rows do not prove ownership.
-- Mixed or user-edited state: preserve a conflict and queue; no automatic replay. Investigate the narrow cells using the before/after journal. Only after an explicit reviewed repair restores a verifiable before or after state can reconciliation proceed.
-
-Retrying an unchanged state requires `sheets.reconcile(root, journal_id, snapshot, settlement)` (CLI `reconcile --settlement file.json`). Evidence must include the matching `journal_id`, the **current `attempt_id`**, and a timezone-qualified `verified_at` on or after that attempt's `attempt_recorded_at` and no later than the current time. Reconciliation returns the current attempt metadata when the write remains unresolved.
-
-Use `kind: native_terminal_failure` plus the actual `response` from that attempt containing a terminal native error code (400, 401, 403, 404, 409, 412 or 422). Alternatively, use `kind: human_reconciled` with a genuine `human_turn_ref` and the explicit confirmation `The previous connector operation has ended; no pending call can still apply this batch.` Both kinds require the same attempt identity and time checks. Generic tool errors, timeouts and 5xx responses do not prove settlement. Never manufacture human confirmation or relabel an older response as evidence for a newer attempt.
-
-Once marked `retryable`, capture another fresh snapshot and authorize once. Each authorization creates a new attempt ID and clears the previous active settlement; the old evidence remains in audit history. If this new attempt times out, evidence from the earlier attempt cannot authorize another write. Repeated reconciliation of the same accepted settlement is safe and does not duplicate its audit entry. Older pending journals without an attempt ID may still commit an exact successful readback, but cannot be automatically retried; follow [upgrade and recovery](upgrade-and-recovery.md#uncertain-google-sheets-write).
-
-If a user edits or sorts before the first write, `sheets.cancel_unattempted(root, journal_id, owner)` permits a fresh plan. It cannot cancel an attempted or uncertain mutation. `queue.release_claim(root, workbook_id, owner)` requires the recorded owner and no unresolved journals. There is no automatic claim expiry or force-takeover API.
+An exact after-state can commit without another write. An unchanged before-state still needs settlement for the current attempt; a mixed state needs reviewed repair. No automatic claim expiry or forced takeover is available. For edits before any attempt, use the recovery guide's [unattempted plan procedure](upgrade-and-recovery.md#unattempted-google-sheets-plan).
 
 The Google connector does not expose a transaction spanning the prewrite read and write. Concurrent human appends are preserved by inserted rows, and readback detects unexpected additions. Human edits to an existing cell that this batch also updates can still race the final request: a last-moment edit to Last Seen or Seen Count can be overwritten. No compare-and-swap guarantee is claimed. This local claim coordinates one installation only; two independent installations must not write the same tracker.
 

@@ -227,3 +227,43 @@ class ReleaseOptimizationTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assertTrue(destination.is_file())
                 self.assertIn('Distribution verified', result.stdout)
+
+    def test_case_alias_destinations_inside_repository_are_rejected_before_export(self):
+        alternate = self.root.with_name(self.root.name.upper())
+        if not alternate.exists():
+            self.skipTest('requires a case-insensitive test filesystem')
+        self.assertTrue(alternate.samefile(self.root))
+        before = {p.relative_to(self.root): p.read_bytes() for p in release.files(self.root)}
+        for relative in ('inside.zip', 'Application Workflow/docs/inside.zip', 'new/inside.zip'):
+            with self.subTest(relative=relative):
+                destination = alternate / relative
+                result = self.command('export_release.py', 'normal', destination)
+                try:
+                    self.assertNotEqual(result.returncode, 0, result.stdout)
+                    self.assertIn('outside the repository', result.stderr)
+                    self.assertNotIn('Distribution verified', result.stdout)
+                    self.assertFalse(destination.exists())
+                finally:
+                    destination.unlink(missing_ok=True)
+        self.assertEqual(before, {p.relative_to(self.root): p.read_bytes() for p in release.files(self.root)})
+
+    def test_existing_export_is_preserved_with_alternate_capitalization(self):
+        original = self.base / 'archive.zip'
+        original.write_bytes(b'keep existing archive')
+        alternate = self.base / 'ARCHIVE.zip'
+        if not alternate.exists():
+            self.skipTest('requires a case-insensitive test filesystem')
+        result = self.command('export_release.py', 'normal', alternate)
+        self.assertNotEqual(result.returncode, 0, result.stdout)
+        self.assertIn('new .zip', result.stderr)
+        self.assertEqual(original.read_bytes(), b'keep existing archive')
+
+    def test_case_alias_parent_outside_repository_is_allowed(self):
+        alternate = self.base.with_name(self.base.name.upper())
+        if not alternate.exists():
+            self.skipTest('requires a case-insensitive test filesystem')
+        destination = alternate / 'outside.zip'
+        result = self.command('export_release.py', 'normal', destination)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue((self.base / 'outside.zip').is_file())
+        self.assertNotIn(destination, release.files(self.root))

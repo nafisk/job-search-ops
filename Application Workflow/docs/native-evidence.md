@@ -82,9 +82,15 @@ responses solely to verify the protocol and cannot establish live readiness.
 
 ## Assemble a Google Sheets snapshot
 
-Read native metadata and bounded `CellData`, including trailing empty areas. For
-each request use the explicit mask from `Application Workflow/sheets/workbook-schema.json`. Store
-each cell response with its **actual** request:
+This is the authoritative snapshot contract for discovery, tracking, authorization and recovery. Read current metadata to resolve sheet IDs and allocated grid row counts; never reuse remembered IDs. The [seven-tab schema](../sheets/workbook-schema.json) defines required headers and managed columns. Every required header must occur once on row 4. Jobs includes the hidden managed **Job Key** column (O in the blank template); resolve it by header after a user reorder.
+
+Read native `CellData` for all managed columns from row 4 through the **last allocated row** of **Jobs**, **Job Sources**, **Rated Companies** and **Rated Search Coverage**, plus **Daily Summary A4:B12**. Include trailing empty areas. Use this complete mask on every request:
+
+```text
+userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns
+```
+
+Split large reads into contiguous bounded chunks. Save each raw cell response with its **actual** request:
 
 ```json
 [
@@ -99,13 +105,9 @@ each cell response with its **actual** request:
 ]
 ```
 
-The example response is intentionally incomplete. Real writes require all four
-managed data tabs through their actual grid row counts and Daily Summary A4:B12.
-Setup also reads the other header rows and the formatting evidence. Split large reads into
-contiguous bounded chunks; use the same complete mask on every chunk. Do not claim
-an unread range was empty because Google omitted trailing cells from another range.
-Local native payloads have a 128 MiB ceiling; do not truncate history to fit. Stop
-for a reviewed archival/migration if a complete snapshot exceeds that ceiling.
+The example response is intentionally incomplete. Setup additionally reads the other header rows and structural/formatting evidence described below. Google may omit trailing empty CellData in its response; the retained request proves which cells were read. **A value-only response is insufficient. Never claim unread cells were empty or truncate history to fit a limit.** Local native payloads have a 128 MiB ceiling; stop for reviewed archival/migration if a complete snapshot exceeds it.
+
+Use `sheets.combine_snapshot(metadata, cell_responses, read_ranges, cell_fields)` or the CLI `snapshot` command below. Both accept actual native connector responses, including `structuredContent` wrappers. The assembled JSON's `_read_ranges` and `_cell_fields` must reflect actual requests, never invented coverage.
 
 ```sh
 python3 -m job_search_ops snapshot --metadata /PRIVATE/metadata.json \
@@ -115,7 +117,7 @@ python3 -m job_search_ops bootstrap --snapshot /PRIVATE/snapshot.json \
 ```
 
 `bootstrap` applies only to an empty imported template. It emits native requests
-for frozen headers, filters, status validation, a hidden key column, date formats,
+for frozen headers, basic filters (not native Tables), status validation, a hidden key column, date formats,
 and open-ended Google summary formulas. Apply its `requests` with the connector,
 then read back all settings. Send its `include_spreadsheet_in_response`,
 `response_include_grid_data`, and `response_ranges` arguments along with the batch.
@@ -185,8 +187,8 @@ Adding an update ID only to an older receipt cannot certify the new settings.
 Include `delivery_readback` from the actual destination. Source gaps may remain
 explicit `complete_with_exceptions`; unsaved writes cannot pass acceptance.
 
-For daily report retries and the separate saved-vs-delivered frontier, follow
-[the Sheets protocol](sheets-protocol.md) and [report runbook](report.md).
+For delivery evidence and the separate saved-vs-delivered frontier, follow the
+[report runbook](report.md). For uncertain outcomes, use [delivery recovery](upgrade-and-recovery.md#uncertain-brief-delivery).
 Do not substitute a send acknowledgement or a made-up message reference for actual
 delivery readback. Blind's saved result remains eligible for exactly one later
 central daily brief; its own result message does not consume that brief frontier.

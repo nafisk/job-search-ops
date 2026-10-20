@@ -446,6 +446,12 @@ class SetupTests(unittest.TestCase):
                 self.assertTrue(runbooks[name].is_file())
                 self.assertIn(f"commands from {SUPPORT_ROOT}", text)
                 self.assertIn(f"Repository: {REPO_ROOT}", text)
+                for private_file in ("config.json", "runtime-profile.json", "installation.json", "execution-plan.json"):
+                    self.assertIn(str(self.root / private_file), text)
+                self.assertIn(str(WORKFLOW_ROOT / "docs/operations.md"), text)
+                self.assertIn("an available connector is not authorization", text)
+                self.assertIn("Never fill or submit applications", text)
+                self.assertIn("Scheduled execution must never supply --pilot-update-id", text)
 
     def test_generated_start_commands_run_with_apostrophe_and_shell_characters_in_root(self):
         self.root = self.base / "Alex's workflow; portable"

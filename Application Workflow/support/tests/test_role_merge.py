@@ -1,11 +1,13 @@
 """Cross-run identity and source-owned referral restrictions, on both trackers."""
 import copy
+import itertools
 import json
 import os
 from pathlib import Path
 import tempfile
 import time
 import unittest
+from unittest import mock
 
 from job_search_ops import local_excel, queue, sheets
 from test_pipeline import NativeConnector, STAMP, WORKBOOK, packet, policies
@@ -17,6 +19,16 @@ def alias(key="alternate:req-9", url=None):
     if url is not None:
         result["url"] = url
     return result
+
+
+def connected_packets(by_url=False):
+    proposals = [packet(source, f"{source}-run", f"{key}:req-{number}", f"{source}-event")
+                 for number, (source, key) in enumerate((("email", "alpha"), ("portal", "beta"), ("blind", "gamma")), start=1)]
+    proposals[1]["jobs"][0].update(referral_hold=True, referral_contact="Private portal contact")
+    proposals[2]["jobs"][0]["aliases"] = [
+        alias(f"unseen:req-{number}" if by_url else proposal["jobs"][0]["job_key"], proposal["jobs"][0]["url"] if by_url else None)
+        for number, proposal in enumerate(proposals[:2])]
+    return proposals
 
 
 class RoleMergeTests(unittest.TestCase):
@@ -160,6 +172,117 @@ class RoleMergeTests(unittest.TestCase):
         for key in ("example:req-1", "alternate:req-9", "new:req-2", "unseen:req-3"):
             self.assertEqual(state["aliases"][key], rows[0][1]["Job Key"])
 
+    def test_three_source_bridge_merges_in_every_processing_order(self):
+        for by_url, order in itertools.product((False, True), itertools.permutations(range(3))):
+            with self.subTest(by_url=by_url, order=order), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                queue.configure_policies(root, WORKBOOK, policies())
+                native = NativeConnector()
+                proposals = connected_packets(by_url)
+                for proposal in proposals:
+                    queue.enqueue(root, proposal)
+                entries = {entry["packet"]["source"]: entry for entry in queue.pending(root)}
+                ordered = [entries[proposals[number]["source"]] for number in order]
+                with mock.patch.object(queue, "pending", return_value=ordered):
+                    journal = sheets.prepare(root, WORKBOOK, native.snapshot(), "central")
+                request = sheets.authorize_write(root, journal["journal_id"], native.snapshot())
+                native.apply(request["requests"])
+                receipt = sheets.verify_and_commit(root, journal["journal_id"], native.snapshot())
+                self.assertEqual(len(receipt["new_jobs"]), 1)
+                self.assertEqual(receipt["new_jobs"][0]["job_key"], "alpha:req-1")
+                self.assertEqual(receipt["new_source_events"], 3)
+                self.assertTrue(receipt["new_jobs"][0]["referral_hold"])
+                snapshot = sheets.Snapshot(native.snapshot(), WORKBOOK)
+                rows = snapshot.state()["Jobs"]["rows"]
+                self.assertEqual(len(rows), 1)
+                self.assertEqual(rows[0]["values"]["Seen Count"], 3)
+                self.assertEqual(rows[0]["url"], proposals[0]["jobs"][0]["url"])
+                source_rows = snapshot.rows("Job Sources")
+                self.assertEqual(len(source_rows), 3)
+                for proposal in proposals:
+                    source_row = next(row for _, row in source_rows if row["Source Job ID"] == proposal["jobs"][0]["source_job_id"])
+                    self.assertEqual(source_row["Job Key"], "alpha:req-1")
+                    self.assertEqual(source_row["Policy ID"], proposal["policy"]["id"])
+                    self.assertEqual(source_row["Qualification Tier"], proposal["jobs"][0]["qualification"]["tier"])
+                state = sheets.role_state(root, WORKBOOK)
+                for proposal in proposals:
+                    self.assertEqual(state["aliases"][proposal["jobs"][0]["job_key"]], "alpha:req-1")
+                    self.assertEqual(state["alias_urls"][proposal["jobs"][0]["url"]], "alpha:req-1")
+                    replay = copy.deepcopy(proposal)
+                    replay["packet_id"] += "-replay"
+                    queue.enqueue(root, replay)
+                # Replaying the same source events cannot inflate sightings.
+                replay = sheets.prepare(root, WORKBOOK, native.snapshot(), "central")
+                request = sheets.authorize_write(root, replay["journal_id"], native.snapshot())
+                native.apply(request["requests"])
+                repeated = sheets.verify_and_commit(root, replay["journal_id"], native.snapshot())
+                self.assertEqual(repeated["new_source_events"], 0)
+                self.assertEqual(repeated["new_jobs"], [])
+                self.assertEqual(sheets.Snapshot(native.snapshot(), WORKBOOK).rows("Jobs")[0][1]["Seen Count"], 3)
+                self.assertEqual(queue.pending(root), [])
+
+    def test_late_bridge_preserves_accepted_role_and_manual_fields(self):
+        original = packet("email", job_key="saved:req-20")
+        self.save(original)
+        self.native.set("Jobs", 4, "Notes", "Personal note")
+        self.native.set("Jobs", 4, "Application Status", "Saved")
+        proposals = connected_packets(by_url=True)
+        proposals[2]["jobs"][0]["aliases"].append(alias("unseen:saved", original["jobs"][0]["url"]))
+        for proposal in proposals:
+            queue.enqueue(self.root, proposal)
+        entries = {entry["packet"]["source"]: entry for entry in queue.pending(self.root)}
+        with mock.patch.object(queue, "pending", return_value=[entries[source] for source in ("email", "portal", "blind")]):
+            journal = sheets.prepare(self.root, WORKBOOK, self.native.snapshot(), "central")
+        request = sheets.authorize_write(self.root, journal["journal_id"], self.native.snapshot())
+        self.native.apply(request["requests"])
+        receipt = sheets.verify_and_commit(self.root, journal["journal_id"], self.native.snapshot())
+        self.assertEqual(receipt["new_jobs"], [])
+        self.assertEqual(receipt["new_source_events"], 3)
+        rows = sheets.Snapshot(self.native.snapshot(), WORKBOOK).state()["Jobs"]["rows"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["values"]["Job Key"], original["jobs"][0]["job_key"])
+        self.assertEqual(rows[0]["url"], original["jobs"][0]["url"])
+        self.assertEqual(rows[0]["values"]["Seen Count"], 4)
+        self.assertEqual(rows[0]["values"]["Notes"], "Personal note")
+        self.assertEqual(rows[0]["values"]["Application Status"], "Saved")
+        self.assertTrue(receipt["referral_restrictions"][0]["referral_hold"])
+
+    def test_pending_bridges_cannot_merge_distinct_accepted_roles(self):
+        first = packet("email")
+        second = packet("portal", "second", "example:req-2", "second-event")
+        self.save(first)
+        self.save(second)
+        before = self.native.snapshot()
+        proposals = connected_packets()
+        for proposal, saved in zip(proposals[:2], (first, second)):
+            proposal["jobs"][0]["aliases"] = [alias(saved["jobs"][0]["job_key"])]
+        for proposal in proposals:
+            queue.enqueue(self.root, proposal)
+        with self.assertRaisesRegex(queue.ProtocolError, "Conflicting cross-source identity"):
+            sheets.prepare(self.root, WORKBOOK, self.native.snapshot(), "central")
+        self.assertEqual(self.native.snapshot(), before)
+        self.assertEqual(len(queue.pending(self.root)), 3)
+        self.assertNotIn("alpha:req-1", sheets.role_state(self.root, WORKBOOK)["aliases"])
+
+    def test_pending_bridges_cannot_bypass_company_or_source_policy_checks(self):
+        for invalid in ("company", "policy"):
+            with self.subTest(invalid=invalid), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                queue.configure_policies(root, WORKBOOK, policies())
+                proposals = connected_packets()
+                if invalid == "company":
+                    proposals[1]["jobs"][0]["company"] = "Another Company"
+                for proposal in proposals:
+                    queue.enqueue(root, proposal)
+                if invalid == "policy":
+                    revised = policies()
+                    revised["portal"] = dict(revised["portal"], max_required_years=1)
+                    queue.configure_policies(root, WORKBOOK, revised)
+                with self.assertRaisesRegex(queue.ProtocolError, "Company conflicts" if invalid == "company" else "source policy ceiling"):
+                    sheets.prepare(root, WORKBOOK, self.native.snapshot(), "central")
+                self.assertEqual(len(queue.pending(root)), 3)
+                self.assertEqual(sheets.role_state(root, WORKBOOK)["aliases"], {})
+
     def test_conflicting_verified_alias_urls_leave_saved_roles_and_packet_intact(self):
         first = packet()
         second = packet("email", "second", "example:req-2", "second-event")
@@ -240,6 +363,35 @@ class RoleMergeTests(unittest.TestCase):
 
 @unittest.skipUnless(RUNTIME, "Bundled XLSX runtime unavailable")
 class LocalRoleMergeTests(unittest.TestCase):
+    def test_actual_excel_merges_three_sources_with_bridge_last(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            path = root / "tracker.xlsx"
+            workbook = "local:fictional-installation"
+            config = {"instance_root": str(root), "installation_id": "fictional-installation", "tracker": {"provider": "local_xlsx", "path": str(path)}}
+            intent = {"intent_id": "fictional-intent", "request_digest": "fixture-request", "request": config["tracker"]}
+            queue.atomic(root / "installation.json", {"resources": {"tracker:tracker": intent}})
+            queue.configure_policies(root, workbook, policies())
+            local_excel.initialize(config, NODE, MODULES)
+            for proposal in connected_packets(by_url=True):
+                proposal["workbook_id"] = workbook
+                queue.enqueue(root, proposal)
+            entries = {entry["packet"]["source"]: entry for entry in queue.pending(root)}
+            with mock.patch.object(queue, "pending", return_value=[entries[source] for source in ("email", "portal", "blind")]):
+                receipt = local_excel.merge(root, workbook, path, NODE, MODULES)
+            self.assertEqual(len(receipt["new_jobs"]), 1)
+            self.assertEqual(receipt["new_source_events"], 3)
+            self.assertTrue(receipt["new_jobs"][0]["referral_hold"])
+            snapshot = local_excel.inspect_workbook(path, workbook)
+            rows = snapshot.state()["Jobs"]["rows"]
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["values"]["Job Key"], "alpha:req-1")
+            self.assertEqual(rows[0]["values"]["Seen Count"], 3)
+            self.assertEqual(rows[0]["url"], "https://careers.example.com/jobs/req-1")
+            self.assertEqual(len(snapshot.rows("Job Sources")), 3)
+            self.assertEqual(sheets.role_state(root, workbook)["aliases"]["gamma:req-3"], "alpha:req-1")
+            self.assertEqual(queue.pending(root), [])
+
     def test_actual_excel_new_ids_merge_through_saved_alias_urls(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()

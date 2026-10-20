@@ -20,25 +20,50 @@ Resume exact frozen window/query/page-token or employer/filter cursor and unreso
 
 ## Uncertain Google Sheets write
 
-1. Keep the write journal and owner claim. Do not resend its mutation or dequeue its packets.
-2. Obtain fresh native metadata and bounded CellData for every affected/preserved identity, table/link constraint and expected insertion area. Resolve rows by Job Key, not old row numbers.
-3. Run `python3 -m job_search_ops reconcile --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/observed.json`.
-4. Exact after-state is verified without another insertion. An unchanged before-state remains `awaiting_settlement`: an apparently absent result after a timeout does not exclude a delayed write. Supply real terminal native failure or explicit human settlement evidence through `reconcile --settlement /absolute/private/settlement.json` before a fresh authorization can permit a retry. It must identify this `journal_id` and the **current `attempt_id`** returned by authorization/reconciliation. Its timezone-qualified `verified_at` must be on or after this attempt's `attempt_recorded_at`, and not in the future. See the [settlement evidence contract](sheets-protocol.md#3-reconcile-uncertain-outcomes).
-5. Install accepted state/receipts only after complete readback. Replay must not add another row or another sighting for the same source event.
+This is the authoritative reconciliation and settlement procedure. **Do not resend an uncertain mutation, dequeue its packets or discard its journal/owner claim.**
 
-Every new authorization creates a new attempt ID. If that call times out, an older call's failure or human confirmation cannot settle it. Keep the actual response associated with its original attempt; do not change its identity or timestamp to make a retry pass. Partial, duplicate, changed-geometry or conflicting state remains unresolved. Re-read/re-plan only a specifically reviewed repair and preserve manual changes.
+1. Capture a fresh [complete native snapshot](native-evidence.md#assemble-a-google-sheets-snapshot). Resolve identities by Job Key rather than old row numbers.
+2. Run `python3 -m job_search_ops reconcile --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/observed.json`.
+3. Follow the returned state below. Install accepted state/receipts only after complete readback; recovery must not add a second row or sighting for the same source event.
 
-Before upgrading a writer, resolve its pending writes where possible. An older pending journal without an attempt ID can still recover through an exact successful readback. If its state is unchanged or conflicting, keep its owner claim and pause that write for a reviewed recovery; do not invent an attempt ID, delete the journal or use an old failure to authorize a retry.
+| Observed state | Action |
+| --- | --- |
+| Exact planned after-state | Verify and commit the existing write without another mutation. |
+| Exact before-state | Keep `awaiting_settlement`. An unchanged snapshot cannot exclude a delayed write; no automatic retry is allowed. |
+| Mixed, user-edited or changed-geometry state | Preserve the conflict and queue. Review the narrow differences against the before/after journal. Reconcile only after an explicitly reviewed repair restores a verifiable before or after state. Blank inserted rows do not prove ownership. |
 
-Do not claim Sheets offers compare-and-swap. Local ownership excludes other coordinated writers, not human editing or unrelated automation.
+### Settle the current attempt
+
+Retrying an unchanged before-state requires `reconcile --settlement /absolute/private/settlement.json`, or `sheets.reconcile(root, journal_id, snapshot, settlement)`. Evidence must identify the matching `journal_id` and **current `attempt_id`** returned by authorization/reconciliation. Its timezone-qualified `verified_at` must be on or after that attempt's `attempt_recorded_at` and no later than the current time.
+
+Use either of these forms:
+
+- `kind: native_terminal_failure`, with the actual `response` from that attempt containing a terminal native error code: 400, 401, 403, 404, 409, 412 or 422.
+- `kind: human_reconciled`, with a genuine `human_turn_ref` and the explicit confirmation `The previous connector operation has ended; no pending call can still apply this batch.`
+
+Both forms require the same attempt identity/time checks. **Generic errors, timeouts and 5xx responses do not prove settlement. Never manufacture human confirmation or relabel an older response as evidence for a newer attempt.**
+
+Once marked `retryable`, capture another fresh snapshot and [authorize once](sheets-protocol.md#2-prepare-refresh-authorize-then-invoke-the-connector). Every authorization creates a new attempt ID and clears the active settlement while retaining audit history. If that call times out, evidence from the earlier attempt cannot settle it. Repeated reconciliation with the same accepted settlement is safe and does not duplicate the audit entry.
+
+Resolve pending writes before upgrading where possible. Older pending journals without an attempt ID may still commit an exact successful readback. If unchanged or conflicting, keep the claim and pause that write for reviewed recovery; do not invent an attempt ID, delete the journal or use an old failure to authorize a retry.
+
+### Unattempted Google Sheets plan
+
+If a user edits or sorts before the first write, `sheets.cancel_unattempted(root, journal_id, owner)` permits a fresh plan. **It cannot cancel an attempted or uncertain mutation.** `queue.release_claim(root, workbook_id, owner)` requires the recorded owner and no unresolved journals. There is no automatic claim expiry or force-takeover API.
+
+Do not claim Sheets offers compare-and-swap. Local ownership excludes other coordinated writers, not human editing or unrelated automation; see the [write limitation](sheets-protocol.md#3-reconcile-uncertain-outcomes).
 
 ## Uncertain local Excel write
 
-Follow [local Excel recovery](local-excel.md). Keep the original workbook, temporary candidate, original file hash and write journal until the outcome is verified. Re-read the actual destination before retrying; never promote a candidate or overwrite a changed file based on an agent assertion. A saved file and an accepted queue receipt are separate steps. Do not start a second writer or rescan completed sources just because the file transfer is pending.
+1. Keep the private installation, original workbook, temporary candidate, original file hash, hidden sibling backup and write journal. **Never delete a journal to force a retry or promote a candidate based on an agent assertion.**
+2. Rerun the same [local command](local-excel.md) and, for `local-update`, the same tracking plan. It re-reads the actual destination. If publication succeeded but receipt installation failed, recovery recognizes the published hash and installs the receipt without repeating the edit.
+3. If another edit occurred, stop for reconciliation; never overwrite a changed file. Readback-only recovery is available during a pending preference pilot, but retrying an unpublished edit requires the [explicit manual pilot](preferences.md).
+
+A saved file and an accepted queue receipt are separate steps. Keep recovery files until verification completes. Do not start a second writer or rescan completed sources just because file transfer is pending.
 
 ## Uncertain brief delivery
 
-Retain the frozen receipt set, exact report body, snapshot and delivery intent. For chat, read the configured chat on the next wake and match the actual final assistant message to the frozen body. For email, search/read complete relevant Sent evidence and match exact report identity, recipient and body. A draft, commentary message, timeout or worker assertion is not delivery confirmation. Mark delivered only after real readback; otherwise preserve pending state. Newly accepted receipts after brief preparation belong to the next brief.
+Retain the frozen receipt set, exact report body, snapshot and delivery intent. For chat, read the configured chat on the next wake and match the actual final assistant message to the frozen body. For email, search/read complete relevant Sent evidence and match exact report identity, recipient and body. A draft, commentary message, timeout or worker assertion is not delivery confirmation. Use the [report delivery command and evidence contract](report.md) to mark delivered only after real readback; otherwise preserve pending state. Newly accepted receipts after brief preparation belong to the next brief.
 
 ## Change ordinary preferences
 

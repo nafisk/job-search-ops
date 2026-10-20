@@ -25,7 +25,11 @@ prepared journal. Report tests cover cancelled quiet briefs, later receipts and
 actionable failures with no new jobs; prompt tests execute quoted private paths.
 Filesystem tests reject differently capitalized repository locations before setup
 writes private data. Alias-URL tests cover saved and previously accepted alternate
-URLs in both trackers, plus shared conflict guards. The toolkit tests cover parsing,
+URLs in both trackers, plus shared conflict guards. Pending-identity tests permute
+three-source bridges before row allocation and preserve accepted rows and per-source
+policies. Tracking tests compare Google and Excel row values; setup/update tests
+compare generated artifacts and preserve interrupted-update recovery. Export tests
+reject repository destinations reached through alternate capitalization. The toolkit tests cover parsing,
 screening, source coverage, tracking and recovery.
 
 The package check rejects unlisted files and symlinks, tolerates but excludes normal Python caches, and verifies local links, private-binding exclusions and the blank seven-tab workbook against its schema. The workbook check inspects the reviewed XML parts, metadata,

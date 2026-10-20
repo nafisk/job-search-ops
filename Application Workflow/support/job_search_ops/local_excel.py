@@ -756,11 +756,7 @@ def update_tracking(root, workbook_id, path, plan, node, node_modules, owner="ce
         next_rows = {name: max((row for row, _ in before.rows(name)), default=3) + 1 for name in ("Jobs", "Job Sources")}
         policy = q.read(base / "approved-policies.json")
         for item in additions:
-            date = sheets.serial(item["observed_at"], policy["timezone"])
-            fields = dict(zip(sheets.JOBS, [date, date, item["company"], item["title"], sheets.hyperlink(item["url"]), item["status"], "Tracking evidence", "", "", "", "", "Application evidence; discovery screening not evaluated", 1, "Tracked application: " + item["evidence_ref"], item["job_key"]]))
-            event = q.digest(["tracking", item["job_key"], item["evidence_ref"]])
-            source_fields = dict(zip(sheets.SOURCES, [event, item["job_key"], "Tracking evidence", item["job_key"], "tracking", "v1", "not_screened", "", "", item["observed_at"], q.now(), item["url"], "TRACKED_APPLICATION", item["role_evidence_ref"]]))
-            for tab, values in (("Jobs", fields), ("Job Sources", source_fields)):
+            for tab, values in google_tracking.new_record_rows(item, policy["timezone"], q.now()).items():
                 row = next_rows[tab]
                 next_rows[tab] += 1
                 for field, value in values.items():

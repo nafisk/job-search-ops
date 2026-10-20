@@ -99,6 +99,20 @@ def validate_identities(base, workbook_id, snapshot, plan, accepted_links=None):
         urls[item["url"]] = item["job_key"]
 
 
+def new_record_rows(item, timezone, recorded_at):
+    """Build both tracker rows from a validated application record.
+
+    The caller supplies the save time and retains identity, ownership, geometry
+    and write/readback checks. This pure helper does not infer qualification.
+    """
+    date = sheets.serial(item["observed_at"], timezone)
+    event = q.digest(["tracking", item["job_key"], item["evidence_ref"]])
+    return {
+        "Jobs": dict(zip(sheets.JOBS, [date, date, item["company"], item["title"], sheets.hyperlink(item["url"]), item["status"], "Tracking evidence", "", "", "", "", "Application evidence; discovery screening not evaluated", 1, "Tracked application: " + item["evidence_ref"], item["job_key"]])),
+        "Job Sources": dict(zip(sheets.SOURCES, [event, item["job_key"], "Tracking evidence", item["job_key"], "tracking", "v1", "not_screened", "", "", item["observed_at"], recorded_at, item["url"], "TRACKED_APPLICATION", item["role_evidence_ref"]])),
+    }
+
+
 def prepare(root, workbook_id, snapshot, plan, owner="central"):
     if owner != "central" or workbook_id.startswith("local:"):
         raise q.ProtocolError("Only the central coordinator plans Google tracking edits")
@@ -158,12 +172,8 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
         addition_rows = []
         for item in plan.get("new_records", []):
             links[item["job_key"]] = {"url": item["url"]}
-            date = sheets.serial(item["observed_at"], policy["timezone"])
-            fields = dict(zip(sheets.JOBS, [date, date, item["company"], item["title"], sheets.hyperlink(item["url"]), item["status"], "Tracking evidence", "", "", "", "", "Application evidence; discovery screening not evaluated", 1, "Tracked application: " + item["evidence_ref"], item["job_key"]]))
-            event = q.digest(["tracking", item["job_key"], item["evidence_ref"]])
-            source_fields = dict(zip(sheets.SOURCES, [event, item["job_key"], "Tracking evidence", item["job_key"], "tracking", "v1", "not_screened", "", "", item["observed_at"], q.now(), item["url"], "TRACKED_APPLICATION", item["role_evidence_ref"]]))
             addition_rows.append(next_rows["Jobs"])
-            for tab, values in (("Jobs", fields), ("Job Sources", source_fields)):
+            for tab, values in new_record_rows(item, policy["timezone"], q.now()).items():
                 row = next_rows[tab]
                 next_rows[tab] += 1
                 for field, value in values.items():

@@ -1,5 +1,6 @@
 """Local tracker contract; real artifact-tool smoke runs when its runtime exists."""
 import copy
+from datetime import date
 import os
 from pathlib import Path
 import shutil
@@ -8,9 +9,10 @@ import unittest
 import xml.etree.ElementTree as ET
 from unittest.mock import patch
 
-from job_search_ops import local_excel as local, queue, sheets, setup
+from job_search_ops import google_tracking, local_excel as local, queue, sheets, setup
 from job_search_ops.config import ConfigError
-from test_pipeline import packet, policies
+from test_pipeline import NativeConnector, WORKBOOK as GOOGLE_WORKBOOK, packet, policies
+from test_tracking import application
 
 DEPENDENCIES = Path.home() / ".cache/codex-runtimes/codex-primary-runtime/dependencies"
 NODE = Path(os.environ.get("JOB_SEARCH_TEST_NODE", DEPENDENCIES / "node/bin/node"))
@@ -256,6 +258,49 @@ class LocalArtifactTests(unittest.TestCase):
         wrong = {"workbook_id": WORKBOOK, "expected_file_sha256": local.file_hash(self.path), "updates": [{"job_key": record["job_key"], "field": "Notes", "old_value": final.rows("Jobs")[0][1]["Notes"], "new_value": "changed", "evidence_ref": "fictional review"}]}
         with self.assertRaisesRegex(queue.ProtocolError, "independent accepted"):
             local.update_tracking(self.root, WORKBOOK, self.path, wrong, NODE, MODULES)
+
+    def test_tracking_rows_match_google_with_timezones_statuses_and_literal_text(self):
+        self.initialize()
+        google_root = self.root / "google"
+        connector = NativeConnector()
+        saved_at = queue.now()
+        cases = [("UTC", application(), date(2026, 10, 18)),
+                 ("America/Los_Angeles", dict(application("example:req-2"),
+                    company='=Example "Research"', title='=Engineer "II"',
+                    status="Interviewing", evidence_ref='=Confirmed "interview"',
+                    role_evidence_ref='=Official "role"'), date(2026, 10, 17))]
+        for timezone, record, expected_date in cases:
+            with self.subTest(timezone=timezone, status=record["status"]):
+                record["observed_at"] = "2026-10-18T01:00:00+00:00"
+                for root, workbook in ((self.root, WORKBOOK), (google_root, GOOGLE_WORKBOOK)):
+                    queue.atomic(queue.storage(root) / "approved-policies.json", {
+                        "schema_version": 1, "workbook_id": workbook, "timezone": timezone, "sources": {}})
+                local_plan = {"workbook_id": WORKBOOK, "expected_file_sha256": local.file_hash(self.path),
+                              "updates": [], "new_records": [record]}
+                google_plan = {"workbook_id": GOOGLE_WORKBOOK,
+                               "expected_state_sha256": google_tracking.review(connector.snapshot(), GOOGLE_WORKBOOK)["expected_state_sha256"],
+                               "updates": [], "new_records": [record]}
+                with patch.object(queue, "now", return_value=saved_at):
+                    local.update_tracking(self.root, WORKBOOK, self.path, local_plan, NODE, MODULES)
+                    journal = google_tracking.prepare(google_root, GOOGLE_WORKBOOK, connector.snapshot(), google_plan)
+                    payload = sheets.authorize_write(google_root, journal["journal_id"], connector.snapshot())
+                    connector.apply(payload["requests"])
+                    sheets.verify_and_commit(google_root, journal["journal_id"], connector.snapshot())
+                actual = local.inspect_workbook(self.path, WORKBOOK)
+                google = sheets.Snapshot(connector.snapshot(), GOOGLE_WORKBOOK)
+                for tab in ("Jobs", "Job Sources"):
+                    self.assertEqual(actual.rows(tab), google.rows(tab))
+                row = actual.rows("Jobs")[-1][1]
+                self.assertEqual(row["First Seen"], (expected_date - date(1899, 12, 30)).days)
+                self.assertEqual(row["Last Seen"], row["First Seen"])
+                for field, value in {"Company": record["company"], "Title": record["title"],
+                                     "Application Status": record["status"], "Seen Count": 1,
+                                     "Referral Contact": "", "Notes": "Tracked application: " + record["evidence_ref"]}.items():
+                    self.assertEqual(row[field], value)
+                source = actual.rows("Job Sources")[-1][1]
+                self.assertEqual(source["Qualification Tier"], "not_screened")
+                self.assertEqual(source["Observed At"], record["observed_at"])
+                self.assertEqual(source["Evidence Link"], record["role_evidence_ref"])
 
 
 if __name__ == "__main__":

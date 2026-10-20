@@ -103,6 +103,29 @@ class PreferencesTests(unittest.TestCase):
         self.assertIn("disabled", (self.h.root / "prompts/email.md").read_text())
         self.assertEqual(staging.read_text(), '{"evidence":"retained"}')
 
+    def test_setup_and_preference_update_publish_identical_runtime_artifacts(self):
+        import hashlib
+        candidate = self.candidate(lambda c: c["discovery"].update(email=False))
+        self.apply(preferences.preference_plan(self.current, candidate))
+        current = load_config(self.h.root / "config.json")
+        manifest = setup.load_instance(current)
+        before = copy.deepcopy(manifest)
+        with patch.object(setup, "_atomic_text", side_effect=AssertionError("builder must not write")):
+            files, bindings = setup.runtime_artifacts(current, manifest)
+        self.assertEqual(manifest, before)
+        self.assertEqual(bindings, manifest["prompts"])
+        self.assertEqual(set(bindings), {"main", "portals", "blind"})
+        for name, body in files.items():
+            self.assertEqual((self.h.root / name).read_text(), body)
+        for entry in bindings.values():
+            self.assertEqual(hashlib.sha256(Path(entry["path"]).read_bytes()).hexdigest(), entry["sha256"])
+        disabled = (self.h.root / "prompts/email.md").read_bytes()
+        setup.prepare_prompts(current)
+        self.assertEqual(setup.load_instance(current), before)
+        for name, body in files.items():
+            self.assertEqual((self.h.root / name).read_text(), body)
+        self.assertEqual((self.h.root / "prompts/email.md").read_bytes(), disabled)
+
     def test_existing_schedule_preserves_pause_timing_id_and_reconciles_native_readback(self):
         bound = self.schedule()
         candidate = self.candidate(lambda c: c["tracking"].update(gmail=False))

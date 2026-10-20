@@ -379,6 +379,59 @@ def role_state(root, workbook_id):
         return {"workbook_id": workbook_id, "aliases": aliases, "alias_urls": urls, "referral_restrictions": [restrictions[key] for key in sorted(restrictions)]}
 
 
+def _pending_roles(entries, jobs, aliases, alias_urls):
+    """Resolve the whole validated batch before assigning any new row identity."""
+    parents = {}
+
+    def find(node):
+        parents.setdefault(node, node)
+        while parents[node] != node:
+            parents[node] = parents[parents[node]]
+            node = parents[node]
+        return node
+
+    def join(left, right):
+        parents[find(right)] = find(left)
+
+    for entry in entries:
+        for job in entry["packet"]["jobs"]:
+            primary = ("key", job["job_key"])
+            for identity in [job, *job.get("aliases", [])]:
+                tokens = [("key", identity["job_key"])]
+                if identity.get("url"):
+                    tokens.append(("url", identity["url"]))
+                for token in tokens:
+                    join(primary, token)
+                    saved = (aliases if token[0] == "key" else alias_urls).get(token[1])
+                    if saved is not None:
+                        join(token, ("saved", saved))
+    saved_groups = {}
+    for node in parents:
+        if node[0] == "saved":
+            saved_groups.setdefault(find(node), set()).add(node[1])
+    groups = {}
+    for entry in entries:
+        for job in entry["packet"]["jobs"]:
+            groups.setdefault(find(("key", job["job_key"])), []).append((entry, job))
+    canonical_keys, representatives = {}, {}
+    for group, proposals in groups.items():
+        saved = saved_groups.get(group, set())
+        if len(saved) > 1:
+            raise q.ProtocolError("Conflicting cross-source identity mapping")
+        # A new role's identity and display fields do not depend on queue order.
+        entry, representative = min(proposals, key=lambda item: (item[1]["job_key"], item[1]["url"], item[0]["packet_key"]))
+        canonical = next(iter(saved), representative["job_key"])
+        if saved and canonical not in jobs:
+            raise q.ProtocolError("Accepted canonical role is missing from the tracker")
+        company = jobs[canonical][1]["Company"] if saved else representative["company"]
+        for _, job in proposals:
+            if job["company"].strip().casefold() != company.strip().casefold():
+                raise q.ProtocolError("Company conflicts with saved stable job identity")
+            canonical_keys[job["job_key"]] = canonical
+        representatives[canonical] = (entry["packet"], representative)
+    return canonical_keys, representatives
+
+
 def prepare(root, workbook_id, snapshot, owner):
     with q.locked(root) as base:
         from .setup import require_execution
@@ -424,6 +477,12 @@ def prepare(root, workbook_id, snapshot, owner):
             if url in existing_urls and existing_urls[url] != key:
                 raise q.ProtocolError("Two saved identities share one destination; reconcile before import")
             existing_urls[url] = key
+        for entry in entries:
+            packet = q.validate_packet(entry["packet"])
+            q.validate_policy(base, packet)
+            if entry["packet_sha256"] != q.digest(packet):
+                raise q.ProtocolError("Queued packet bytes changed")
+        canonical_keys, representatives = _pending_roles(entries, jobs, aliases, alias_urls)
         def put(tab, row, field, value, formula=False):
             table = snap.summary if tab == "Daily Summary" else snap.tables[tab]
             col = table["headers"][field]
@@ -438,32 +497,11 @@ def prepare(root, workbook_id, snapshot, owner):
                 put(tab, row, field, value, field == "Job Link" and tab == "Jobs")
             return row
         for entry in entries:
-            packet = q.validate_packet(entry["packet"])
-            q.validate_policy(base, packet)
-            if entry["packet_sha256"] != q.digest(packet):
-                raise q.ProtocolError("Queued packet bytes changed")
+            packet = entry["packet"]
             for job in packet["jobs"]:
                 key = job["job_key"]
-                mapped = {aliases[alias["job_key"]] for alias in job.get("aliases", []) if alias["job_key"] in aliases}
-                if key in jobs:
-                    mapped.add(key)
-                if key in aliases:
-                    mapped.add(aliases[key])
-                # Verified alternate URLs can identify a saved role even when
-                # every identifier in this source's packet is new.
-                identity_urls = [job["url"]] + [alias["url"] for alias in job.get("aliases", []) if alias.get("url")]
-                for url in identity_urls:
-                    if url in existing_urls:
-                        mapped.add(existing_urls[url])
-                    if url in alias_urls:
-                        mapped.add(alias_urls[url])
-                if len(mapped) > 1:
-                    raise q.ProtocolError("Conflicting cross-source identity mapping")
-                canonical_key = next(iter(mapped), key)
-                if canonical_key not in jobs and canonical_key != key:
-                    raise q.ProtocolError("Accepted canonical role is missing from the tracker")
-                if canonical_key in jobs and jobs[canonical_key][1]["Company"].strip().casefold() != job["company"].strip().casefold():
-                    raise q.ProtocolError("Company conflicts with saved stable job identity")
+                canonical_key = canonical_keys[key]
+                representative_packet, representative = representatives[canonical_key]
                 evidence = job["qualification"]["evidence"]["identity"]
                 assertions = [{"job_key": key, "url": job["url"], "evidence_url": evidence["url"], "quote": evidence["quote"]}] + job.get("aliases", [])
                 for alias in assertions:
@@ -480,8 +518,8 @@ def prepare(root, workbook_id, snapshot, owner):
                     if prior_key is None or (alias.get("url") and prior_url is None):
                         role_aliases.append(dict(alias, canonical_key=canonical_key, verified_at=job["qualification"]["checked_at"]))
                 if job.get("referral_hold") or job.get("referral_contact"):
-                    canonical = jobs[canonical_key][1] if canonical_key in jobs else {"Company": job["company"], "Title": job["title"]}
-                    identity = {"job_key": canonical_key, "company": canonical["Company"], "title": canonical["Title"], "url": accepted_links.get(canonical_key, next((u for u, k in existing_urls.items() if k == canonical_key), job["url"]))}
+                    canonical = jobs[canonical_key][1] if canonical_key in jobs else {"Company": representative["company"], "Title": representative["title"]}
+                    identity = {"job_key": canonical_key, "company": canonical["Company"], "title": canonical["Title"], "url": accepted_links.get(canonical_key, representative["url"])}
                     restriction = restrictions.setdefault(canonical_key, dict(identity, referral_hold=False, contacts=[], evidence=[]))
                     new_hold = job.get("referral_hold", False) and not restriction["referral_hold"]
                     new_contact = bool(job.get("referral_contact")) and job["referral_contact"] not in restriction["contacts"]
@@ -526,16 +564,16 @@ def prepare(root, workbook_id, snapshot, owner):
                     put("Jobs", row, "Seen Count", fields["Seen Count"])
                     put("Jobs", row, "Last Seen", fields["Last Seen"])
                 else:
-                    notes = job.get("notes", "")
-                    if job["qualification"]["tier"] != "core":
-                        notes = job["qualification"]["tier"] + ": " + job.get("experience", "") + ". " + notes
-                    values = [first, last, job["company"], job["title"], hyperlink(job["url"]), "New", job["provider"], job["location"], job.get("level", ""), "", job.get("target_fit", ""), job["fit_reason"], len(events), notes, canonical_key]
+                    notes = representative.get("notes", "")
+                    if representative["qualification"]["tier"] != "core":
+                        notes = representative["qualification"]["tier"] + ": " + representative.get("experience", "") + ". " + notes
+                    values = [first, last, representative["company"], representative["title"], hyperlink(representative["url"]), "New", representative["provider"], representative["location"], representative.get("level", ""), "", representative.get("target_fit", ""), representative["fit_reason"], len(events), notes, canonical_key]
                     fields = dict(zip(JOBS, values))
                     row = append("Jobs", fields)
                     fields["Job Link"] = values[4]["formulaValue"]
                     jobs[canonical_key] = (row, fields)
-                    existing_urls[job["url"]] = canonical_key
-                    new_jobs.append({"job_key": canonical_key, "company": job["company"], "title": job["title"], "url": job["url"], "source": packet["source"], "policy": packet["policy"], "tier": job["qualification"]["tier"], "referral_hold": job.get("referral_hold", False)})
+                    existing_urls[representative["url"]] = canonical_key
+                    new_jobs.append({"job_key": canonical_key, "company": representative["company"], "title": representative["title"], "url": representative["url"], "source": representative_packet["source"], "policy": representative_packet["policy"], "tier": representative["qualification"]["tier"], "referral_hold": restrictions.get(canonical_key, {}).get("referral_hold", False)})
             for company in packet.get("companies", []):
                 key = company["company_key"]
                 fields = dict(zip(COMPANIES, [key, company["company"], company["rating"], company["rating_as_of"], company["careers_url"], True, "User-supplied rating list", company["checked_at"]]))
