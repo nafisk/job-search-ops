@@ -66,7 +66,7 @@ flowchart TD
     class batches,outreach action
 ```
 
-Colors use the [OpenAI Apps SDK UI palette](https://github.com/openai/apps-sdk-ui/blob/main/src/styles/variables-primitive.css). Blind starter ratings are historical and not freshly verified. Batches requires the shared installation and its completed pilot; choosing Blind alone does not require LinkedIn alerts.
+Blind starter ratings are historical and not freshly verified. Batches requires the shared installation and its completed pilot; choosing Blind alone does not require LinkedIn alerts.
 
 For operational workflows, use the first-run request in your private setup summary. **Request Batches and Outreach separately:** discovery starts neither. Opening an application page does not mark it Applied. Only selected Application Workflow runs can be scheduled, after verification.
 

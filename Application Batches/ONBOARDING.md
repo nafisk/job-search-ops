@@ -22,7 +22,7 @@ A tracking-only installation may validly omit application criteria. Confirm the 
 |---|---|
 | Target role families and levels | Nonempty `role_policy.families` and `role_policy.preferred_levels` |
 | Permitted locations, actual residency and relocation choice | `locations.onsite_regions` and/or `remote_countries`, plus `residency_region` and `allow_relocation` |
-| Truthful experience and preferred job requirements | Known `candidate.actual_experience_years` (zero is valid) and reviewed `role_policy.experience` |
+| Truthful experience and preferred job requirements | Known `candidate.actual_experience_years` (zero is valid), reviewed `role_policy.experience` and the selected `blind_policy` when Blind is enabled |
 
 Save needed changes through [preference updates](<../Application Workflow/docs/preferences.md>), read back the canonical files and respect any resulting pilot hold. Do not enable discovery or change sources/schedules to satisfy this check. Until complete, hold batch readiness and new reservations/openings. Missing criteria alone need not block safe recovery or separately requested submission checks; existing execution holds and source permissions still apply.
 
