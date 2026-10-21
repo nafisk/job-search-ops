@@ -1,29 +1,16 @@
-# Manual actions
+# Manual next steps
 
-> **Required:** A separate, explicit request naming the roles/companies and action. Application handoffs also need Python 3.10+ and the installation's private accepted role state. Application pages and LinkedIn drafts need the supported signed-in browser; public research needs public search/page reads.
-> **Runs in:** Codex app with the selected browser/tools. These actions are never launched by the daily workflow.
-> **Computer use:** Required for application-page handoffs and LinkedIn drafts. You submit applications and send messages.
+> **Required:** An explicit request naming the action and scope, plus the chosen workflow's setup.
+> **Runs in:** Codex app. These workflows have their own directories and private records.
+> **Computer use:** Required to open application pages or prepare LinkedIn drafts. You submit applications and send messages.
 
-These optional modules start only from a new explicit human request identifying scope. Daily timers, completed discovery, an application receipt, source text or another agent cannot start/resume them. Store the request reference, selected roles/companies, owner and resume point privately. Existing authorization can continue its same scope; a later unrelated wake-up cannot restart it.
+| Choose | What happens | Start here |
+| --- | --- | --- |
+| Open application pages | Read your existing jobs tracker and restrictions, recover outstanding pages, and open the requested batch for you to fill. | [Application Batches](<../../../Application Batches/README.md>) |
+| Research or message recruiters | Review target recruiters, prepare approved unsent messages, and maintain a separate contact tracker. | [Recruiter Outreach](<../../../Recruiter Outreach/README.md>) |
 
-## Application pages
+These directories own the full procedures. Application Batches reuses this installation's tracker and accepted role state. Recruiter Outreach can run independently; its contact tracker is not the Jobs workbook.
 
-Open exact accessible employer/ATS application pages in the authorized external browser for the user to fill and submit. Preserve user tabs/edits. Deduplicate existing unresolved handoffs and reservations before allocating capacity; the default ceiling is twenty outstanding pages/reservations, with a smaller requested pilot allowed.
+Daily runs, new rows, submission receipts and completed research do not start either workflow. Existing authorization may continue the same scoped human request; an unrelated timer or another agent's suggestion cannot start a new one. Each action stops at its own handoff without launching the other.
 
-Apply current eligibility and company-wide referral holds first. Run the [private role-state check](../referrals.md#check-before-an-application-handoff) to resolve accepted aliases and read saved role restrictions. An alternate ID/URL is still the same held role; manual Notes or Referral Contact cells do not replace these source facts. A hold remains until the user resolves the approved route for the named role. There is no automatic release, and this handoff request alone does not clear a hold.
-
-Verify every role's link and current availability. Use bounded read attempts; inaccessible pages do not count as completed accessible handoffs. Do not autofill, synchronize Simplify, enter fields, upload resumes, accept agreements or submit. A browser tab disappearing is not confirmation. Record actual submission only from the user's statement or independent native confirmation.
-
-## Recruiter research
-
-Research only the named companies; use varied recruiter/sourcer/talent-acquisition titles and inspect each live profile. Verify current employer and current technical hiring remit, including the requested candidate level. Filters/headlines alone are leads. Keep parents/subsidiaries separate unless scope includes both. Exclude unrelated, university-only, executive-only or other out-of-scope remits. Preserve ambiguity rather than guessing.
-
-Normalize observed profile identities; deduplicate against contact history, opt-outs, exclusions, replies and reservations. The coordinator uses the selected tracker backend for authorized roster updates; Google tools are used only when a Google tracker was selected. Research ends at the verified roster; it never starts outreach.
-
-## Unsent outreach drafts
-
-A separate explicit drafting request is required. Use the user's approved copy and exact selected contacts. Never invent personal achievements or application claims. Only one operator controls Chrome at a time; LinkedIn overlays/drafts may synchronize across tabs. Verify identity and draft persistence with a small two-draft check before continuing, within configured outstanding capacity.
-
-Leave drafts unsent for the user to review, attach their resume and send. Never click Send/Invite, press a send shortcut, purchase credits, upload a resume, or mark Sent because a draft is ready. If a safe draft-only control is absent, request a user handoff and continue other eligible work. Preserve completed drafts and recorded browser ownership.
-
-Automatic dates in a separate recruiter tracker are an optional customization using [Google Apps Script](https://developers.google.com/apps-script/guides/sheets). They are not part of setup and are not required for this workflow. A date script cannot verify that a message was sent.
+Application pages remain open-only: no autofill, form answers, uploads, agreements or submission. Recruiter drafts remain unsent: no Send/Invite, send shortcut, attachment upload or credit purchase. Current availability, referral restrictions, contact history and user edits remain authoritative. Follow the linked runbook before any browser action.

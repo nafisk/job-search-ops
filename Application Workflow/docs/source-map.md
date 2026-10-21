@@ -42,7 +42,8 @@ The two helpers work on the main chat's assignments and have no timers. Rated-co
 | [Change preferences](preferences.md) | Apply choices while preserving history/bindings; run any required replacement pilot. |
 | [Operations](operations.md) | Permissions, one-writer ownership, mandatory start checks, source gaps and completion rules. |
 | [Verification](verification.md), [support](../support/README.md) | Offline checks, live-check limits and local code. |
-| [Manual actions](optional/manual-actions.md), [Outlook alert routing](optional/outlook-alerts.md) | Separately requested browser actions, or mailbox organization outside the Gmail ingestion path. |
+| [Manual actions](optional/manual-actions.md) | Entry points to separate [Application Batches](<../../Application Batches/README.md>) and [Recruiter Outreach](<../../Recruiter Outreach/README.md>) workflows. Neither runs automatically. |
+| [Outlook alert routing](optional/outlook-alerts.md) | Optional mailbox organization outside the Gmail ingestion path. |
 
 ## Where things live
 

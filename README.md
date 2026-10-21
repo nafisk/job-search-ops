@@ -2,9 +2,9 @@
 
 <h1>💼 job-search-ops</h1>
 
-<p><strong>Better job-search materials. One guided step at a time.</strong></p>
+<p><strong>Your job search. One guided step at a time.</strong></p>
 
-<p>Agent instructions to help you improve your resume, polish your LinkedIn profile, and work toward your next job.</p>
+<p>Improve your materials, find relevant jobs, and prepare applications and recruiter messages for your review.</p>
 
 <p>
   <img src="https://img.shields.io/badge/AI-ready-2563eb?style=flat-square" alt="AI-ready">
@@ -25,12 +25,14 @@
 | 📝 [Resume](Resume/resume-content-optimization.md) | Strengthen experience bullets with clear ownership, context, and impact. |
 | 🔎 [LinkedIn](LinkedIn/linkedin-profile-optimization.md) | Audit your profile and align it with your resume and target roles. |
 | 🔁 [Application Workflow](<Application Workflow/README.md>) | Choose your tracker, job sources, tracking features and run schedule with guided setup. |
+| ✉️ [Recruiter Outreach](<Recruiter Outreach/README.md>) | Find relevant recruiters, prepare unsent LinkedIn messages, and keep contact history. |
+| 📑 [Application Batches](<Application Batches/README.md>) | Open eligible application pages in batches for you to fill and submit. |
 
 ## 🚀 How to use
 
-1. For **Resume or LinkedIn**, give your AI assistant the entire instruction Markdown file. For **Application Workflow**, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder and open that folder in Codex. It needs the linked guides, code, workbook and starter data; one Markdown file is insufficient.
-2. Provide your current resume and any other inputs listed in the runbook.
-3. Ask the agent to read the whole file and use it as the guiding instructions for your review, then work through the suggested improvements.
+1. For **Resume or LinkedIn**, give your assistant the entire instruction Markdown file. For the other workflows, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder, and open it in Codex.
+2. Open your chosen directory's README and follow its setup. Provide only the inputs that workflow needs.
+3. Ask the agent to follow the linked instructions. Review the result before sending a message or submitting an application.
 
 > [!TIP]
 > Start with the resume runbook if you're unsure. It helps clarify the experience you'll also use on LinkedIn.
@@ -42,3 +44,9 @@
 The main chat saves verified results and prepares your report. Enable email-alert and referral-portal helpers, a separate rated target company search, or application/interview tracking as needed. Every selected source feeds the **same tracker**. Codex asks only relevant follow-up questions and checks the tools your choices require.
 
 [Set up your copy](<Application Workflow/ONBOARDING.md>) · [Read the workflow](<Application Workflow/README.md>)
+
+## 🖱️ Manual next steps
+
+[Recruiter Outreach](<Recruiter Outreach/README.md>) has its own setup and separate contact tracker. It can run independently of job discovery. [Application Batches](<Application Batches/README.md>) uses your configured Application Workflow tracker and saved role restrictions.
+
+Both run only when you ask and require computer use for their browser actions. Recruiter drafts stay unsent; application pages stay open for you to complete. The daily job workflow does not launch either feature.

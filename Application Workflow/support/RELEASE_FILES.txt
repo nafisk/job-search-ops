@@ -1,4 +1,8 @@
 .gitignore
+Application Batches/ONBOARDING.md
+Application Batches/README.md
+Application Batches/batch-state.example.json
+Application Batches/run.md
 Application Workflow/AGENTS.md
 Application Workflow/ONBOARDING.md
 Application Workflow/README.md
@@ -110,5 +114,10 @@ Application Workflow/support/toolkit/verify_offline.py
 LinkedIn/README.md
 LinkedIn/linkedin-profile-optimization.md
 README.md
+Recruiter Outreach/ONBOARDING.md
+Recruiter Outreach/README.md
+Recruiter Outreach/research.md
+Recruiter Outreach/run.md
+Recruiter Outreach/tracker.md
 Resume/README.md
 Resume/resume-content-optimization.md

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "workflow_config_path": null,
+  "installation_root": null,
+  "tracker_id": null,
+  "browser": {
+    "name": null,
+    "session_ref": null
+  },
+  "limits": {
+    "first_total": 5,
+    "next_additional": 5,
+    "max_outstanding": 20
+  },
+  "created_at": null,
+  "updated_at": null,
+  "active_run": null,
+  "runs": [],
+  "handoffs": []
+}

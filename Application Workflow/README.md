@@ -45,4 +45,6 @@ Follow [Change preferences](docs/preferences.md) to adjust criteria, sources, de
 
 Use the [guide catalog and folder map](docs/source-map.md) for each feature, tool requirement, and recovery procedure. `helpers/` holds research instructions; `docs/` holds detailed guides; `sheets/` holds the blank tracker/schema; `support/` contains setup, save, queue, and evidence-checking code.
 
+**Ready to act on results?** Ask for [Application Batches](<../Application Batches/README.md>) to open pages for you to fill, or [Recruiter Outreach](<../Recruiter Outreach/README.md>) to prepare unsent messages. These separate manual workflows need computer use and are never started by a discovery run.
+
 Improve your materials separately in [Resume](../Resume/resume-content-optimization.md) and [LinkedIn](../LinkedIn/linkedin-profile-optimization.md), or return to [all runbooks](../README.md).
