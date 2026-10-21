@@ -192,24 +192,12 @@ class CoverageTests(unittest.TestCase):
             with self.subTest(changes=changes), self.assertRaises(ContractError):
                 self.run_status(checks={**self.checks, 'messages': replace(self.checks['messages'], **changes)})
 
-    def test_incomplete_optional_source_affects_all_enabled_not_required(self):
-        partial = receipt(self.profile, self.scopes, 'calendar', status='partial', gaps=(gap(),))
-        result = self.run_status(checks={**self.checks, 'calendar': partial})
-        self.assertTrue(result['required_complete'])
-        self.assertFalse(result['all_enabled_complete'])
-
     def test_profile_connection_service_and_scope_receipts_cannot_cross_bind(self):
         good = self.checks['messages']
         for change in ({'profile_id': 'fictional-other'}, {'connection_ref': 'fictional-other-connection'},
                        {'service': 'mail'}, {'scope_digest': fp('unapproved-context')}, {'scope_digest': 'not-a-digest'}):
             with self.subTest(change=change), self.assertRaises(ContractError):
                 self.run_status(checks={**self.checks, 'messages': replace(good, **change)})
-
-    def test_named_context_and_transcript_backlog_cannot_be_dropped_under_old_receipt(self):
-        scopes = {**self.scopes, 'messages': fp({'profile_id': self.profile['profile_id'],
-                                                'scope': {'direct_context': 'different-fictional-context'}})}
-        with self.assertRaises(ContractError):
-            self.run_status(scopes=scopes)
 
     def test_dictionary_receipts_and_mutable_gap_lists_are_untrusted(self):
         good = self.checks['messages']

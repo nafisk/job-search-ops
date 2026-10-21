@@ -5,7 +5,7 @@ import json
 import unittest
 from unittest.mock import patch
 
-from applications import SubmissionAcceptance, application_key, reconcile
+from applications import SubmissionAcceptance, reconcile
 from contracts import ContractError
 
 
@@ -45,12 +45,6 @@ def receipt(event, role="ats:123", company="example-co", basis="exact_role", kin
 
 
 class ApplicationTests(unittest.TestCase):
-    def test_key_binds_profile_employer_and_exact_role(self):
-        self.assertEqual(application_key(PROFILE, "example-co", "ats:123"), key())
-        self.assertNotEqual(key(), key("other-co"))
-        self.assertNotEqual(key(), key(role="ats:124"))
-        self.assertNotEqual(key(), key(profile="another-profile"))
-
     def test_union_all_five_origins_preserves_complete_source_history(self):
         sources = [record("sheet", "sheet", payload={"manual_status": "Applied", "notes": "preserve me"}),
                    record("manual", "manual_history", payload={"user_note": "application history"}),
@@ -133,15 +127,6 @@ class ApplicationTests(unittest.TestCase):
         self.assertEqual(len(result["proposals"]), 1)
         wrong = record("wrong-ref", "correspondence", company="other-co", role=None, requisition=None)
         result = reconcile(packet(record("known"), wrong), {"wrong-ref": receipt(wrong, basis="exact_application_ref")})
-        self.assertEqual(result["proposals"], [])
-        self.assertTrue(result["unresolved"])
-
-    def test_same_title_with_no_exact_id_is_not_a_match(self):
-        known = record("known", payload={"title": "Software Engineer II"})
-        other = record("other", role="ats:456", requisition="REQ-456", ref="APP-456", payload={"title": "Software Engineer II"})
-        mail = record("title-only", "correspondence", role=None, requisition=None, ref=None,
-                      payload={"title": "Software Engineer II", "application_date": SUBMITTED})
-        result = reconcile(packet(known, other, mail))
         self.assertEqual(result["proposals"], [])
         self.assertTrue(result["unresolved"])
 

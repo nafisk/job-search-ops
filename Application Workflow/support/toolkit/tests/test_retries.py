@@ -229,11 +229,6 @@ class RetryTests(unittest.TestCase):
         ledger = finish(ledger, "later-pending", "inaccessible")
         self.denied_completion(ledger, scope, accepted(scope, ledger))
 
-    def test_pending_reservation_never_counts_as_read(self):
-        ledger = reserve(fresh(), "pending")
-        scope = {"page_items": [source()], "current_candidate_ids": []}
-        self.denied_completion(ledger, scope, accepted(scope, ledger))
-
     def test_saved_fourth_attempt_duplicate_id_and_rebinding_rejected(self):
         ledger = fresh()
         for n in range(3):

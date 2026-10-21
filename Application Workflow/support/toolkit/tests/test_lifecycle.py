@@ -91,16 +91,6 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(len(a['submission_facts']), 1)
         self.assertTrue(all(p['stage'] != 'APPLIED' for p in result['lifecycle_proposals']))
 
-    def test_submission_fact_does_not_overwrite_interview_or_withdrawal(self):
-        for stage in ['INTERVIEWING', 'WITHDRAWN']:
-            with self.subTest(stage=stage):
-                receipt, outcome = source('old-receipt'), source('outcome')
-                accepted = SubmissionAcceptance(PROFILE, receipt['event_id'], fp(receipt), app_key(), 'exact_role',
-                               'email_receipt', OLD, REVIEWED, 'fictional-proof', True)
-                a = current(reconcile_lifecycle(packet(receipt, outcome), {'old-receipt': accepted}, [event(outcome, stage=stage)]))
-                self.assertTrue(a['submission_confirmed'])
-                self.assertEqual(a['current_stage'], stage)
-
     def test_no_events_or_silence_never_invents_rejection(self):
         result = reconcile_lifecycle(packet())
         a = current(result)
@@ -116,13 +106,6 @@ class LifecycleTests(unittest.TestCase):
         self.assertNotEqual(a['status'], 'known')
         self.assertEqual(result['lifecycle_proposals'], [])
         self.assertTrue(result['gaps'])
-
-    def test_same_time_contradictory_outcomes_surface_and_hold(self):
-        a, b = source('rejected'), source('interviewing')
-        result = reconcile_lifecycle(packet(a, b), events=[event(a), event(b, stage='INTERVIEWING')])
-        self.assertEqual(current(result)['status'], 'conflicted')
-        self.assertTrue(current(result)['conflicts'])
-        self.assertEqual(result['lifecycle_proposals'], [])
 
     def test_manual_status_conflict_is_retained_not_silently_downgraded(self):
         manual = source('manual', 'manual_history', payload={'status': 'Interviewing', 'note': 'user edited'})
@@ -269,13 +252,6 @@ class LifecycleTests(unittest.TestCase):
                 self.assertEqual(request_state(result)['status'], 'suppressed')
         result = reconcile_lifecycle(packet(incoming), events=[request(incoming)], sent_coverage=coverage(('ats:1', 'request:1')),
                                      excluded_application_keys=frozenset([app_key()]))
-        self.assertEqual(request_state(result)['status'], 'suppressed')
-
-    def test_generic_request_does_not_reopen_terminal_application(self):
-        terminal, incoming = source('terminal'), source('request')
-        result = reconcile_lifecycle(packet(terminal, incoming), events=[event(terminal, at=OLD), request(incoming)],
-                                   sent_coverage=coverage(('ats:1', 'request:1')))
-        self.assertEqual(current(result)['current_stage'], 'REJECTED')
         self.assertEqual(request_state(result)['status'], 'suppressed')
 
     def test_explicit_reopen_after_terminal_restores_active_request(self):

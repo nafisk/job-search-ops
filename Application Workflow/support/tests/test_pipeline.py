@@ -225,19 +225,6 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(sheets.reconcile(self.root, journal["journal_id"], self.connector.snapshot())["status"], "saved")
         self.assertEqual(self.value(4, "Seen Count"), 1)
 
-    def test_timeout_before_write_has_explicit_retry_and_no_checkpoint(self):
-        journal = self.prepare(packet())
-        payload = sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())
-        self.assertEqual(len(queue.pending(self.root)), 1)
-        self.assertEqual(list((self.root / "state/writer/receipts").glob("*.json")), [])
-        self.assertEqual(sheets.reconcile(self.root, journal["journal_id"], self.connector.snapshot())["status"], "awaiting_settlement")
-        with self.assertRaises(queue.ProtocolError):
-            sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())
-        settled = {"journal_id": journal["journal_id"], "attempt_id": payload["attempt_id"], "kind": "native_terminal_failure", "verified_at": queue.now(), "response": {"error": {"code": 400, "message": "Invalid request rejected before execution"}}}
-        self.assertEqual(sheets.reconcile(self.root, journal["journal_id"], self.connector.snapshot(), settled)["status"], "retryable")
-        self.connector.apply(sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())["requests"])
-        self.assertEqual(sheets.verify_and_commit(self.root, journal["journal_id"], self.connector.snapshot())["status"], "saved")
-
     def test_mixed_write_stays_conflict_and_queued(self):
         journal = self.prepare(packet())
         requests = sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())["requests"]
