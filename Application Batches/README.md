@@ -19,7 +19,7 @@
 
 ## 🚀 Set up
 
-1. Complete [Application Workflow onboarding](<../Application Workflow/ONBOARDING.md>) first, including its initial pilot.
+1. Complete the shared [Application Workflow onboarding](<../Application Workflow/ONBOARDING.md>) first, including its initial pilot. Use [LinkedIn alerts](<../Application Workflow/README.md>), [Blind 3.5+ companies](<../Blind Company Research/README.md>) or both; only accepted jobs saved to their shared tracker are available to batches.
 2. Give Codex your private workflow configuration path. Confirm your saved application criteria and the browser/profile it may use.
 3. Follow [batch onboarding](ONBOARDING.md) to choose one operating chat, private history location and batch limits: **five pages first, five more next, twenty outstanding maximum** by default.
 

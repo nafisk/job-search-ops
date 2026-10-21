@@ -1,6 +1,6 @@
 # Guide catalog and folder map
 
-Start at the [Application Workflow README](../README.md), or use [repository onboarding](../../ONBOARDING.md) to choose a goal. This catalog covers Application Workflow. Read the guides for your selected features; saved choices determine which tools the agent may use. Each procedure begins with its requirements and computer-use needs.
+Start at the [Application Workflow README](../README.md), or use [repository onboarding](../../ONBOARDING.md) to choose a goal. This catalog covers the shared Application Workflow runtime and its LinkedIn-alert entry point; the sibling [Blind Company Research](<../../Blind Company Research/README.md>) owns rated-company research and its starter list. Read the guides for your selected features; saved choices determine which tools the agent may use. Each procedure begins with its requirements and computer-use needs.
 
 ## Set up and run
 
@@ -10,7 +10,7 @@ Start at the [Application Workflow README](../README.md), or use [repository onb
 | [Main run](../run.md) | Coordinate independent research, save to one tracker, track and report. | Codex + selected tools; main is the sole writer. |
 | [Email helper](../helpers/email-discovery.md) | Read alerts and verify official job descriptions. | Gmail reads; browser as needed. |
 | [Portal helper](../helpers/referral-portals.md) | Search chosen companies while preserving referral holds. | Public web tools; computer use for interactive pages. |
-| [Rated target companies](../blind.md) | Search a private company list under its fit policy; queue results for the same writer. | Public web tools; computer use as needed. |
+| [Blind Company Research](<../../Blind Company Research/run.md>) | Search a private company list under its fit policy; queue results for the same writer. | Public web tools; computer use as needed. |
 
 The two helpers work on the main chat's assignments and have no timers. Rated-company research can have its own selected schedule; queued findings wait for the main chat to save them.
 
@@ -54,6 +54,6 @@ The two helpers work on the main chat's assignments and have no timers. Rated-co
 | [docs/](.) | Detailed feature, setup, evidence and recovery procedures indexed above. |
 | [sheets/](../sheets/) | Shareable blank tracker and seven-tab schema, including the shared Jobs tab. |
 | [support/](../support/README.md) | Setup, queue, journals, writes, receipts and verification code. [Toolkit](../support/toolkit/README.md) parses/checks source evidence; it has no account connections. |
-| [blind-companies.json](../blind-companies.json) | Sanitized 103-company starting list. User-supplied ratings are historical, not freshly verified; original dates are unknown. |
+| [Blind Company Research/blind-companies.json](<../../Blind Company Research/blind-companies.json>) | Sibling workflow’s sanitized 103-company starting list. User-supplied ratings are historical, not freshly verified; original dates are unknown. |
 
 Onboarding copies selected targets privately. The [fictional rated-company example](../support/config/examples/rated-companies.json) shows the same format. Personal profiles, working lists/notes, accounts, contacts, chat IDs, schedules and history stay outside the repository.

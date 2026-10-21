@@ -559,7 +559,7 @@ def render_prompts(config, manifest):
             )
     if "blind" in plan["chats"]:
         prompts["blind"] = gate("blind") + prefix + (
-            f"Follow [rated-company discovery](<{WORKFLOW_ROOT / 'blind.md'}>) and its selected policy.\n"
+            f"Follow [rated-company discovery](<{REPO_ROOT / 'Blind Company Research' / 'run.md'}>) and its selected policy.\n"
             f"Rated-company chat: {_bound(manifest, 'chat:blind')}. Coordinator: {central}. "
             f"Source choices: {config['sources']['rated_companies_path']}. Staging: {root / 'staging' / 'blind'}.\n"
             f"Use [producer handoff](<{WORKFLOW_ROOT / 'docs/handoffs.md'}#producer-handoff>) under the recorded setup authorization. "

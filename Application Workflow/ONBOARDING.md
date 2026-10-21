@@ -1,10 +1,12 @@
-# Set up Application Workflow
+# Set up alerts and the shared application workflow
 
 > **Required:** Codex desktop on macOS, Python 3.10+, the complete repository in a permanent folder, and a private writable folder outside it.
 > **Runs in:** Codex app; connect only the tools your choices need.
 > **Computer use:** LinkedIn alerts and interactive job pages. You handle sign-in and permission prompts.
 
 Open the complete repository in **Codex** mode and paste the setup prompt below. Use the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for installation and connection links. Codex guides you one choice at a time; you do not need to edit configuration files.
+
+This is the shared setup for [LinkedIn Job Alerts](README.md) and [Blind Company Research](<../Blind Company Research/README.md>). Choose either or both: Blind-only setup needs no email alerts or referral portals. Both use one jobs tracker and the central writer, with their own selected research chats and policies.
 
 This page covers your choices and completion checks. Codex follows the [agent setup reference](docs/agent-setup.md) for the setup sequence. To choose another goal, return to [repository onboarding](../ONBOARDING.md).
 
@@ -24,7 +26,7 @@ This page covers your choices and completion checks. Codex follows the [agent se
 
 - **LinkedIn email alerts:** you need alerts for the jobs you want. Follow [LinkedIn alerts and inbox setup](docs/linkedin-alerts.md) to create them and verify delivery. Recommended: your existing email plus a **Job Alerts** label and a narrow rule that skips Inbox. A `+jobs` address is optional. Automatic ingestion currently supports Gmail; Outlook organization is an optional section in that guide.
 - **Referral portals:** choose companies using [referral setup](docs/referrals.md). Codex copies your list privately and populates both the tracker’s watchlist and the search registry.
-- **Rated target companies:** choose the [103-company starter](blind-companies.json) or your own list. The starter has no personal notes. **Ratings are historical, user-supplied and not freshly verified; original dates are unknown.** Codex reviews enabled targets and copies them privately. [How this source runs](blind.md).
+- **Rated target companies:** choose the [103-company starter](<../Blind Company Research/blind-companies.json>) or your own list. The starter has no personal notes. **Ratings are historical, user-supplied and not freshly verified; original dates are unknown.** Codex reviews enabled targets and copies them privately. [How this separate workflow runs](<../Blind Company Research/run.md>).
 
 ## Connect only what you need
 
@@ -81,4 +83,4 @@ sources, save verified discovery and tracking updates to my one tracker, and
 return my chosen report with any gaps. Do not change my settings or schedules.
 ```
 
-Rated target companies may research separately, but its queued results are saved during a main run. Scheduling only that source does not schedule the main writer.
+[Blind Company Research](<../Blind Company Research/README.md>) may research separately, but its queued results are saved during a main run. Scheduling only that source does not schedule the main writer.

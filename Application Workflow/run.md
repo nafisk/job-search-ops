@@ -6,9 +6,9 @@
 
 **Start with [onboarding](ONBOARDING.md).** This guide runs the choices saved for your installation: local Excel or Google Sheets, selected discovery/tracking sources, manual or scheduled execution, and report delivery.
 
-The main Job Workflow chat is always the coordinator and sole tracker writer. Email Discovery and Referral Portal Search are helpers only when selected. [Rated target companies](blind.md) is a separate optional source feeding the same tracker. Helpers have no schedules; the main and Rated Target Companies chats run manually or on their individually selected schedules.
+The main Job Workflow chat is always the coordinator and sole tracker writer. Email Discovery and Referral Portal Search are helpers only when selected. [Blind Company Research](<../Blind Company Research/run.md>) is a separate optional source feeding the same tracker. Helpers have no schedules; the main and Rated Target Companies chats run manually or on their individually selected schedules.
 
-**Selected discovery → review and save → selected tracking → one report.** Tracking-only and public-research-only configurations are valid.
+**Selected discovery → review and save → selected tracking → one report.** Tracking-only and public-research-only configurations are valid. LinkedIn alerts and Blind are separate discovery paths; both feed this central writer. Blind-only runs skip email/referral dispatch when those sources are off.
 
 ## Every run
 

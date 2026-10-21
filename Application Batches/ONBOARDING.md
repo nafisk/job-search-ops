@@ -10,7 +10,7 @@
 
 Codex reuses your existing tracker, criteria, permissions and source choices. It verifies the private configuration and installation paths, tracker identity, saved job aliases, company-wide referral holds and application history. It does not create another workbook or change discovery schedules.
 
-Completed Application Workflow onboarding, including its initial pilot, remains required. The [agent setup check](run.md#agent-setup-reference) checks installed configuration and pending preference-pilot holds; it does not prove current tool access or replace that pilot. A held installation follows [preference recovery](<../Application Workflow/docs/preferences.md>) before connected work. Setup cannot waive a pending pilot or fill in missing account access.
+Completed shared Application Workflow onboarding, including its initial pilot, remains required. The tracker can contain accepted jobs from [LinkedIn alerts](<../Application Workflow/README.md>), [Blind Company Research](<../Blind Company Research/README.md>) or both. Pending research packets are not batch candidates; central must save them first. Blind-only setup does not require alert or referral discovery. The [agent setup check](run.md#agent-setup-reference) checks installed configuration and pending preference-pilot holds; it does not prove current tool access or replace that pilot. A held installation follows [preference recovery](<../Application Workflow/docs/preferences.md>) before connected work. Setup cannot waive a pending pilot or fill in missing account access.
 
 ### Check application criteria
 

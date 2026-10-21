@@ -4,7 +4,7 @@
 > **Runs in:** Codex app; the matrix below adds requirements only for selected features.
 > **Computer use:** A supported browser is required for discovery; actual interaction depends on the page. Signed-in browser access is required only for selected authenticated tasks.
 
-[Application Workflow onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory is the assistant's Application Workflow reference, not a repository-wide install list. [Repository onboarding](../../ONBOARDING.md#tools-for-your-choices) holds common installation and connection links. Commands run from `Application Workflow/support`.
+[Application Workflow onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory covers the shared Application Workflow runtime used by alerts and [Blind Company Research](<../../Blind Company Research/README.md>), not unrelated modules. Blind research uses public research/handoff tools; its accepted results still require the selected tracker and central writer. [Repository onboarding](../../ONBOARDING.md#tools-for-your-choices) holds common installation and connection links. Commands run from `Application Workflow/support`.
 
 **Selected**, **installed**, **connected to the expected identity**, and **authorized for the requested operation** are separate facts. Check actual saved preferences and tool responses. Do not turn a tool's availability into permission to use an unselected source.
 
@@ -21,7 +21,7 @@ The central chat always coordinates the selected work. Other chats, browser acce
 | Local Excel tracker | Private `.xlsx` path, the shipped [local workbook backend](local-excel.md), and app-provided Node/spreadsheet editing runtime discovered with `load_workspace_dependencies`. Verify actual file reads/writes, identity, schema and readback. No Drive/Sheets connection or Google workbook is needed. |
 | Google Sheets tracker | Native Google Drive/Sheets identity, import, metadata/CellData read and checked batch writes. Verify the account, selected workbook, seven-tab schema, links and manual-field preservation. |
 | Email alerts | Gmail identity, labels/search, full message/MIME reads and pagination. No mail mutations. |
-| Referral portals or Blind | Public search/open, official pages and a supported public HTTP/browser reader. Optional [curl](https://curl.se/download.html) is unnecessary when a native reader works. Verify scope, pagination and exact job details. |
+| Referral portals or [Blind research](<../../Blind Company Research/run.md>) | Public search/open, official pages and a supported public HTTP/browser reader. Optional [curl](https://curl.se/download.html) is unnecessary when a native reader works. Verify scope, pagination and exact job details. |
 | Gmail tracking | Gmail reads for exact-role receipts, replies and Sent history. Independent of email-alert discovery; no mail mutations. |
 | Calendar tracking | Native Google Calendar connection, selected calendars, bounded event search/read and identity checks. No booking, RSVP or event changes. |
 | Apple Messages tracking | macOS, connected Mac Messages MCP, user-granted database access, an explicitly selected conversation and reviewed read tools. See [Messages setup](messages.md). No bundled MCP server/decoder; no sends, contact edits or availability probes. |

@@ -1,8 +1,8 @@
 <div align="center">
 
-<h1>🔁 Application Workflow</h1>
+<h1>🔔 LinkedIn Job Alerts</h1>
 
-<p><strong>Find relevant jobs. Keep applications and interviews in one place.</strong></p>
+<p><strong>Turn LinkedIn alerts into verified jobs. Keep applications and interviews in one place.</strong></p>
 
 <p>Selected sources → independent research helpers → one tracker → one report.</p>
 
@@ -17,10 +17,12 @@
 
 ---
 
+This is **3.1: LinkedIn Job Alerts** in the repository flow. This directory also holds the shared tracker, central writer, optional referral research and application/interview tracking. **[3.2: Blind 3.5+ Companies](<../Blind Company Research/README.md>)** is a separate discovery workflow that feeds the same tracker. Choose either or both.
+
 ## 🚀 Set up
 
 1. Open the complete repo in **Codex on macOS**. Check the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for Codex and Python 3.10+.
-2. Follow [onboarding](ONBOARDING.md): choose Excel or Google Sheets, sources, and tracking options.
+2. Follow [onboarding](ONBOARDING.md): choose Excel or Google Sheets, LinkedIn alerts, and any other sources or tracking options. Blind-only setup uses this same shared setup with email and referrals off.
 3. Connect only your selected [tools](docs/tools.md), review a first run, and choose manual runs or a schedule.
 
 Bring your existing private installation path, or choose a private folder for a new setup. Codex asks for job/location criteria, resume facts, accounts and company lists only where your selected sources need them.
@@ -45,9 +47,9 @@ Open your configured main chat and ask it to [run the workflow](run.md).
 2. Save verified results to your one tracker, preserving your edits.
 3. Check selected application/interview sources and report changes, actions, and gaps.
 
-**Helpers research; the main chat saves and reports.** Email and referral helpers run on assignment. [Rated-company research](blind.md) can run separately; its results enter the same tracker on the next main run.
+**Helpers research; the main chat saves and reports.** Email and referral helpers run on assignment. [Blind Company Research](<../Blind Company Research/run.md>) can run separately; its results enter the same tracker on the next main run.
 
-The included [103-company Blind 3.5+ starter list](blind-companies.json) has no personal notes. **Ratings are historical and not freshly verified; original dates are unknown.** Onboarding copies your chosen targets privately.
+The [Blind Company Research folder](<../Blind Company Research/README.md>) owns its runbook and [103-company starter list](<../Blind Company Research/blind-companies.json>). **Ratings are historical and not freshly verified; original dates are unknown.** Shared onboarding copies your chosen targets privately.
 
 ## ⚙️ Change preferences
 

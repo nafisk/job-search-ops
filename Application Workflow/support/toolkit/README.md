@@ -21,7 +21,7 @@ Users start with [onboarding](../../ONBOARDING.md). Agents use this library only
 
 The [workflow support CLI](../README.md) manages setup, the shared queue, tracker journals, verified saves and delivery receipts. Do not substitute an old simulated storage or delivery adapter. Native access comes from the selected tools in [tool requirements](../../docs/tools.md).
 
-Personal profiles, working company lists/notes, resumes, evidence and history belong outside the repository. The approved [starter list](../../blind-companies.json) is copied and reviewed during onboarding; its historical ratings are not freshly verified. Example values never authorize access or stand in for live evidence.
+Personal profiles, working company lists/notes, resumes, evidence and history belong outside the repository. The approved [starter list](<../../../Blind Company Research/blind-companies.json>) is copied and reviewed during onboarding; its historical ratings are not freshly verified. Example values never authorize access or stand in for live evidence.
 
 ## Maintenance only
 

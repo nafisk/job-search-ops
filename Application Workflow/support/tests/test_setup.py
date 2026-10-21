@@ -333,7 +333,7 @@ class SetupTests(unittest.TestCase):
     def test_generated_prompts_resolve_workflow_runbooks_and_support_command_directory(self):
         self.bind_all()
         paths = setup.prepare_prompts(self.config)
-        runbooks = {"main": WORKFLOW_ROOT / "run.md", "blind": WORKFLOW_ROOT / "blind.md",
+        runbooks = {"main": WORKFLOW_ROOT / "run.md", "blind": REPO_ROOT / "Blind Company Research" / "run.md",
                     "email": WORKFLOW_ROOT / "helpers/email-discovery.md",
                     "portals": WORKFLOW_ROOT / "helpers/referral-portals.md"}
         for name, path in paths.items():
