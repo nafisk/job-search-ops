@@ -1,6 +1,6 @@
 # Guide catalog and folder map
 
-Start at the [Application Workflow README](../README.md). Read the guides for your selected features; saved choices determine which tools the agent may use. Each procedure begins with its requirements and computer-use needs.
+Start at the [Application Workflow README](../README.md), or use [repository onboarding](../../ONBOARDING.md) to choose a goal. This catalog covers Application Workflow. Read the guides for your selected features; saved choices determine which tools the agent may use. Each procedure begins with its requirements and computer-use needs.
 
 ## Set up and run
 
@@ -38,7 +38,8 @@ The two helpers work on the main chat's assignments and have no timers. Rated-co
 
 | Guide | Use it for |
 | --- | --- |
-| [Tools](tools.md), [agent setup](agent-setup.md) | Connection links, selected dependencies and the setup sequence. |
+| [Workflow tools](tools.md), [agent setup](agent-setup.md) | Selected dependencies and the setup sequence. Common installation links live in [repository onboarding](../../ONBOARDING.md#tools-for-your-choices). |
+| [Your setup summary](../../ONBOARDING.md#your-setup-summary) | The shared private handoff with canonical settings/state, tracker/chats, verified or pending checks and the exact next prompt. |
 | [Change preferences](preferences.md) | Apply choices while preserving history/bindings; run any required replacement pilot. |
 | [Operations](operations.md) | Permissions, one-writer ownership, mandatory start checks, source gaps and completion rules. |
 | [Verification](verification.md), [support](../support/README.md) | Offline checks, live-check limits and local code. |

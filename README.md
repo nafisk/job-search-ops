@@ -7,46 +7,52 @@
 <p>Improve your materials, find relevant jobs, and prepare applications and recruiter messages for your review.</p>
 
 <p>
-  <img src="https://img.shields.io/badge/AI-ready-2563eb?style=flat-square" alt="AI-ready">
   <img src="https://img.shields.io/badge/Format-Markdown-475569?style=flat-square&logo=markdown" alt="Format: Markdown">
   <img src="https://img.shields.io/badge/Setup-guided-16a34a?style=flat-square" alt="Guided setup">
 </p>
 
-<p><a href="#-runbooks">Explore the runbooks</a> · <a href="#-how-to-use">Get started</a></p>
+<p><a href="ONBOARDING.md">Start setup</a> · <a href="#-choose-your-workflow">Choose a workflow</a> · <a href="#-follow-the-flow">See the flow</a></p>
 
 </div>
 
 ---
 
-## 📚 Runbooks
+## 📚 Choose your workflow
 
-| Start here | What it helps with |
-| --- | --- |
-| 📝 [Resume](Resume/resume-content-optimization.md) | Strengthen experience bullets with clear ownership, context, and impact. |
-| 🔎 [LinkedIn](LinkedIn/linkedin-profile-optimization.md) | Audit your profile and align it with your resume and target roles. |
-| 🔁 [Application Workflow](<Application Workflow/README.md>) | Choose your tracker, job sources, tracking features and run schedule with guided setup. |
-| ✉️ [Recruiter Outreach](<Recruiter Outreach/README.md>) | Find relevant recruiters, prepare unsent LinkedIn messages, and keep contact history. |
-| 📑 [Application Batches](<Application Batches/README.md>) | Open eligible application pages in batches for you to fill and submit. |
+| Workflow | What you get | What you need to start |
+| --- | --- | --- |
+| [1. Resume](Resume/README.md) | Clearer experience bullets grounded in your work | Your resume and an AI assistant |
+| [2. LinkedIn](LinkedIn/README.md) | A profile audit and reviewed improvements | Your resume and profile content; browser access for live changes |
+| [3. Application Workflow](<Application Workflow/README.md>) | Job discovery, application/interview tracking and reports | Codex on macOS, Python and your selected tracker/sources |
+| [4. Application Batches](<Application Batches/README.md>) | Eligible application pages opened for you | Completed Application Workflow setup, confirmed criteria and browser access |
+| [5. Recruiter Outreach](<Recruiter Outreach/README.md>) | Screened contacts and unsent LinkedIn drafts | Independent Codex setup, browser access and a separate contact tracker |
 
-## 🚀 How to use
+## 🚀 Get started
 
-1. For **Resume or LinkedIn**, give your assistant the entire instruction Markdown file. For the other workflows, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder, and open it in Codex.
-2. Open your chosen directory's README and follow its setup. Provide only the inputs that workflow needs.
-3. Ask the agent to follow the linked instructions. Review the result before sending a message or submitting an application.
+1. **Resume or LinkedIn review:** open that folder's README and give your assistant the entire linked runbook. Supplied files are enough for a content review.
+2. **Operational workflows:** download the complete repository or reviewed release ZIP, keep it in a permanent folder, and open it in Codex on macOS.
+3. Follow [guided onboarding](ONBOARDING.md). Choose what you want; the agent explains and checks only the tools those choices need.
 
-> [!TIP]
-> Start with the resume runbook if you're unsure. It helps clarify the experience you'll also use on LinkedIn.
+You do not need to edit JSON or install every tool. Personal settings, resumes, contacts and history stay in a separate private location.
 
-## 🔁 Application Workflow
+## 🧭 Follow the flow
 
-[Start onboarding](<Application Workflow/ONBOARDING.md>) to build your own workflow. Choose **local Excel or Google Sheets**, the job sources and tracking features you want, and manual runs or a schedule.
+Dotted arrows show a suggested order; start with your current goal. **Batches requires completed Application Workflow setup and its pilot. Outreach works independently.**
 
-The main chat saves verified results and prepares your report. Enable email-alert and referral-portal helpers, a separate rated target company search, or application/interview tracking as needed. Every selected source feeds the **same tracker**. Codex asks only relevant follow-up questions and checks the tools your choices require.
+```mermaid
+flowchart TD
+    resume["1. Resume<br/>Improve your resume"]
+    linkedin["2. LinkedIn<br/>Improve your profile"]
+    workflow["3. Application Workflow<br/>Find and track jobs"]
+    batches["4. Application Batches<br/>Open pages; you apply"]
+    outreach["5. Recruiter Outreach<br/>Prepare drafts; you send"]
 
-[Set up your copy](<Application Workflow/ONBOARDING.md>) · [Read the workflow](<Application Workflow/README.md>)
+    resume -.-> linkedin
+    linkedin -.-> workflow
+    workflow -->|"Jobs tracker"| batches
+    batches -.-> outreach
+```
 
-## 🖱️ Manual next steps
+For operational workflows, use the first-run request in your private setup summary. **Request Batches and Outreach separately:** discovery starts neither. Opening an application page does not mark it Applied. Only selected Application Workflow runs can be scheduled, after verification.
 
-[Recruiter Outreach](<Recruiter Outreach/README.md>) has its own setup and separate contact tracker. It can run independently of job discovery. [Application Batches](<Application Batches/README.md>) uses your configured Application Workflow tracker and saved role restrictions.
-
-Both run only when you ask and require computer use for their browser actions. Recruiter drafts stay unsent; application pages stay open for you to complete. The daily job workflow does not launch either feature.
+Each numbered workflow links to its setup, run instructions and preferences in the [table above](#-choose-your-workflow). Application Workflow's [guide catalog](<Application Workflow/docs/source-map.md>) explains its helpers, detailed procedures and support code.

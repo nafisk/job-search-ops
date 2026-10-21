@@ -6,9 +6,61 @@
 
 Use a **separate recruiter tracker**. The Application Workflow jobs workbook has a different schema and does not store these records. Read this guide before creating storage or saving contact/draft history.
 
+## Agent-facing settings
+
+Collect the choices and approved copy in [onboarding](ONBOARDING.md#3-save-your-choices-and-approved-copy), then create private `settings.json` using this starting shape. Replace nulls and empty targets through the setup conversation; they are deliberately incomplete values. Never replace existing settings without reviewing and preserving their choices and history.
+
+```json
+{
+  "schema_version": 1,
+  "setup_status": "needs_setup",
+  "timezone": null,
+  "browser": {"name": "chrome", "account_identity": null},
+  "tracker": {
+    "backend": "local_json",
+    "spreadsheet_id": null,
+    "worksheet": "Recruiters",
+    "header_row": 1,
+    "expected_google_identity": null
+  },
+  "targets": {"specialties": [], "candidate_levels": [], "excluded_remits": []},
+  "capacity": {"outstanding_drafts": 20, "pilot_drafts": 2},
+  "research": {"target_per_company": 25, "read_attempts": 3},
+  "channels": ["inmail", "linkedin_message", "connection_note"],
+  "allow_needs_review_drafts": false,
+  "next_batch_confirms_previous_sent": false,
+  "approved_copy": {
+    "approved": false,
+    "approval_reference": null,
+    "subject": "",
+    "body": "",
+    "connection_note": ""
+  }
+}
+```
+
+Use the chosen IANA timezone and observed account identity. Select one or more allowed channels; an available but unselected channel is not a fallback. Set a positive outstanding-draft ceiling and a pilot count no larger than it. The research count is a configurable goal, not proof of full coverage or a draft quota. Google mode sets `backend` to `google_sheets` and requires the actual workbook ID and expected account. Approved copy must have no unsupported facts or unresolved fact placeholders before drafting.
+
+Save the absolute private folder and repository locations in the assigned operating chat's instructions. Complete the [setup summary](../ONBOARDING.md#your-setup-summary) as an index to authoritative settings and records, not a second configuration.
+
+## Outreach tool checks
+
+Use the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for general connection guidance, then verify the selected outreach capabilities:
+
+| Capability | Setup and proof |
+| --- | --- |
+| Codex and local files | Open the permanent checkout in Codex. Confirm Python 3.10+ is available and a private JSON file can be saved and read back. Python's standard library is sufficient; no extra package is needed. |
+| Supported browser | Select Chrome or another browser the current host supports using the shared connection guidance above. The user logs into LinkedIn; verify the observed account matches the chosen identity. Preserve unrelated tabs. |
+| Google tracker, if selected | Use the selected native Drive/Sheets connection. Read the installed Google Sheets skill before Google access/effects. Verify account identity, access to the exact workbook, metadata/cell reads and narrow writes with readback. Follow the current tool schemas. |
+| Research | Use available public search/page reads and the supported LinkedIn browser. Search results find leads; live profiles supply current evidence. |
+
+Standalone outreach uses these checks, not Application Workflow's configuration, `doctor`, start check or capability manifest. Gmail, Calendar, Messages and scheduling are not outreach requirements. Do not install a CLI, email-finder service, extra MCP server or alternate credential flow for this setup. If a selected capability is unavailable, record the missing step and keep setup incomplete; never substitute another account. Access does not grant permission to send.
+
 ## Set up storage
 
-Create private `settings.json` from [onboarding](ONBOARDING.md#3-save-your-choices-and-approved-copy) and `state.json` with this exact empty starting shape. Use owner-only `0700` folders and `0600` files, including private snapshots, proofs and temporary replacements:
+Check the private folder's actual filesystem location, including symlinks and case aliases; it must be outside this repository and any shared export folder. Keep one installation per person and never bind another person's contacts or batches.
+
+For a new installation, create private `settings.json` from [the settings reference](#agent-facing-settings) and `state.json` with this exact empty starting shape. On restart or adoption, read existing records first; never initialize over them. Use owner-only `0700` folders and `0600` files, including private snapshots, proofs and temporary replacements:
 
 ```json
 {
@@ -19,7 +71,7 @@ Create private `settings.json` from [onboarding](ONBOARDING.md#3-save-your-choic
 }
 ```
 
-**Local JSON:** create `contacts.json` beside them:
+**Local JSON:** for a new empty tracker, create `contacts.json` beside them:
 
 ```json
 {
@@ -29,19 +81,21 @@ Create private `settings.json` from [onboarding](ONBOARDING.md#3-save-your-choic
 }
 ```
 
-This is the contact source of truth. Read and parse it after creation, verifying version, revision and empty contacts. Optional `contacts.csv` is a generated view using the columns below; regenerate it from JSON, never overwrite JSON from an unreviewed CSV. Do not open untrusted values as spreadsheet formulas: export literal text and escape formula-leading cells for the selected viewer.
+This is the contact source of truth. Read and parse it after creation, verifying version, revision and empty contacts. For adoption, verify the existing version, revision, contact fields and identities, history and unresolved drafts instead of requiring empty contacts. Review any required migration before writing; never reset the revision or discard history. Optional `contacts.csv` is a generated view using the columns below; regenerate it from JSON, never overwrite JSON from an unreviewed CSV. Do not open untrusted values as spreadsheet formulas: export literal text and escape formula-leading cells for the selected viewer.
 
 **Google Sheets:** read the installed Google Sheets skill and verify the selected account. Before creation, save a `create_tracker` intent in `state.json` with a unique write ID, expected account, requested title and any tool-supported request/idempotency identifier. Use the native tool's supported create/import operation to create a new blank workbook with a `Recruiters` worksheet. Save the actual returned workbook ID and verify native metadata/readback before binding it. If no creation operation is available, the user creates the empty workbook and supplies its link. Do not introduce alternate credentials. Adopt an existing workbook only after explicit mapping and history review.
 
 If creation returns no ID or times out, retain the intent as `reconciliation_required`. Use the provider's documented operation/idempotency status or inspect the expected account with actual creation evidence to identify the outcome. A matching title, missing return value or one empty search is not enough to create again. If the outcome cannot be established, hold setup for a user-assisted binding; never create a second tracker to bypass uncertainty.
 
-Write the exact headers below to `A1:U1` as literal values. Read native metadata and the cells back; verify the exact workbook ID, tab, header row, all 21 header names and initially empty contact rows. Save the verified binding in settings. Read/write only this mapped table. Freeze/filter the header if supported; formatting is optional. No hidden identity hyperlinks, formulas, native table object or Apps Script is required.
+For a newly created blank sheet only, write the exact headers below to `A1:U1` as literal values. Read native metadata and the cells back; verify the exact workbook ID, tab, header row, all 21 header names and initially empty contact rows. For an adopted sheet, verify its reviewed mapping to all 21 fields, stable identities, existing history and unresolved drafts; do not rewrite headers or require empty rows. Save any nonstandard column mapping in the private setup-readback record and use it for every read/write. Missing or ambiguous fields require a reviewed migration before use.
+
+Save the verified workbook/tab/header binding in settings. Read/write only this mapped table. Freeze/filter the header if supported; formatting is optional. No hidden identity hyperlinks, formulas, native table object or Apps Script is required.
 
 In Google mode the sheet is authoritative for contact/history fields; private `state.json` owns batch reservations, detailed evidence, approved copy snapshots and write recovery. Reconcile both before acting. A stale local snapshot cannot overwrite live manual edits. Keep a dated private setup-readback record; do not use a passing JSON parse as proof of Google access.
 
 ## Contact fields
 
-Use these JSON keys, or their exact Google/CSV headers in this order. Every contact has all keys; use `null` for unknown dates, `false` for the initial do-not-contact flag and empty strings only for genuinely empty text. No invented check dates or send history.
+Use these JSON keys. New Google sheets and generated CSVs use the exact headers in this order; adopted Google sheets use their verified private field mapping. Every contact has all fields; use `null` for unknown dates, `false` for the initial do-not-contact flag and empty strings only for genuinely empty text. No invented check dates or send history.
 
 | JSON key | Header | Meaning |
 | --- | --- | --- |

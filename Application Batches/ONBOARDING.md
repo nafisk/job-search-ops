@@ -4,23 +4,31 @@
 > **Runs in:** Codex app on the installation's supported macOS host.
 > **Computer use:** Required to inspect and retain application tabs. Tracker access uses the selected native Google tools or local Excel runtime.
 
-**Give Codex this file and the absolute path to your existing private workflow configuration.** Setup records your choices; opening pages begins only when you request a batch.
+**Give Codex this file and the absolute path to your existing private workflow configuration.** Confirm your application criteria, browser/profile and preferred batch size. Codex handles the setup commands and private ledger described in the [agent setup reference](run.md#agent-setup-reference). Opening pages begins only when you request a batch.
 
 ## 1. Connect the existing installation
 
-Read the saved configuration and [shared operating rules](<../Application Workflow/docs/operations.md>). Reuse the verified tracker, criteria, permissions and source choices. Do not create another workbook or change discovery schedules.
+Codex reuses your existing tracker, criteria, permissions and source choices. It verifies the private configuration and installation paths, tracker identity, saved job aliases, company-wide referral holds and application history. It does not create another workbook or change discovery schedules.
 
-From `Application Workflow/support/`, run the existing readiness check with the actual quoted configuration path:
+Completed Application Workflow onboarding, including its initial pilot, remains required. The [agent setup check](run.md#agent-setup-reference) checks installed configuration and pending preference-pilot holds; it does not prove current tool access or replace that pilot. A held installation follows [preference recovery](<../Application Workflow/docs/preferences.md>) before connected work. Setup cannot waive a pending pilot or fill in missing account access.
 
-```sh
-python3 -m job_search_ops run-check --config '/absolute/private/config.json' --workflow main
-```
+### Check application criteria
 
-If it is held, follow [preference recovery](<../Application Workflow/docs/preferences.md>) before starting connected work. Setup cannot waive a pending pilot or fill in missing account access.
+A tracking-only installation may validly omit application criteria. Confirm the roles and levels you want, where you may work, your residency and relocation choice, and your actual experience. Codex asks only for missing values or unconfirmed example defaults. Empty criteria do not mean “anything is eligible.”
 
-Read the selected tracker and [accepted role state](<../Application Workflow/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases, company-wide referral holds and existing application history are required inputs.
+**Agent preflight:** before declaring batch setup ready or reserving/opening roles, check the canonical configuration and profile for these confirmed choices:
 
-## 2. Select only the tools you need
+| Required input | Where it belongs |
+|---|---|
+| Target role families and levels | Nonempty `role_policy.families` and `role_policy.preferred_levels` |
+| Permitted locations, actual residency and relocation choice | `locations.onsite_regions` and/or `remote_countries`, plus `residency_region` and `allow_relocation` |
+| Truthful experience and preferred job requirements | Known `candidate.actual_experience_years` (zero is valid) and reviewed `role_policy.experience` |
+
+Save needed changes through [preference updates](<../Application Workflow/docs/preferences.md>), read back the canonical files and respect any resulting pilot hold. Do not enable discovery or change sources/schedules to satisfy this check. Until complete, hold batch readiness and new reservations/openings. Missing criteria alone need not block safe recovery or separately requested submission checks; existing execution holds and source permissions still apply.
+
+## 2. Confirm your tools and browser
+
+Use the shared [tools guide](../ONBOARDING.md#tools-for-your-choices) to connect only the tools your choices require. Codex checks the access below.
 
 | Tool | Why it is needed |
 |---|---|
@@ -30,41 +38,58 @@ Read the selected tracker and [accepted role state](<../Application Workflow/doc
 | Local files and Python 3.10+ | Keep the private ledger and read accepted role aliases/restrictions with the shared CLI. |
 | Selected submission sources, later | Only an explicit submission-check request needs the sources enabled in [tracking](<../Application Workflow/docs/tracking.md>). Opening pages needs neither Gmail, Calendar nor Apple Messages. |
 
-Confirm the browser name and authorized profile/session with the user. Inspect supported controls without visiting application pages during setup. Do not install Simplify, browser libraries, new credentials or an alternate Google CLI. This workflow does not autofill forms.
+Confirm the browser name and authorized profile/session. Codex inspects supported controls without visiting application pages during setup. Do not install Simplify, browser libraries, new credentials or an alternate Google CLI. This workflow does not autofill forms.
 
-## 3. Save your private ledger
+## 3. Choose your limits and private history location
 
-Copy [batch-state.example.json](batch-state.example.json) to a new private location, such as `<installation>/application-batches/state.json`. The directory must be outside the repository and release folder. Check its actual filesystem location, including symlinks and alternate capitalization. Give this dedicated directory owner-only access (`0700`) and its ledger, temporary files and backups owner-only access (`0600`). Never overwrite an existing ledger; recover it instead.
+Choose how many pages you want and where to keep the private batch ledger. This file records reservations, open tabs and past handoffs so Codex can recover unfinished work.
 
-Populate the exact template fields:
-
-| Field | Saved value |
+| Choice | Default |
 |---|---|
-| `workflow_config_path`, `installation_root`, `tracker_id` | Absolute configuration/root paths and the verified existing tracker ID |
-| `browser.name`, `browser.session_ref` | Selected browser name and observed session/profile reference; no cookies or credentials |
-| `limits` | Positive integers: `first_total: 5`, `next_additional: 5`, `max_outstanding: 20` by default; both batch sizes must fit the ceiling |
-| `created_at`, `updated_at` | Actual timezone-qualified timestamps |
-| `schema_version`, `active_run`, `runs`, `handoffs` | Keep version `1`, `null`, `[]`, `[]` until the first requested run |
+| First batch | Five accessible pages, including earlier pages still open |
+| Next batch | Five additional pages |
+| Outstanding maximum | Twenty unresolved pages or reservations |
+| Private ledger location | A dedicated folder outside the repository and release, such as `<installation>/application-batches/state.json` |
 
 These are configurable limits, not promises of eligible jobs. The first target includes accessible carryovers; a subsequent request adds pages. All unresolved handoffs and reservations count toward the ceiling, even when their accessibility is uncertain. Lowering the ceiling never discards existing work.
 
-The [runbook](run.md#private-ledger-contract) defines the records added during use. This is agent-managed state; the template does not implement an automatic lock or background process. Keep backups and every past run private. Do not add unsupported settings to the existing Application Workflow configuration.
+Codex creates or recovers the ledger using the [agent setup reference](run.md#agent-setup-reference) and [private ledger contract](run.md#private-ledger-contract). Keep it, its backups and every past run private. The ledger is agent-managed state; it does not provide an automatic lock or background process. Do not add unsupported settings to the existing Application Workflow configuration.
 
 ## 4. Give the chat a durable starting point
 
-Use an existing chat or create a dedicated one when the user asks. Save these bindings in its instructions:
+**One active chat per ledger, including submission checks.** Choose one existing chat, or ask to create a dedicated one. Two chats must never operate the same ledger concurrently; atomic file replacement is not a lock. To switch chats, stop the previous operator, confirm it is inactive, then recover the same ledger and tabs before continuing. If ownership is uncertain, hold new work.
+
+Codex saves these bindings in the chosen chat's private instructions, replacing each bracketed value with its actual path:
 
 ```text
 For application batches, read [absolute installed path]/Application Batches/run.md.
 Use the private ledger at [absolute private path]/state.json.
+This is the sole operating chat for this ledger; no concurrent batch chat.
 Start only from my explicit request naming a batch or submission check.
 Recover outstanding work before opening more pages. Never fill or submit forms.
 ```
 
-Replace every bracketed value with the actual path. Keep these private instructions outside the public repository. Do not create or activate a schedule.
+Keep these private instructions outside the public repository. Do not create or activate a schedule.
 
-## 5. Review your first handoff
+## 5. Verify setup and your first handoff
 
-Ask **“Open my first batch of eligible application pages.”** Codex follows [run.md](run.md), returns the actual accessible count and lists held/blocked roles separately. You review, fill and submit.
+When you want the first batch, ask **“Read the batch runbook and my private ledger. Open my first batch of eligible application pages.”** Codex follows [run.md](run.md), returns the actual accessible count and lists held/blocked roles separately. You review, fill and submit.
 
-Setup is ready when the ledger bindings are verified and the first requested handoff records exact role/tab identities. Unavailable browser or tracker access remains a setup blocker; do not label a simulated or inaccessible page as a successful pilot.
+Setup is ready when the application criteria are confirmed and saved, one operating chat is selected, the ledger bindings are verified and the first requested handoff records exact role/tab identities. Unavailable browser or tracker access remains a setup blocker; do not label a simulated or inaccessible page as a successful pilot.
+
+## Change preferences
+
+Ask the operating chat to update batch limits or browser/session bindings in the private ledger, preserve history and verify the saved values. Limits must be positive integers; both batch sizes must fit the outstanding maximum. Lowering that maximum preserves existing reservations and may leave no capacity for more pages. Follow the ownership handoff above before switching chats.
+
+Change role criteria or source choices through [Application Workflow preferences](<../Application Workflow/docs/preferences.md>), retaining its canonical files and any resulting pilot hold. These changes do not start a batch or enable a schedule.
+
+## Your setup summary
+
+Finish by saving or updating the shared [private setup summary](../ONBOARDING.md#your-setup-summary). It is an index to the authoritative settings and history, not an alternate configuration. Record:
+
+- The absolute installed runbook, workflow configuration, profile and batch ledger paths, plus the authoritative tracker identifier or file path.
+- The sole operating chat and selected browser/profile, including the ownership handoff rule for batch runs and submission checks.
+- Verified criteria, tracker and browser access; the first handoff result, or an explicit “not yet requested” pilot gap; remaining blockers and next actions.
+- The exact first request: **“Read the batch runbook and my private ledger. Open my first batch of eligible application pages.”** Name the actual installed runbook and private ledger paths in that request.
+
+Return the summary's absolute path and the truthful setup status: ready, incomplete pending a requested pilot, or blocked with the reason.

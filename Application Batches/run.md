@@ -1,15 +1,19 @@
 # Open one application batch
 
-> **Required:** Completed [batch onboarding](ONBOARDING.md), the private ledger, installed Application Workflow configuration, Python 3.10+, current tracker/role-state reads and a supported authorized browser.
+> **Required for routine runs:** Completed [batch onboarding](ONBOARDING.md), the private ledger, installed Application Workflow configuration, Python 3.10+, current tracker/role-state reads and a supported authorized browser.
 > **Runs in:** Codex app, only on an explicit human request.
 > **Computer use:** Required for application pages. The user fills and submits.
+
+**Agent procedure:** use [onboarding](ONBOARDING.md) for the user's choices and setup status. Commands and ledger fields below are implementation details for Codex.
+
+For setup, use [Agent setup reference](#agent-setup-reference). The first explicitly requested batch may run after all non-pilot onboarding checks pass; its observed handoff completes the batch pilot. The Application Workflow initial pilot and any preference holds must already be satisfied.
 
 **Read the private ledger and the current request before opening any page.** A daily timer, discovery result, receipt, recruiter roster or another agent cannot start this module. A current request may continue its saved scope; an unrelated later wake-up cannot resume it. Generic “continue” is sufficient only when it clearly continues this unfinished, explicitly requested batch.
 
 ## 1. Recover and reserve
 
-1. Read [shared operating rules](<../Application Workflow/docs/operations.md>), verify the ledger's installation/tracker binding, and run `run-check --config '/absolute/private/config.json' --workflow main` from `Application Workflow/support/` using `python3 -m job_search_ops`. A held installation stays held.
-2. Inspect `active_run`, earlier handoffs, recorded tabs and uncertain reservations. Keep one coordinator as ledger/browser owner. If another owner may still be active, stop new allocations until ownership is resolved.
+1. Read [shared operating rules](<../Application Workflow/docs/operations.md>), verify the ledger's installation/tracker binding, and run `run-check --config '/absolute/private/config.json' --workflow main` from `Application Workflow/support/` using `python3 -m job_search_ops`. A held installation stays held. Before reserving or opening any role, repeat the [application criteria check](ONBOARDING.md#check-application-criteria) against current saved settings; `run-check` alone does not establish eligibility readiness.
+2. Inspect `active_run`, earlier handoffs, recorded tabs and uncertain reservations. Follow [one active chat per ledger](ONBOARDING.md#4-give-the-chat-a-durable-starting-point); keep that chat's coordinator as ledger/browser owner. If another owner may still be active, stop new work until ownership is resolved.
 3. Refresh current tracker status, actual links and application history. Read accepted aliases and restrictions using the command below. Match stable identities rather than row numbers; a sort or alternate URL does not create a new job.
 4. Confirm the requested scope and count. First batch targets `first_total` accessible pages including carryovers. “Next five” requests five additional; a generic next batch uses `next_additional`. All allocations must fit `max_outstanding`.
 5. Save the run and reserve each exact role before opening it. Count every unreleased handoff/reservation conservatively. Unknown capacity prevents new allocation but permits safe recovery of existing work.
@@ -52,7 +56,37 @@ Require an exact-role user report or independent native confirmation. A tracker 
 
 Record confirmed outcomes and explicitly resolved/abandoned handoffs without deleting history. An explicit user decision may release a reservation; it does not assert submission. If no tracking source is enabled, a role-specific user report can resolve the private handoff, but do not force the gated tracker writer or enable sources; report that the tracker was not updated. Stop after reporting. Application-driven recruiter work requires its own request and applicable evidence checks.
 
+## Agent setup reference
+
+Use this section while following [onboarding](ONBOARDING.md). Read the saved configuration and [shared operating rules](<../Application Workflow/docs/operations.md>); reuse the verified tracker, criteria, permissions and source choices. Do not create another workbook or change discovery schedules.
+
+From `Application Workflow/support/`, run the existing start check with the actual quoted configuration path:
+
+```sh
+python3 -m job_search_ops run-check --config '/absolute/private/config.json' --workflow main
+```
+
+This checks the installed configuration and pending preference-pilot holds. It does not verify current tools or the initial onboarding pilot; completed Application Workflow onboarding remains required. If it is held, follow [preference recovery](<../Application Workflow/docs/preferences.md>) before starting connected work. Setup cannot waive a pending pilot or fill in missing account access. Apply the authoritative [application criteria preflight](ONBOARDING.md#check-application-criteria) before declaring readiness or reserving/opening roles.
+
+Read the selected tracker and [accepted role state](<../Application Workflow/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases, company-wide referral holds and existing application history are required inputs.
+
+Copy [batch-state.example.json](batch-state.example.json) to a new private location, such as `<installation>/application-batches/state.json`. The directory must be outside the repository and release folder. Check its actual filesystem location, including symlinks and alternate capitalization. Give this dedicated directory owner-only access (`0700`) and its ledger, temporary files and backups owner-only access (`0600`). Never overwrite an existing ledger; recover it instead.
+
+Populate the exact template fields:
+
+| Field | Saved value |
+|---|---|
+| `workflow_config_path`, `installation_root`, `tracker_id` | Absolute configuration/root paths and the verified existing tracker ID |
+| `browser.name`, `browser.session_ref` | Selected browser name and observed session/profile reference; no cookies or credentials |
+| `limits` | Positive integers: `first_total: 5`, `next_additional: 5`, `max_outstanding: 20` by default; both batch sizes must fit the ceiling |
+| `created_at`, `updated_at` | Actual timezone-qualified timestamps |
+| `schema_version`, `active_run`, `runs`, `handoffs` | Keep version `1`, `null`, `[]`, `[]` until the first requested run |
+
+Use [one active chat per ledger](ONBOARDING.md#4-give-the-chat-a-durable-starting-point), including submission checks, and save the actual bindings in that chat's private instructions. The template does not implement an automatic lock or background process. Keep backups and every past run private. Do not add unsupported settings to the existing Application Workflow configuration or create a schedule.
+
 ## Private ledger contract
+
+**Agent reference:** preserve this schema and recovery protocol when creating or updating private state.
 
 Start from the [empty template](batch-state.example.json). Keep its top-level keys, version and private bindings. `active_run` is `null` or the current run ID; `runs` and `handoffs` are arrays. Use actual timezone-qualified timestamps, stable generated run IDs and source references; no credentials or form answers.
 

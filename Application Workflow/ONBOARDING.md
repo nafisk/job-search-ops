@@ -1,10 +1,12 @@
-# Set up your job-search workflow
+# Set up Application Workflow
 
 > **Required:** Codex desktop on macOS, Python 3.10+, the complete repository in a permanent folder, and a private writable folder outside it.
 > **Runs in:** Codex app; connect only the tools your choices need.
 > **Computer use:** LinkedIn alerts and interactive job pages. You handle sign-in and permission prompts.
 
-Install the [desktop app](https://learn.chatgpt.com/docs/app), select **Codex** mode, open the complete repository and paste the setup prompt below. Codex guides you one choice at a time; you do not need to edit configuration files.
+Open the complete repository in **Codex** mode and paste the setup prompt below. Use the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for installation and connection links. Codex guides you one choice at a time; you do not need to edit configuration files.
+
+This page covers your choices and completion checks. Codex follows the [agent setup reference](docs/agent-setup.md) for the setup sequence. To choose another goal, return to [repository onboarding](../ONBOARDING.md).
 
 ## Choose your workflow
 
@@ -26,7 +28,7 @@ Install the [desktop app](https://learn.chatgpt.com/docs/app), select **Codex** 
 
 ## Connect only what you need
 
-[Tool setup](docs/tools.md) lists installation links, requirements and capability checks. Python runs the local setup and verification helpers. Local Excel also needs Codex’s app-provided spreadsheet runtime. Google Sheets needs the Drive/Sheets connection. Gmail is needed only for selected email discovery/tracking or email reports. Calendar is independent; [Mac Messages MCP](docs/messages.md) is required only if you select Messages.
+[Workflow tools](docs/tools.md) lists the requirements and capability checks for these choices; [shared tool setup](../ONBOARDING.md#tools-for-your-choices) holds common installation links. Python runs the local setup and verification helpers. Local Excel also needs Codex’s app-provided spreadsheet runtime. Google Sheets needs the Drive/Sheets connection. Gmail is needed only for selected email discovery/tracking or email reports. Calendar is independent; [Mac Messages MCP](docs/messages.md) is required only if you select Messages.
 
 Codex shows the chosen tools, permissions, tracker, chats and schedules before setup. New installations, connections and expanded permissions require your participation. A missing selected tool remains a visible gap. Existing live workflows stay untouched.
 
@@ -51,7 +53,9 @@ reports as defaults. Create only schedules I choose, after a verified pilot.
 Check actual connections and allowed operations. Do not install optional
 software or broaden permissions automatically. Do not alter existing live
 workflows, submit applications, contact people or book events.
-Finish with the completion checklist and my exact first-run prompt.
+Finish with the completion checklist. Return and save my private setup summary
+following the repository-root ONBOARDING.md#your-setup-summary,
+including my exact first-run prompt.
 ```
 
 ## Before setup is complete
@@ -62,7 +66,9 @@ Finish with the completion checklist and my exact first-run prompt.
 - [ ] Selected chats and their evidence handoffs work.
 - [ ] A genuine scoped pilot saves and reports correctly; gaps remain explicit.
 - [ ] Manual mode has no schedules, or requested schedules are read back after the pilot.
-- [ ] You have the tracker link/path, selected chat links, private state location and run prompt.
+- [ ] Your [setup summary](../ONBOARDING.md#your-setup-summary) is returned and saved privately, with links to the canonical settings/state, tracker and selected chats, verified or pending checks, chosen schedules and exact first-run prompt.
+
+The summary is a navigation aid. Saved settings, resource receipts and accepted pilot evidence remain authoritative; a pending selected check keeps setup incomplete for that path.
 
 ## Your first run
 

@@ -19,9 +19,19 @@
 
 ## 🚀 Set up
 
-1. Open the complete repo in **Codex on macOS**, with **Python 3.10+**.
+1. Open the complete repo in **Codex on macOS**. Check the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for Codex and Python 3.10+.
 2. Follow [onboarding](ONBOARDING.md): choose Excel or Google Sheets, sources, and tracking options.
 3. Connect only your selected [tools](docs/tools.md), review a first run, and choose manual runs or a schedule.
+
+Bring your existing private installation path, or choose a private folder for a new setup. Codex asks for job/location criteria, resume facts, accounts and company lists only where your selected sources need them.
+
+Paste this into Codex:
+
+```text
+Read Application Workflow/ONBOARDING.md and guide me through setup one choice
+at a time. Reuse my saved preferences and authorization. Follow its setup prompt,
+verify the selected path, and return and save my private setup summary.
+```
 
 Gmail, Calendar, and Apple Messages are independent options. LinkedIn discovery needs [email alerts and inbox filtering](docs/linkedin-alerts.md). Your settings and history stay outside this repository.
 
@@ -47,4 +57,4 @@ Use the [guide catalog and folder map](docs/source-map.md) for each feature, too
 
 **Ready to act on results?** Ask for [Application Batches](<../Application Batches/README.md>) to open pages for you to fill, or [Recruiter Outreach](<../Recruiter Outreach/README.md>) to prepare unsent messages. These separate manual workflows need computer use and are never started by a discovery run.
 
-Improve your materials separately in [Resume](../Resume/resume-content-optimization.md) and [LinkedIn](../LinkedIn/linkedin-profile-optimization.md), or return to [all runbooks](../README.md).
+Improve your materials separately in [Resume](../Resume/resume-content-optimization.md) and [LinkedIn](../LinkedIn/linkedin-profile-optimization.md), or return to [choose a goal](../ONBOARDING.md) / [all runbooks](../README.md).

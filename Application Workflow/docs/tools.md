@@ -4,13 +4,13 @@
 > **Runs in:** Codex app; the matrix below adds requirements only for selected features.
 > **Computer use:** A supported browser is required for discovery; actual interaction depends on the page. Signed-in browser access is required only for selected authenticated tasks.
 
-[Onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory is the assistant's reference, not a list every user must install. Commands run from `Application Workflow/support`.
+[Application Workflow onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory is the assistant's Application Workflow reference, not a repository-wide install list. [Repository onboarding](../../ONBOARDING.md#tools-for-your-choices) holds common installation and connection links. Commands run from `Application Workflow/support`.
 
 **Selected**, **installed**, **connected to the expected identity**, and **authorized for the requested operation** are separate facts. Check actual saved preferences and tool responses. Do not turn a tool's availability into permission to use an unselected source.
 
-## Shared requirements
+## Workflow requirements
 
-Use the local Codex desktop host, a permanent checkout and private writable state. Python 3.10+ runs the included helpers with standard-library/POSIX locking and IANA timezone data. Check existing tools first; [Python downloads](https://www.python.org/downloads/) are relevant only when a compatible runtime is missing. The supported workflow targets a local Mac; Windows/cloud execution is not certified.
+Use the local Codex desktop host, a permanent checkout and private writable state. Python 3.10+ runs the included helpers with standard-library/POSIX locking and IANA timezone data. Check existing tools first; use the [shared tool setup](../../ONBOARDING.md#tools-for-your-choices) only when a compatible runtime is missing. The supported workflow targets a local Mac; Windows/cloud execution is not certified.
 
 The central chat always coordinates the selected work. Other chats, browser access, Google connections and scheduling capabilities are conditional. Keep the local computer/app available only when relying on local scheduled execution; manual mode needs no automation setup.
 
@@ -28,7 +28,7 @@ The central chat always coordinates the selected work. Other chats, browser acce
 | Self-email report | Explicit recipient/send opt-in, Gmail sending and actual Sent search/readback. Chat reports need no send capability. |
 | Scheduled runs | App automation create/view/readback for the chosen central and/or Blind chat only, after verified pilot. Manual mode creates no timers. |
 
-For Google features, [connect the relevant plugin](https://learn.chatgpt.com/docs/plugins) and start a fresh chat when needed. Use native connectors; do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration needs neither Google Drive nor Gmail.
+For selected Google features, use the [shared connection links](../../ONBOARDING.md#tools-for-your-choices) and start a fresh chat when needed. Use native connectors; do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration needs neither Google Drive nor Gmail.
 
 ## Native tools and optional additions
 
@@ -38,7 +38,7 @@ Discover current schemas instead of assuming exact provider arguments. Relevant 
 
 Chat operations use `list_projects`, `create_thread`, `read_thread`, `send_message_to_thread` and `wait_threads` for selected bindings and authorized delegation. `automation_update` is used only for selected schedules. Optional collaboration tools can verify disjoint work; they do not create an obligation to add more permanent chats.
 
-Public research may use supported `mcp__cua_repl.js` controls. Authenticated Chrome is optional when a selected access path needs it or the user separately requests manual application/recruiter work. Follow the [supported browser connection](https://learn.chatgpt.com/docs/chrome-extension), verify the session and preserve user tabs. Never autofill, upload resumes, apply or send outreach automatically. Serialize controls unless the host demonstrates safe isolation.
+Public research may use supported `mcp__cua_repl.js` controls. Authenticated Chrome is optional when a selected access path needs it or the user separately requests manual application/recruiter work. Use the [shared browser connection link](../../ONBOARDING.md#tools-for-your-choices), verify the session and preserve user tabs. Never autofill, upload resumes, apply or send outreach automatically. Serialize controls unless the host demonstrates safe isolation.
 
 This release supports Messages through the [external Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) and its reviewed read tools. Follow [Messages setup](messages.md) and [Codex registration](https://learn.chatgpt.com/docs/extend/mcp) only when selected. Other Messages plugins are not assumed compatible; they need their own reviewed tool/evidence mapping before use. Missing transcript support is a source gap, not a requirement to build a decoder.
 

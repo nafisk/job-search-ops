@@ -24,8 +24,8 @@ Do not infer an open vacancy or application from a recruiter's title. Use only t
 
 ## 3. Prepare one draft at a time
 
-1. Prefer a visible InMail composer; use ordinary LinkedIn messaging when that is the available selected channel. Confirm the recipient/profile before typing and preserve existing conversation content. A direct message may have no subject field.
-2. If those routes are unavailable, use a connection note only when selected and a safe draft-only entry is established in the current UI. Never click a speculative Connect/Invite control that could send immediately. Ask the user to open the note editor if needed, and continue other eligible contacts.
+1. Use only channels in `settings.channels`. Among selected channels, prefer a visible InMail composer, then ordinary LinkedIn messaging. Treat an unselected route as unavailable. Confirm the recipient/profile before typing and preserve existing conversation content. A direct message may have no subject field.
+2. If those selected routes are unavailable, use a connection note only when selected and a safe draft-only entry is established in the current UI. If no selected channel is usable, hold that contact. Never click a speculative Connect/Invite control that could send immediately. Ask the user to open the note editor if needed, and continue other eligible contacts.
 3. Read the visible character limit and check the personalized approved note against it. If it does not fit, hold for a copy revision. No silent truncation, invented attachment claim, credit purchase or invitation withdrawal.
 4. Fill or paste into explicitly identified fields; do not press Enter in a message editor or a send shortcut. Refresh UI references after controls change. Never click Send, Send invitation, a paper-plane submit control or upload the resume.
 5. Read back recipient, subject where applicable, full text, spacing and unsent state. Save the live tab/link and narrowly scoped evidence privately; exclude unrelated conversations from any screenshot. Local text or an image alone is not a live draft.

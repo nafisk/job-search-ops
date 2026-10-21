@@ -4,7 +4,7 @@
 > **Runs in:** Codex app with the tools required by those choices.
 > **Computer use:** Selected browser setup and user-handled sign-in/permission prompts.
 
-Follow [onboarding](../ONBOARDING.md) interactively and use the shared [operating rules](operations.md). The user chooses features; the assistant prepares settings and runs checks. Do not ask the user to edit JSON or present every possible question at once. Run helper commands from `Application Workflow/support/`; workbook assets are in `Application Workflow/sheets/`.
+Follow [Application Workflow onboarding](../ONBOARDING.md) interactively and use the shared [operating rules](operations.md). [Repository onboarding](../../ONBOARDING.md) routes goals and lists common tools; it does not initialize Application Workflow for other modules. The user chooses features; the assistant prepares settings and runs checks. Do not ask the user to edit JSON or present every possible question at once. Run helper commands from `Application Workflow/support/`; workbook assets are in `Application Workflow/sheets/`.
 
 ## 1. Establish the selected workflow
 
@@ -99,4 +99,6 @@ Use `automation_update` to create/read back the chosen thread heartbeat. Verify 
 
 Helpers stay unscheduled. Preserve unrelated automations; never substitute shell cron. A scheduled rated-company producer does not itself save rows or schedule central.
 
-Finish with the actual tracker path/link, selected chats, how to run manually, chosen schedules if any, private state location and unresolved checks. Do not claim full setup while a required selected effect remains unverified.
+Return and save the same private [setup summary](../../ONBOARDING.md#your-setup-summary). Link the normalized `config.json` and `profile.json`, the installation root containing `installation.json` and its existing `state/` ledger, the actual tracker path/link, and selected chats. Include chosen sources, verified versus pending pilot checks and unresolved gaps, chosen schedules if any, and the exact first-run prompt with the real private installation path. Keep the summary in the selected durable private area.
+
+The summary points to canonical settings, ledgers and evidence; it does not replace them, authorize new actions, clear a pilot hold or certify an unverified effect. Do not claim full setup while a required selected effect remains unverified.

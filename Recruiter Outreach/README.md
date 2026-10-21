@@ -11,7 +11,7 @@
   <img src="https://img.shields.io/badge/Mode-Manual-475569?style=flat-square" alt="Mode: Manual">
 </p>
 
-<p><a href="ONBOARDING.md">Set up</a> · <a href="research.md">Find recruiters</a> · <a href="run.md">Prepare drafts</a> · <a href="../README.md">All runbooks</a></p>
+<p><a href="ONBOARDING.md">Set up</a> · <a href="run.md">Run</a> · <a href="ONBOARDING.md#change-preferences">Change preferences</a> · <a href="../README.md">All runbooks</a></p>
 
 </div>
 
@@ -20,8 +20,19 @@
 ## 🚀 Set up
 
 1. Follow [onboarding](ONBOARDING.md) to choose your target roles, private storage and local JSON or Google Sheets tracker.
-2. Connect a supported browser, sign into your own LinkedIn account and approve your message copy.
-3. Request a small pilot: find contacts first, then prepare up to two drafts for review.
+2. Connect your selected tools, approve your copy and receive your private [setup summary](../ONBOARDING.md#your-setup-summary).
+3. Request a small pilot: find contacts first, then separately request up to two unsent drafts for review.
+
+**Bring:** your target roles and levels, first company, timezone, LinkedIn identity, private folder, tracker choice or existing tracker link, selected channels and verified facts for your message copy.
+
+**Tools:** Codex desktop on macOS, local files, Python 3.10+ and a supported browser with your LinkedIn login. Google Drive/Sheets is needed only for the Google tracker. Start with [tools for your choices](../ONBOARDING.md#tools-for-your-choices).
+
+```text
+Set up Recruiter Outreach with me using Recruiter Outreach/ONBOARDING.md.
+Help me choose my inputs and verify my selected tools and tracker. Save and
+return my private setup summary, including the assigned chat and first request.
+Keep research and the unsent-draft pilot pending until I request them.
+```
 
 **Independent setup:** you do not need Application Workflow. Its job tracker and this recruiter tracker stay separate. Your contacts, message copy and history belong outside the repository.
 
@@ -39,9 +50,9 @@ Research, drafting and the next batch each need your request. These guides creat
 
 | Guide | What it does |
 | --- | --- |
-| [Onboarding](ONBOARDING.md) | Tools, private settings, approved copy and pilot |
+| [Onboarding](ONBOARDING.md) | Choices, supplied inputs, approved copy, pilot and setup handoff |
 | [Research](research.md) | Search, current-employer checks, fit and deduplication |
 | [Drafting](run.md) | Batch recovery, LinkedIn drafts and review handoff |
-| [Tracker](tracker.md) | Local/Google setup, record formats, safe saves and recovery |
+| [Tracker](tracker.md) | Agent settings, tool checks, local/Google storage and recovery |
 
 Change preferences through [onboarding](ONBOARDING.md#change-preferences). These are agent-readable procedures; there is no separate outreach app or bundled automation script.
