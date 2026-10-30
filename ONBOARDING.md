@@ -1,4 +1,21 @@
-# Set up the parts of your job search you need
+# Start with one skill
+
+For a one-time search, supplied-job review, or application preparation, use
+[job-search](.agents/skills/job-search/SKILL.md),
+[job-fit-review](.agents/skills/job-fit-review/SKILL.md), or
+[application-prep](.agents/skills/application-prep/SKILL.md) in your current session.
+Supply resume text/facts and plain-language preferences. No tracker, Python,
+private installation, schedule, extra chat, or pilot is required. Missing live
+tools means useful text output with verification limits, not mandatory setup.
+
+The remainder of this page describes **optional advanced workflows**. Follow it
+only when selecting those workflows or operating an existing installation.
+Standalone application preparation is supported by the new skill; the old
+persistent Batches module below retains its own setup prerequisites.
+
+---
+
+# Advanced workflow setup
 
 Start with your goal. The agent guides you through the relevant choices, reuses confirmed answers and explains each connection before you use it. You do not need to edit configuration files.
 

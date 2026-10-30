@@ -1,3 +1,5 @@
+> **Scope:** This runbook operates the advanced installation only. Basic [job-search](<../.agents/skills/job-search/SKILL.md>) does not require these source bindings, queues, or chats.
+
 # Run Blind company research
 
 > **Required when selected:** Your reviewed company list and search policy, Python 3.10+, public search/page reads, the supported Codex browser and a working [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>).

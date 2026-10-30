@@ -1,3 +1,5 @@
+> **Scope:** This is the optional installed rated-company workflow. For a small company-list search without setup, use [job-search](<../.agents/skills/job-search/SKILL.md>). Existing runtime behavior is preserved.
+
 <div align="center">
 
 <h1>🏢 Blind 3.5+ Companies</h1>

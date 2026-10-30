@@ -1,0 +1,14 @@
+# Fictional and inactive. Select a copy outside the installed skill directory.
+# Omitted fields remain unspecified. Plain-language preferences also work.
+roles: [backend software engineer, full-stack software engineer]
+levels: [mid-level]
+locations: [Example City]
+work_arrangements: [hybrid, remote]
+remote_country: Example Country
+remote_residency_region: Example State
+companies: [Fictional Northstar, Fictional Cedar]
+exclude_primary_duties: [customer support, sales engineering]
+result_count: 5
+compensation_minimum: null
+sponsorship_required: null # Unknown, not false.
+output: chat

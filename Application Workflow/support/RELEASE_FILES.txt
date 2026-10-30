@@ -1,3 +1,12 @@
+.agents/skills/application-prep/SKILL.md
+.agents/skills/application-prep/preferences.example.yaml
+.agents/skills/application-prep/references/answer-and-handoff.md
+.agents/skills/job-fit-review/SKILL.md
+.agents/skills/job-fit-review/preferences.example.yaml
+.agents/skills/job-fit-review/references/evidence-rubric.md
+.agents/skills/job-search/SKILL.md
+.agents/skills/job-search/preferences.example.yaml
+.agents/skills/job-search/references/posting-verification.md
 .gitignore
 AGENTS.md
 Application Batches/ONBOARDING.md
@@ -126,3 +135,9 @@ Recruiter Outreach/run.md
 Recruiter Outreach/tracker.md
 Resume/README.md
 Resume/resume-content-optimization.md
+docs/installation.md
+docs/skill-validation.md
+docs/skills-redesign.md
+scripts/validate_skills.py
+tests/skills/scenarios.md
+tests/skills/test_packages.py

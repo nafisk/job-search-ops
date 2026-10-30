@@ -1,3 +1,5 @@
+> **Scope:** These ledger and pilot rules apply to advanced batches only. Basic [application-prep](<../.agents/skills/application-prep/SKILL.md>) is independent; do not import these prerequisites into it.
+
 # Open one application batch
 
 > **Required for routine runs:** Completed [batch onboarding](ONBOARDING.md), the private ledger, installed Application Workflow configuration, Python 3.10+, current tracker/role-state reads and a supported authorized browser.

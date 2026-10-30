@@ -1,3 +1,5 @@
+> **Scope:** This is the optional advanced runtime. For a one-time search without tracker/setup requirements, use [job-search](<../.agents/skills/job-search/SKILL.md>). Existing installations keep the procedures below.
+
 <div align="center">
 
 <h1>🔔 LinkedIn Job Alerts</h1>

@@ -1,0 +1,14 @@
+# Fictional; optional. Select a copy outside the installed skill directory.
+draft_style: concise
+output: chat
+open_application_pages: false
+prior_applications:
+  - employer: Fictional Northstar
+    requisition: NS-42
+    status: confirmed_applied
+    evidence: exact-role user confirmation
+referral_restrictions:
+  - employer: Fictional Cedar
+    scope: company
+    action: hold_until_user_resolves_referral_route
+simplify_support: untested

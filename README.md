@@ -1,73 +1,95 @@
-<div align="center">
+# Job Search Ops
 
-<h1>💼 job-search-ops</h1>
+Three independent agent skills for finding engineering jobs, reviewing fit, and preparing applications. Supply your resume and preferences in your current session. Basic use needs no Google Sheets, Python runtime, installation ledger, extra chats, or schedules.
 
-<p><strong>Your job search. One guided step at a time.</strong></p>
-
-<p>Improve your materials, find relevant jobs, and prepare applications and recruiter messages for your review.</p>
-
-<p>
-  <img src="https://img.shields.io/badge/Format-Markdown-475569?style=flat-square&logo=markdown" alt="Format: Markdown">
-  <img src="https://img.shields.io/badge/Setup-guided-16a34a?style=flat-square" alt="Guided setup">
-</p>
-
-<p><a href="ONBOARDING.md">Start setup</a> · <a href="#-choose-your-workflow">Choose a workflow</a> · <a href="#-follow-the-flow">See the flow</a></p>
-
-</div>
-
----
-
-## 📚 Choose your workflow
-
-| Workflow | What you get | What you need to start |
+| Skill | Use it for | Minimum capability |
 | --- | --- | --- |
-| [1. Resume](Resume/README.md) | Clearer experience bullets grounded in your work | Your resume and an AI assistant |
-| [2. LinkedIn](LinkedIn/README.md) | A profile audit and reviewed improvements | Your resume and profile content; browser access for live changes |
-| [3.1 LinkedIn Job Alerts](<Application Workflow/README.md>) | Jobs from your email alerts, plus shared application tracking and reports | Codex on macOS, Python, selected tracker and Gmail alerts |
-| [3.2 Blind 3.5+ Companies](<Blind Company Research/README.md>) | Jobs researched from your chosen rated-company list | Shared jobs tracker/setup, reviewed targets and public web access |
-| [4. Application Batches](<Application Batches/README.md>) | Eligible application pages opened for you | Completed shared setup/pilot, saved jobs from either source, confirmed criteria and browser access |
-| [5. Recruiter Outreach](<Recruiter Outreach/README.md>) | Screened contacts and unsent LinkedIn drafts | Independent Codex setup, browser access and a separate contact tracker |
+| [job-search](.agents/skills/job-search/SKILL.md) | Discover official postings; calibrate on three samples before a larger shortlist | Readable applicant facts; public search/full-page reads for verified live matches |
+| [job-fit-review](.agents/skills/job-fit-review/SKILL.md) | Compare descriptions or URLs with specific resume evidence | Resume/facts and description text; URL reading optional |
+| [application-prep](.agents/skills/application-prep/SKILL.md) | Draft truthful answers and verify/open chosen routes | Supplied job details and approved facts; browser optional |
 
-## 🚀 Get started
+Each skill includes its own instructions, conditional reference, and fictional preferences example. Install one without the others.
 
-1. **Resume or LinkedIn review:** open that folder's README and give your assistant the entire linked runbook. Supplied files are enough for a content review.
-2. **Operational workflows:** download the complete repository or reviewed release ZIP, keep it in a permanent folder, and open it in Codex on macOS.
-3. Follow [guided onboarding](ONBOARDING.md). Choose what you want; the agent explains and checks only the tools those choices need.
+## Try a skill
 
-You do not need to edit JSON or install every tool. Personal settings, resumes, contacts and history stay in a separate private location.
+Keep your resume outside the repository and installed skill folders. Attach it, supply text, or identify an accessible private file. If your host cannot read its format, supply text instead.
 
-## 🧭 Follow the flow
-
-Start with your current goal. Choose **3.1, 3.2 or both**. They share one jobs tracker: the coordinator saves verified findings before Batches can use them. Dotted arrows show suggested order; Outreach works independently.
-
-```mermaid
-flowchart TD
-    resume["1. Resume<br/>Improve your resume"]
-    linkedin["2. LinkedIn<br/>Improve your profile"]
-    alerts["3.1 LinkedIn Job Alerts<br/>Find jobs from your alert emails"]
-    blind["3.2 Blind 3.5+ Companies<br/>Research jobs at selected companies"]
-    batches["4. Application Batches<br/>Open pages; you apply"]
-    outreach["5. Recruiter Outreach<br/>Prepare drafts; you send"]
-
-    resume -.-> linkedin
-    linkedin -.-> alerts
-    linkedin -.-> blind
-    alerts -->|"Shared jobs tracker"| batches
-    blind -->|"Shared jobs tracker"| batches
-    batches -.-> outreach
-
-    classDef prepare fill:#f9f9f9,stroke:#5d5d5d,color:#0d0d0d
-    classDef email fill:#e5f3ff,stroke:#004f99,color:#0d0d0d
-    classDef rated fill:#d9f4e4,stroke:#008635,color:#0d0d0d
-    classDef action fill:#efe5fe,stroke:#6b3ab4,color:#0d0d0d
-    class resume,linkedin prepare
-    class alerts email
-    class blind rated
-    class batches,outreach action
+```text
+Use $job-search with my attached resume. Find 10 backend or full-stack
+Software Engineer roles at my chosen companies, in Example City or remote
+within Example Country. Exclude support and sales roles. Show three samples
+for calibration before completing the search. Return a chat table.
 ```
 
-Blind starter ratings are historical and not freshly verified. Batches requires the shared installation and its completed pilot; choosing Blind alone does not require LinkedIn alerts.
+```text
+Use $job-fit-review with my resume and these two pasted descriptions.
+Compare required and preferred qualifications with specific evidence.
+Tell me what is supported, unknown, or a genuine mismatch.
+```
 
-For operational workflows, use the first-run request in your private setup summary. **Request Batches and Outreach separately:** discovery starts neither. Opening an application page does not mark it Applied. Only selected Application Workflow runs can be scheduled, after verification.
+```text
+Use $application-prep for these chosen job URLs and approved resume facts.
+Check my supplied prior applications and referral restrictions. Draft answers
+for review. If browser access exists, verify and open the routes for my
+Simplify handoff. Do not fill or submit anything.
+```
 
-Each numbered workflow links to its setup, run instructions and preferences in the [table above](#-choose-your-workflow). The shared Application Workflow [guide catalog](<Application Workflow/docs/source-map.md>) explains its helpers, detailed procedures and support code.
+Search returns fewer matches instead of padding. Fit uses **strong match**, **plausible match**, **needs clarification**, or **mismatch**, without invented percentages. Missing live tools yields supplied-text review or search guidance with availability unverified. Preparation never autofills, uploads, accepts agreements, or submits; you operate Simplify and review/submit yourself.
+
+## Installation
+
+**Development status:** this redesign is local and uncommitted on `codex/ray-updates`. GitHub installation and fresh clones will not contain it until publication. Try the local files in this checkout now. The following instructions describe use after publication; this repository runs no installer.
+
+### Clone and open in Codex
+
+```sh
+git clone --branch codex/ray-updates git@github.com:RaymondRJones/job-search-ops.git
+cd job-search-ops
+```
+
+Open the checkout as your project/current working directory. Codex discovers repository skills in `.agents/skills`; invoke them by name. It detects changes automatically; restart if absent. Instructions were checked against the [official Codex skill guide](https://learn.chatgpt.com/docs/build-skills) on October 30, 2026; a fresh installation has not been tested.
+
+If discovery is unavailable, ask your agent to read the exact `SKILL.md` and follow its references. This manual-instructions fallback is not a claim of native support in every host.
+
+### Install one GitHub skill in Codex
+
+After publication, ask the built-in installer:
+
+```text
+Use $skill-installer to install only job-search from repository
+RaymondRJones/job-search-ops, ref codex/ray-updates,
+path .agents/skills/job-search. Preserve existing installed skills.
+```
+
+Replace `job-search` in both places with `job-fit-review` or `application-prep`. Supply repo/ref/path separately to avoid ambiguity with branch names containing slashes. Each directory includes its required references. See [installation and host support](docs/installation.md) for evidence and limitations.
+
+## Customize without setup
+
+Plain-language preferences are enough. Optionally select a private copy of a skill's `preferences.example.yaml` and identify it to your agent. Examples are fictional and inactive; they never automatically become your profile.
+
+Precedence: **explicit user instructions > saved preferences > defaults**. Per-request overrides do not overwrite saved files. Omitted applicant facts stay unknown. No sponsorship needed does not establish citizenship; total tenure does not establish years in a specific technology.
+
+Default output is chat. Request CSV or tracker integration optionally; neither is required. Personal resumes, preferences, answers, and history belong outside installed skills and public exports.
+
+## Advanced workflows remain available
+
+Existing installations, records, resource IDs, and schedules are unchanged. Basic skills neither migrate nor operate them. Explicitly select an advanced guide for its original setup and safeguards:
+
+- [Application Workflow](<Application Workflow/README.md>): alerts, shared trackers, evidence receipts, ongoing tracking.
+- [Blind Company Research](<Blind Company Research/README.md>): rated-company research through that shared runtime.
+- [Application Batches](<Application Batches/README.md>): persistent tab reservations and handoffs.
+- [Recruiter Outreach](<Recruiter Outreach/README.md>): screened contacts and unsent drafts.
+- [Resume](Resume/README.md) and [LinkedIn](LinkedIn/README.md): material-improvement runbooks.
+
+[Onboarding](ONBOARDING.md) distinguishes basic use from advanced setup. Advanced ownership, recovery, and pilot rules remain in force inside those workflows; they are not prerequisites for these skills.
+
+## Development and validation
+
+The skills are instruction-only. Python below is a maintainer check, not a user prerequisite.
+
+```sh
+python3 scripts/validate_skills.py
+python3 -B -m unittest discover -s tests/skills -v
+```
+
+See [design assessment](docs/skills-redesign.md) and [validation/scenarios](docs/skill-validation.md). Local checks do not prove model behavior, fresh installation, live integrations, Simplify support, or cross-agent compatibility.

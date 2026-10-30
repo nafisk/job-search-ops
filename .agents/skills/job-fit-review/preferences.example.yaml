@@ -1,0 +1,8 @@
+# Fictional; optional. Select a copy outside the installed skill directory.
+target_roles: [backend software engineer]
+preferred_levels: [mid-level]
+locations: [Example City]
+work_arrangements: [remote, hybrid]
+exclude_primary_duties: [customer support]
+review_focus: [required qualifications, ownership, transferable experience]
+output: chat

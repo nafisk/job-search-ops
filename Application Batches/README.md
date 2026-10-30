@@ -1,3 +1,5 @@
+> **Scope:** This is the optional persistent batch workflow. For independent draft/open-only preparation, use [application-prep](<../.agents/skills/application-prep/SKILL.md>) without this module's setup prerequisites.
+
 <div align="center">
 
 <h1>🗂️ Application Batches</h1>

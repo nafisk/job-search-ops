@@ -1,3 +1,5 @@
+> **Scope:** This setup applies only to advanced persistent batches. Standalone [application-prep](<../.agents/skills/application-prep/SKILL.md>) accepts chosen jobs directly and needs no shared installation.
+
 # Set up application batches
 
 > **Required:** A completed [Application Workflow installation](<../Application Workflow/ONBOARDING.md>), its private configuration and tracker, Python 3.10+, supported browser control and private file access.

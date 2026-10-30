@@ -1,3 +1,5 @@
+> **Scope:** These rules apply to the advanced installed workflow only. Basic searches use the standalone [job-search skill](<../.agents/skills/job-search/SKILL.md>) without these setup requirements.
+
 # Application Workflow guidance
 
 **Required:** selected private settings, Python 3.10+ on macOS and the tools for selected features.  

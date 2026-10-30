@@ -159,7 +159,7 @@ def main():
     for path in paths:
         relative = path.relative_to(REPO_ROOT).as_posix()
         if path.is_symlink(): failures.append(relative + ": distributed symlink")
-        if path.suffix not in {".py", ".json", ".md", ".txt", ".mjs", ".gs", ".swift", ".lock"}: continue
+        if path.suffix not in {".py", ".json", ".md", ".txt", ".mjs", ".gs", ".swift", ".lock", ".yaml", ".yml"}: continue
         text = path.read_text(encoding="utf-8")
         # Literal signatures of local private bindings must never ship.
         if has_private_binding(text):

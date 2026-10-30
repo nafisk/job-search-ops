@@ -1,3 +1,5 @@
+> **Scope:** These operating rules govern the advanced installation, not the standalone [basic skills](../../README.md). Do not apply its ledger, tracker, chat, or pilot prerequisites to basic skill use.
+
 # Operating rules
 
 > **Required:** Completed [onboarding](../ONBOARDING.md), Python 3.10+, private saved state and the tools for selected sources and tracker.

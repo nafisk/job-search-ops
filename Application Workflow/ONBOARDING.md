@@ -1,3 +1,5 @@
+> **Scope:** This setup is only for the advanced runtime. For basic search/review/preparation, use the [three independent skills](../README.md) instead. No migration of existing installations is implied.
+
 # Set up alerts and the shared application workflow
 
 > **Required:** Codex desktop on macOS, Python 3.10+, the complete repository in a permanent folder, and a private writable folder outside it.

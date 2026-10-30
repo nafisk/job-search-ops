@@ -1,3 +1,5 @@
+> **Scope:** This setup is for advanced rated-company research. A basic company-list search uses [job-search](<../.agents/skills/job-search/SKILL.md>) independently, without ratings or shared-installation prerequisites.
+
 # Set up Blind company research
 
 > **Required:** Codex desktop on macOS, Python 3.10+, the complete repository, a private writable folder outside it, public search/page reads and a supported browser. A shared Application Workflow installation supplies the queue and central tracker writer.
