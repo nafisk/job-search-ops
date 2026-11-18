@@ -65,8 +65,7 @@ verified workbook are bound. A disabled tracking selection cannot create a journ
 python3 -m job_search_ops tracking-prepare --root /absolute/private --workbook WORKBOOK_ID --snapshot /absolute/private/tracking-before.json --plan /absolute/private/tracking-plan.json
 ```
 
-4. Capture fresh native state. Run `authorize-write --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/tracking-fresh.json`, send its exact batch once using native Sheets tools, then obtain complete readback and run `commit --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/tracking-after.json`. These are `python3 -m job_search_ops` commands. Keep the tracker idle during the write: Google provides no conditional cell transaction protecting a simultaneous human edit to the same field.
-5. After a timeout, follow [uncertain-write recovery](upgrade-and-recovery.md#uncertain-google-sheets-write); do not send the batch again. Only exact verified saved state creates a tracking receipt.
+4. [Apply the prepared batch](sheets-protocol.md#apply-a-prepared-batch). Use the same native snapshot, authorization, write, and readback steps as discovery. For an uncertain write, follow the [recovery procedure](upgrade-and-recovery.md#uncertain-google-sheets-write).
 
 ## Save to Excel and report
 

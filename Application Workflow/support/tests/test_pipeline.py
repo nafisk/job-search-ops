@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import subprocess
 import sys
 import time
@@ -144,6 +145,65 @@ class PipelineTests(unittest.TestCase):
 
     def value(self, row, field, tab="Jobs"):
         return sheets.cellvalue(self.connector.cell(tab, row, field))
+
+    def test_discovery_export_switch_reuses_snapshot_without_changing_tracker(self):
+        from job_search_ops import discovery_export
+
+        email = packet("email", "email-run")
+        portal = packet("portal", "portal-run")
+        portal["jobs"][0].update(referral_hold=True, referral_contact="Private contact")
+        self.save(email)
+        self.save(packet("blind", "blind-run"))
+        self.save(portal)
+        replay = packet("email", "replay", event="sighting-2", observed_at="2026-10-19T08:00:00+00:00")
+        self.save(replay)
+        queue.enqueue(self.root, packet("email", "later-run", "example:req-2", "pending"))
+
+        cfg = {"instance_root": str(self.root), "_profile": {"timezone": "America/New_York"}}
+        tracker = {"status": "verified", "resource_id": WORKBOOK}
+        with patch.object(discovery_export.setup, "load_instance", return_value={
+            "resources": {"tracker:tracker": tracker},
+        }):
+            self.assertEqual(discovery_export.prepare(cfg), {"destination": "off"})
+            local = str(self.root.resolve() / "discovery.xlsx")
+            discovery_export.select(cfg, "local_xlsx", local=local)
+            local_plan = discovery_export.prepare(cfg)
+            discovery_export.select(cfg, "google_sheets", spreadsheet_id="export-sheet",
+                                    google_identity="verified-test-account")
+            google_plan = discovery_export.prepare(cfg)
+            self.assertEqual(google_plan["spreadsheet_id"], "export-sheet")
+            self.assertEqual(google_plan["tabs"], local_plan["tabs"])
+            discovery_export.select(cfg, "local_xlsx")
+            self.assertEqual(discovery_export.prepare(cfg), local_plan)
+            with self.assertRaises(ValueError):
+                discovery_export.select(cfg, "google_sheets", spreadsheet_id=WORKBOOK,
+                                        google_identity="verified-test-account")
+            self.assertEqual(discovery_export.prepare(cfg), local_plan)
+
+        tabs = local_plan["tabs"]
+        self.assertEqual(list(tabs), ["LinkedIn Alerts", "Blind Research", "Referral Portals"])
+        self.assertEqual(len(tabs["LinkedIn Alerts"]["rows"]), 1)
+        self.assertEqual(tabs["LinkedIn Alerts"]["rows"][0][0], sheets.serial(STAMP, "America/New_York"))
+        self.assertEqual(tabs["Blind Research"]["rows"][0][-3:], ["Stretch", 4.0, "Not applied"])
+        self.assertEqual(tabs["Referral Portals"]["rows"][0][-2:], ["Yes", "Not applied"])
+        current = {title: [] for title in tabs}
+        email_rows = tabs["LinkedIn Alerts"]["rows"]
+        legacy_url = "https://careers.example.com/jobs/old-link"
+        tabs["LinkedIn Alerts"]["url_aliases"][legacy_url] = email_rows[0][4]
+        current["LinkedIn Alerts"] = [[*email_rows[0][:4], legacy_url, *email_rows[0][5:-1], "Applied"]]
+        email_rows.insert(0, [*email_rows[0][:4], "https://careers.example.com/jobs/new-link",
+                              *email_rows[0][5:]])
+        current["Blind Research"] = [tabs["Blind Research"]["rows"][0][:-1]]
+        current["Referral Portals"] = [[*tabs["Referral Portals"]["rows"][0][:-1], "On hold"]]
+        merged = discovery_export.merge_status(local_plan, current)["tabs"]
+        self.assertEqual([row[-1] for row in merged["LinkedIn Alerts"]["rows"]], ["Not applied", "Applied"])
+        self.assertEqual(merged["Blind Research"]["rows"][0][-1], "Not applied")
+        self.assertEqual(merged["Referral Portals"]["rows"][0][-1], "On hold")
+        current["LinkedIn Alerts"][0][4] = "https://careers.example.com/jobs/unmatched"
+        with self.assertRaisesRegex(ValueError, "previously marked posting"):
+            discovery_export.merge_status(local_plan, current)
+        self.assertNotIn("Private contact", json.dumps(tabs))
+        self.assertEqual(len(queue.pending(self.root)), 1)
 
     def test_real_native_batch_readback_and_dynamic_sheet_ids(self):
         journal, receipt = self.save(packet())

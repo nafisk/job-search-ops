@@ -4,11 +4,7 @@
 > **Runs in:** Codex app; the central chat saves results.
 > **Computer use:** Dynamic pages need browser interaction. Restricted pages additionally need an authorized signed-in browser and your login.
 
-**Selection check:** Read this installation’s saved choices and execution plan first. Run only when referral-portal discovery is selected and this assignment is authorized. Otherwise return “not selected” without connecting tools, searching sources, or creating resources. A missing permission for a selected source is a scoped access gap; it does not authorize an alternative account or tool.
-
-Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
-
-**Before any source/account access**, run `python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow main`. A failed check holds this assignment. Only an explicitly requested [manual replacement pilot](../docs/preferences.md) may supply the current `--pilot-update-id`; never add it to a schedule. If this chat cannot read the private root, obtain central's fresh successful check for this frozen assignment before starting.
+Start with the [shared source checks](../docs/operations.md#start-a-discovery-source). Use the `main` gate.
 
 Read the authoritative file at `sources.referral_companies_path`, the accepted `<installation>/portal-registry.json`, the live Referral Watchlist and [toolkit portals](../support/toolkit/PORTALS.md). [Referral setup](../docs/referrals.md) creates these projections; missing seed/registry is a setup gap, not an empty search. Freeze scope from the private list and overlay stricter live contact/referral holds. Never clear a hold from weaker registry data. Manual scope or contact conflicts require reconciliation. Group verified employer aliases while keeping distinct subsidiaries separate unless explicitly approved.
 
@@ -18,7 +14,5 @@ Read the authoritative file at `sources.referral_companies_path`, the accepted `
 4. Use the supported Codex built-in browser for JavaScript shells, partial text, filters, pagination or contradictory templates. Other authenticated interactive work uses the user's authorized external browser. Google mail/sheets remain connector-only. Inventory owned tabs and preserve existing user tabs and handoffs.
 5. Enumerate the entire declared scope unless a verified incremental adapter proves equivalence. Record query/filter/page coverage, terminal pagination evidence and original check dates. No result from a partial page is a verified zero. Absence is Closed only with positive closure evidence or a complete authoritative comparison covering that specific role.
 6. Verify exact official descriptions and all matching criteria; keep overall minimums separate from specialty/degree alternatives. Label target and stretch based on configured search policy, without rewriting factual tenure. Unread/ambiguous descriptions remain unresolved. Every candidate gets a decision and evidence.
-7. At most three attempts per exact source operation across methods/workers; reserve a browser fallback after incomplete retrieval. Save exact cursor/URL, attempted methods, reason and next action. Continue other companies after failures.
-8. Follow the [producer handoff](../docs/handoffs.md#producer-handoff), keeping local staging until central archival is acknowledged if the shared root is not writable. Prepare one producer packet for the completed scope with source `portal`, per-policy decisions, stable identities, observed canonical URLs, referral metadata and honest coverage. Producers do not write either tracker backend. Return the queue receipt, totals and exceptions to the coordinator.
-
-If the shared queue is writable, run `python3 -m job_search_ops enqueue --root /absolute/private --packet /absolute/private/referral-packet.json`. Central merging deduplicates against email/rated sources and preserves Job Sources provenance. An unchanged replay must not create another row or inflate sightings.
+7. Reserve browser fallback for incomplete retrieval. Record the exact URL and resume cursor if it fails.
+8. Use the [shared handoff](../docs/handoffs.md#producer-handoff) for the `portal` packet. Include referral facts, verified identities, screening decisions, and coverage.

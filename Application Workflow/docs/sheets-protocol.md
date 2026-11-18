@@ -17,9 +17,19 @@ Follow the complete [snapshot capture procedure](native-evidence.md#assemble-a-g
 ## 2. Prepare, refresh, authorize, then invoke the connector
 
 1. `sheets.prepare(root, workbook_id, snapshot_or_path, owner)` acquires the persistent workbook claim and freezes the currently queued packets into a journal. A repeated call returns an unresolved journal. Another owner cannot take over based on its age.
-2. Capture a fresh native snapshot immediately before mutation. `sheets.authorize_write(root, journal_id, fresh_snapshot)` checks every managed value against the saved prewrite state and rechecks packet/policy bindings. It writes `write_pending` **before** returning `spreadsheet_id`, `requests`, `journal_id`, a unique `attempt_id`, `attempt_recorded_at` and the `attempts` count. Retain this output privately with the response from that exact connector call.
-3. Central sends those exact `requests` through Google Drive/Sheets `batch_update_spreadsheet` once, supplying `spreadsheet_id` and the tool's documented JSON serialization. The attempt fields belong to the local journal; do not add them to the Google request. The connector call is agent-mediated; this package contains no alternate Google authentication path.
-4. Read the complete native managed state again and call `sheets.verify_and_commit(root, journal_id, readback_snapshot)`.
+
+### Apply a prepared batch
+
+1. Capture a fresh native snapshot immediately before mutation. `sheets.authorize_write(root, journal_id, fresh_snapshot)` checks every managed value against the saved prewrite state and rechecks packet/policy bindings. It writes `write_pending` **before** returning `spreadsheet_id`, `requests`, `journal_id`, a unique `attempt_id`, `attempt_recorded_at` and the `attempts` count. Retain this output privately with the response from that exact connector call.
+2. Central sends those exact `requests` through Google Drive/Sheets `batch_update_spreadsheet` once, supplying `spreadsheet_id` and the tool's documented JSON serialization. The attempt fields belong to the local journal; do not add them to the Google request. The connector call is agent-mediated; this package contains no alternate Google authentication path.
+3. Read the complete native managed state again and call `sheets.verify_and_commit(root, journal_id, readback_snapshot)`.
+
+The matching CLI commands are:
+
+```sh
+python3 -m job_search_ops authorize-write --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/fresh.json
+python3 -m job_search_ops commit --root /absolute/private --journal JOURNAL_ID --snapshot /absolute/private/after.json
+```
 
 New source text uses literal `stringValue`; only generated HYPERLINK and managed summary formulas are formulas. Jobs dates are numeric dates in the profile timezone; original ISO source timestamps remain in Job Sources. New statuses are `New`; native date formats and status validation are applied. New links explicitly clear inherited formatting/rich-text links. Existing rows change only Last Seen and Seen Count; statuses, notes, referral contacts, First Seen and URLs stay intact. Updated source/coverage/rating metadata is separately managed; missing/incomplete coverage never closes a job.
 
@@ -33,9 +43,7 @@ Only successful readback installs a private saved receipt and moves packets from
 
 ## 3. Reconcile uncertain outcomes
 
-**After a timeout or interruption, do not send the batch again or release its packets.** Keep the journal/owner claim, capture fresh native state and follow [uncertain Google Sheets write recovery](upgrade-and-recovery.md#uncertain-google-sheets-write). That is the authoritative reconciliation and settlement procedure.
-
-An exact after-state can commit without another write. An unchanged before-state still needs settlement for the current attempt; a mixed state needs reviewed repair. No automatic claim expiry or forced takeover is available. For edits before any attempt, use the recovery guide's [unattempted plan procedure](upgrade-and-recovery.md#unattempted-google-sheets-plan).
+Keep the journal and owner claim after an uncertain write. Follow [Google Sheets recovery](upgrade-and-recovery.md#uncertain-google-sheets-write) for readback, settlement, or cancellation of an unattempted plan.
 
 The Google connector does not expose a transaction spanning the prewrite read and write. Concurrent human appends are preserved by inserted rows, and readback detects unexpected additions. Human edits to an existing cell that this batch also updates can still race the final request: a last-moment edit to Last Seen or Seen Count can be overwritten. No compare-and-swap guarantee is claimed. This local claim coordinates one installation only; two independent installations must not write the same tracker.
 

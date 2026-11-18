@@ -9,6 +9,7 @@ Application Workflow/ONBOARDING.md
 Application Workflow/README.md
 Application Workflow/blind.md
 Application Workflow/docs/agent-setup.md
+Application Workflow/docs/discovery-export.md
 Application Workflow/docs/handoffs.md
 Application Workflow/docs/linkedin-alerts.md
 Application Workflow/docs/local-excel.md
@@ -29,6 +30,7 @@ Application Workflow/docs/verification.md
 Application Workflow/helpers/email-discovery.md
 Application Workflow/helpers/referral-portals.md
 Application Workflow/run.md
+Application Workflow/sheets/discovery-export.xlsx
 Application Workflow/sheets/job-search-tracker.xlsx
 Application Workflow/sheets/workbook-schema.json
 Application Workflow/support/README.md
@@ -46,6 +48,7 @@ Application Workflow/support/job_search_ops/__init__.py
 Application Workflow/support/job_search_ops/__main__.py
 Application Workflow/support/job_search_ops/bootstrap.py
 Application Workflow/support/job_search_ops/config.py
+Application Workflow/support/job_search_ops/discovery_export.py
 Application Workflow/support/job_search_ops/doctor.py
 Application Workflow/support/job_search_ops/google_tracking.py
 Application Workflow/support/job_search_ops/host_evidence.py

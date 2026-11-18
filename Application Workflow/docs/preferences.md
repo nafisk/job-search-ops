@@ -8,6 +8,8 @@ Ask Codex: **“Update my job-workflow preferences using this guide. Show the ch
 
 Supported changes include search criteria, disabling selected sources, report preferences and manual-to-scheduled execution. The updater retains tracker/chat IDs, accepted rows, receipts, source history and first-pass evidence. Changes to accounts, tracker provider/path, installation location or new unbound helper chats need a separate reviewed migration; this command stops instead of guessing those bindings.
 
+To switch where the three-tab discovery workbook is published, use [discovery export](discovery-export.md#switch-the-next-export). That choice takes effect on the next export and keeps the jobs tracker binding.
+
 ## Agent procedure
 
 Commands run from `Application Workflow/support/`.

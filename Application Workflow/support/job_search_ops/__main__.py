@@ -18,7 +18,7 @@ def parser():
     def command(name, description, fields=()):
         p = commands.add_parser(name, help=description)
         p.add_argument("--output", help="Save JSON to this private path instead of stdout")
-        if name in {"run-check", "enqueue", "prepare", "tracking-prepare", "authorize-write", "local-sync", "local-update", "brief-prepare", "brief-sending"}:
+        if name in {"run-check", "enqueue", "prepare", "tracking-prepare", "authorize-write", "local-sync", "local-update", "brief-prepare", "brief-sending", "discovery-export-plan"}:
             p.add_argument("--pilot-update-id", help="Only for an explicitly requested manual replacement pilot; never save this flag in schedules")
         for field in fields:
             p.add_argument("--" + field, required=True)
@@ -41,6 +41,12 @@ def parser():
     p.add_argument("--owner", default="central")
     command("init", "Initialize a private instance without connecting accounts", ("config",))
     command("setup-plan", "Review selected storage, sources, chats, permissions and schedules without effects", ("config",))
+    command("discovery-export-plan", "Read the selected export destination and accepted posting rows", ("config",))
+    command("discovery-export-merge-status", "Preserve manual application status in a prepared export", ("plan", "current"))
+    p = command("discovery-export-select", "Select the destination for the next discovery export", ("config", "destination"))
+    p.add_argument("--local-path", help="Absolute private path to a separate Excel export")
+    p.add_argument("--spreadsheet-id", help="Verified native Google Sheets export ID")
+    p.add_argument("--google-identity", help="Observed identity of the connected Google account")
     p = command("doctor", "Check installed tools and current native evidence", ("config",))
     p.add_argument("--evidence"); p.add_argument("--check-staging", action="store_true")
     p.add_argument("--workflow", choices=("main", "blind"), help="Check only this workflow’s dependencies")
@@ -119,6 +125,13 @@ def run_command(args):
             elif name == "referrals-commit": result = referrals.commit(config, snapshot)
             else: result = referrals.local_seed(config, args.node, args.node_modules)
         elif name == "setup-plan": result = setup.setup_plan(config)
+        elif name.startswith("discovery-export-"):
+            from . import discovery_export
+            if name == "discovery-export-plan":
+                result = discovery_export.prepare(config)
+            else:
+                result = discovery_export.select(config, args.destination, local=args.local_path,
+                                                 spreadsheet_id=args.spreadsheet_id, google_identity=args.google_identity)
         elif name == "init": result = setup.init_instance(config)
         elif name == "prompts": result = setup.prepare_prompts(config)
         elif name == "runtime-profile": result = setup.runtime_profile(config)
@@ -146,6 +159,10 @@ def run_command(args):
         elif name == "first-pass-record": result = setup.record_first_pass(config, args.workflow, one_observation(args), verify)
         else: raise ConfigError("command: unsupported setup operation")
         return result, 0
+    if name == "discovery-export-merge-status":
+        from .discovery_export import merge_status
+        from .snapshots import read_data
+        return merge_status(read_data(args.plan), read_data(args.current)), 0
     if name == "snapshot":
         from .snapshots import assemble, read_data
         return assemble(read_data(args.metadata), read_data(args.reads)), 0

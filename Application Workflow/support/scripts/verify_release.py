@@ -18,6 +18,11 @@ WORKBOOK_PARTS = {
     "xl/_rels/workbook.xml.rels", "xl/styles.xml", "xl/theme/theme1.xml",
     "xl/sharedStrings.xml", *(f"xl/worksheets/sheet{index}.xml" for index in range(1, 8)),
 }
+DISCOVERY_PARTS = (
+    WORKBOOK_PARTS.difference(f"xl/worksheets/sheet{i}.xml" for i in range(4, 8))
+    | {f"xl/tables/table{i}.xml" for i in range(1, 7)}
+    | {f"xl/worksheets/_rels/sheet{i}.xml.rels" for i in range(1, 4)}
+)
 
 
 def has_private_binding(text):
@@ -76,7 +81,7 @@ def require(condition, message):
         raise ValueError(message)
 
 
-def workbook_privacy_check(archive):
+def workbook_privacy_check(archive, expected_parts=WORKBOOK_PARTS):
     """Inspect the entire blank template package, including nonvisible remnants."""
     names = archive.namelist()
     require(len(names) == len(set(names)), "Workbook contains duplicate ZIP parts")
@@ -105,7 +110,7 @@ def workbook_privacy_check(archive):
     # worksheets. Unknown parts can retain private text without recognizable
     # signatures, and an orphan worksheet could disguise a deleted string as
     # referenced. Update this reviewed inventory only with a template change.
-    require(set(names) == WORKBOOK_PARTS, "Workbook part inventory differs; unreviewed or missing template content")
+    require(set(names) == expected_parts, "Workbook part inventory differs; unreviewed or missing template content")
     strings = list(parts.get("xl/sharedStrings.xml", []))
     used = set()
     for name, node in parts.items():
@@ -149,6 +154,41 @@ def workbook_check():
     require(schema == workbook_schema(), "Python and template schemas differ")
 
 
+def discovery_workbook_check():
+    from job_search_ops.discovery_export import STATUSES, TABS, posting_headers
+
+    ns = {"m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    with zipfile.ZipFile(WORKFLOW_ROOT / "sheets/discovery-export.xlsx") as z:
+        workbook_privacy_check(z, DISCOVERY_PARTS)
+        book = ET.fromstring(z.read("xl/workbook.xml"))
+        names = [sheet.attrib["name"] for sheet in book.findall("m:sheets/m:sheet", ns)]
+        require(names == list(TABS.values()), "Discovery export tabs differ from the export plan")
+        shared = ["".join(value.itertext()) for value in ET.fromstring(z.read("xl/sharedStrings.xml"))]
+        for index, source in enumerate(TABS, 1):
+            sheet = ET.fromstring(z.read(f"xl/worksheets/sheet{index}.xml"))
+            table = ET.fromstring(z.read(f"xl/tables/table{2 * index}.xml"))
+            headers = posting_headers(source)
+            header_cells = sheet.findall("m:sheetData/m:row[@r='14']/m:c", ns)
+            actual = []
+            for cell in header_cells:
+                value = cell.findtext("m:v", namespaces=ns)
+                actual.append(shared[int(value)] if cell.get("t") == "s" else value)
+            require(actual == headers, "Discovery export posting headers differ from the export plan")
+            require([c.get("name") for c in table.findall("m:tableColumns/m:tableColumn", ns)] == headers,
+                    "Discovery export table columns differ from the export plan")
+            col = chr(64 + len(headers))
+            bounds = f"{col}15:{col}23"
+            require(table.get("ref") == f"A14:{col}23", "Discovery export table excludes the status column")
+            validations = sheet.findall(f"m:dataValidations/m:dataValidation[@sqref='{bounds}']", ns)
+            require(len(validations) == 1 and validations[0].get("type") == "list"
+                    and validations[0].findtext("m:formula1", namespaces=ns) == '"' + ",".join(STATUSES) + '"',
+                    "Discovery export application status choices differ")
+            for row in sheet.findall("m:sheetData/m:row", ns):
+                position = int(row.attrib["r"])
+                if 7 <= position <= 10 or position >= 15:
+                    require(not any(len(cell) for cell in row), "Discovery template contains target or posting data")
+
+
 def main():
     try:
         paths = files()
@@ -172,12 +212,14 @@ def main():
                 if re.match(r"^[a-z][a-z0-9+.-]*:", target, re.I) or target.startswith("#"): continue
                 target = unquote(urlsplit(target).path)
                 if target and not (path.parent / target).exists(): failures.append(relative + ": broken local link " + target)
-    try: workbook_check()
+    try:
+        workbook_check()
+        discovery_workbook_check()
     except (KeyError, ValueError, OSError, ET.ParseError, zipfile.BadZipFile) as error: failures.append(str(error))
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1
-    print(f"Distribution verified: {len(paths)} files; reviewed inventory; blank seven-tab workbook including hidden-content scan; local links; private-binding scan.")
+    print(f"Distribution verified: {len(paths)} files; reviewed inventory; tracker and discovery templates including hidden-content scan; local links; private-binding scan.")
     return 0
 
 

@@ -20,6 +20,7 @@ The central chat always coordinates the selected work. Other chats, browser acce
 | --- | --- |
 | Local Excel tracker | Private `.xlsx` path, the shipped [local workbook backend](local-excel.md), and app-provided Node/spreadsheet editing runtime discovered with `load_workspace_dependencies`. Verify actual file reads/writes, identity, schema and readback. No Drive/Sheets connection or Google workbook is needed. |
 | Google Sheets tracker | Native Google Drive/Sheets identity, import, metadata/CellData read and checked batch writes. Verify the account, selected workbook, seven-tab schema, links and manual-field preservation. |
+| [Discovery export](discovery-export.md) | Local Excel uses the bundled spreadsheet runtime. Google Sheets uses the connected account, native import, metadata and checked batch writes on the separate export workbook. |
 | Email alerts | Gmail identity, labels/search, full message/MIME reads and pagination. No mail mutations. |
 | Referral portals or [Blind research](<../../Blind Company Research/run.md>) | Public search/open, official pages and a supported public HTTP/browser reader. Optional [curl](https://curl.se/download.html) is unnecessary when a native reader works. Verify scope, pagination and exact job details. |
 | Gmail tracking | Gmail reads for exact-role receipts, replies and Sent history. Independent of email-alert discovery; no mail mutations. |
@@ -28,11 +29,11 @@ The central chat always coordinates the selected work. Other chats, browser acce
 | Self-email report | Explicit recipient/send opt-in, Gmail sending and actual Sent search/readback. Chat reports need no send capability. |
 | Scheduled runs | App automation create/view/readback for the chosen central and/or Blind chat only, after verified pilot. Manual mode creates no timers. |
 
-For selected Google features, use the [shared connection links](../../ONBOARDING.md#tools-for-your-choices) and start a fresh chat when needed. Use native connectors; do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration needs neither Google Drive nor Gmail.
+For selected Google features, use the [shared connection links](../../ONBOARDING.md#tools-for-your-choices) and start a fresh chat when needed. Use native connectors; do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration without a Google export needs neither Google Drive nor Gmail.
 
 ## Native tools and optional additions
 
-[LinkedIn alert onboarding](linkedin-alerts.md) adds a one-time setup step only when that source is selected: inspect/create the chosen alerts through the supported signed-in LinkedIn browser, and inspect/create the selected mailbox label/filter where actual native tools support it. Gmail `create_label` does not establish filter-management support. If a native Gmail filter tool is absent, the user creates the rule in Gmail settings and the assistant verifies delivery with native reads; no alternate Google credentials or browser access is introduced. Outlook folder/rule setup uses selected supported controls, but this release's automated reader is Gmail-only. No new CLI, MCP server, permanent helper chat or schedule is required for alert setup. Record subscription/delivery/routing proof separately from `doctor` tool receipts; daily discovery never inherits mailbox mutation permissions.
+Use [LinkedIn alert setup](linkedin-alerts.md) to check alert creation, mailbox routing, and real delivery. The [email runbook](../helpers/email-discovery.md) covers routine Gmail reads.
 
 Discover current schemas instead of assuming exact provider arguments. Relevant Google operations include profile reads, Gmail search/read/send as selected, Drive `import_spreadsheet`, `get_spreadsheet_metadata`, `get_spreadsheet_cells` and `batch_update_spreadsheet`. Calendar uses bounded search and event reads.
 

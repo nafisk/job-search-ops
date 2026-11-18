@@ -19,7 +19,7 @@ python3 -m job_search_ops --help
 
 These maintainer checks use fictional data and do not contact accounts, create cloud resources, send messages or change schedules. The original suites cover setup and selected tools, tracker writes, source screening and deduplication, manual edits, recovery and delivery checkpoints. Local Excel checks use disposable workbook files; toolkit checks cover parsing, screening, source coverage, tracking and recovery.
 
-The package check rejects unlisted files and symlinks, tolerates but excludes normal Python caches, and verifies local links, private-binding exclusions and the blank seven-tab workbook against its schema. The workbook check inspects the reviewed XML parts, metadata,
+The package check rejects unlisted files and symlinks, tolerates but excludes normal Python caches, and checks local links, private bindings, and both blank workbooks. The tracker is checked against its schema. The discovery export is checked against the export headers and Application status choices. The workbook check inspects the reviewed XML parts, metadata,
 relationships and unused shared strings to catch hidden or deleted content;
 unreviewed extra parts are rejected. These checks use explicit validation and remain
 active with `python -O`, `python -OO` and `PYTHONOPTIMIZE`. This complements human review of changed

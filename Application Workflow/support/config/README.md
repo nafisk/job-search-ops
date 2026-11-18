@@ -28,8 +28,12 @@ Version two makes each branch explicit:
 
 At least one discovery or tracking source is selected. A tracking-only setup has
 one central chat and no discovery helpers. Other setups create only their
-selected helper chats. Manual runs need no schedule tool. `excel_export` is an
-optional output feature and does not select local storage.
+selected helper chats. Manual runs need no schedule tool.
+
+The `modules.excel_export` compatibility flag selects the spreadsheet runtime
+check. The three-tab workbook uses its own [discovery export destination](../../docs/discovery-export.md#switch-the-next-export),
+saved in `state/discovery-export.json`. Set `tracker.provider` for the separate
+jobs tracker.
 
 `installation.schema.json` is an editor aid. `load_config` is the authoritative
 validator for cross-field choices, profile, paths, timezone and permission

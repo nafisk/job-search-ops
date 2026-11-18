@@ -36,6 +36,12 @@ Job identity is employer/requisition or a verified canonical official URL, store
 
 Reports consume accepted receipts from every producer and preserve current source gaps. A rated packet arriving after a frozen brief stays for the next one. Quiet unchanged results according to configured notification preference; surface actionable failures and required decisions. Manual applications, recruiter research and drafting remain separately requested.
 
+## Start a discovery source
+
+Read the saved choices and execution plan. Run only a selected, authorized source. Use the start check below with `main` for email and referrals and `blind` for rated companies. A helper without private-root access needs central's fresh passing check for its exact assignment.
+
+Freeze scope and policy. Reserve each attempt before using a tool. Keep the exact query, message, URL, or cursor and each outcome. Share the three-attempt limit across methods and workers. Keep prior verified results when reads fail. Return what was checked and what remains, including the cursor and next action. Use the [shared handoff](handoffs.md#producer-handoff) to queue findings and coverage.
+
 ## Routine operation
 
 Before any source/account access or helper dispatch, run this check from `Application Workflow/support/`:
@@ -44,7 +50,7 @@ Before any source/account access or helper dispatch, run this check from `Applic
 python3 -m job_search_ops run-check --config /absolute/private/config.json --workflow main
 ```
 
-Use `main` for central, email and referral runs; use `blind` for the rated-company producer. A pending preference pilot holds the affected workflow even when its timer remains active. Stop that work and follow [preference updates](preferences.md); only an explicitly requested manual pilot may use the exact current `--pilot-update-id`. Never save that flag in an automation prompt. Unaffected sources continue. A helper without private-root access needs central's fresh successful check for its frozen assignment before starting.
+Use the workflow named in the assignment. A pending preference pilot holds the affected path. Follow [preference updates](preferences.md). Only an explicitly requested manual pilot may use the exact current `--pilot-update-id`. Keep it out of schedule prompts. Unaffected sources can continue.
 
 After the check: inspect unfinished journals and owner state, verify relevant identities and permissions, freeze scope, dispatch selected producers, merge the queue, save and read back, reconcile selected tracking, prepare the report, and confirm delivery. Readback/reconciliation of an existing uncertain effect remains available during a pilot hold. Use [coordinator](../run.md) for the run and [recovery](upgrade-and-recovery.md) after interruptions.
 

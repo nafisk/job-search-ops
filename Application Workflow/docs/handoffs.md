@@ -28,6 +28,14 @@ The central chat reads the authorized files, copies them into the private durabl
 
 Setup must exercise the selected handoff path for all enabled producers before scheduling. Archival and queue acceptance remain separate from the later verified Sheet save.
 
+When the approved queue is writable, enqueue the completed packet:
+
+```sh
+python3 -m job_search_ops enqueue --root /absolute/private --packet /absolute/private/source-packet.json
+```
+
+Return the receipt and coverage gaps to the coordinator.
+
 Call `queue.enqueue(root, packet_or_path)`. Required packet shape:
 
 ```json

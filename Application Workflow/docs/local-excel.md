@@ -72,6 +72,6 @@ Read the private accepted aliases using [role-state](tracking.md#save-to-google-
 
 The writer exports a sibling candidate file, reopens it with artifact-tool, and independently reads the actual OOXML. It compares planned values, role-specific links, all other cell contents, untouched cell formatting, frozen panes, merged cells and column widths/visibility. It keeps a backup, checks the original file again, atomically replaces it, and verifies the final bytes before recording success. Literal text beginning with `=` stays literal text. ISO-looking evidence text uses constant-text formulas to prevent automatic date conversion; the exact original text and saved formula result are both checked. Ordinary job dates remain numeric Excel dates.
 
-If a save is interrupted or receipt installation fails, follow [uncertain local Excel write recovery](upgrade-and-recovery.md#uncertain-local-excel-write). **Keep the original workbook, candidate, backups and journal. Never delete a journal to force a retry or overwrite a file changed by another editor.**
+For an interrupted save or receipt, follow [local Excel recovery](upgrade-and-recovery.md#uncertain-local-excel-write).
 
 Saved-file verification proves the contents of the `.xlsx` file. It is not a claim that a person opened the workbook in Excel. Source completeness, saved jobs and delivered briefs remain separate checks.

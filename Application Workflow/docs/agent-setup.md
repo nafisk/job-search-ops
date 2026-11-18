@@ -1,104 +1,55 @@
 # Agent setup reference
 
-> **Required:** Codex desktop on macOS, Python 3.10+, a permanent checkout, private writable state and the user's selected features. See [tools](tools.md).
-> **Runs in:** Codex app with the tools required by those choices.
-> **Computer use:** Selected browser setup and user-handled sign-in/permission prompts.
-
-Follow [Application Workflow onboarding](../ONBOARDING.md) interactively and use the shared [operating rules](operations.md). [Repository onboarding](../../ONBOARDING.md) routes goals and lists common tools. This reference initializes the shared jobs runtime for alerts, Blind research and selected tracking; it does not initialize unrelated Resume, LinkedIn profile or Outreach work. The user chooses features; the assistant prepares settings and runs checks. Do not ask the user to edit JSON or present every possible question at once. Run helper commands from `Application Workflow/support/`; workbook assets are in `Application Workflow/sheets/`.
+Follow [onboarding](../ONBOARDING.md) for the user's choices and [operating rules](operations.md) for ownership and access. Run commands from `Application Workflow/support/`.
 
 ## 1. Establish the selected workflow
 
-Read this installation's existing private preferences, permissions and resource receipts before asking questions. Never use another person's deployment as a default. Keep the repository permanent and personal state outside it, outside disposable chat folders. Preserve an existing authoritative resume at its chosen location.
+Read existing private settings, permissions, and resource receipts first. Use the [installation and profile examples](../support/config/README.md) for structure. Keep source settings and truthful applicant qualifications separate.
 
-Proceed through tracker, discovery, tracking, execution and delivery choices one at a time. Ask relevant follow-ups while that choice is in view. Reuse valid saved answers; ask only where a choice is absent, conflicts with the current request, or changes an effect. Manual execution and chat reporting are defaults.
+For a new setup, create a durable private installation under an existing parent outside the repo. Use owner-only directories (`0700`) and files (`0600`). Check actual paths and ownership. Write `draft-config.json` and `draft-profile.json`; reserve `config.json` and `profile.json` for the snapshots created by `init`.
 
-| Choice | Relevant follow-ups |
-| --- | --- |
-| Local Excel or Google Sheets | Local private `.xlsx` path, or Google account/workbook title/destination. One tracker only. |
-| Email alerts, portals, Blind, or no discovery | Job/location criteria and truthful resume facts; [LinkedIn alerts, delivery and inbox routing](linkedin-alerts.md), email queries/lookback only for alerts; referral companies/holds only for portals; rated list/provenance/threshold only for Blind. |
-| Gmail, Calendar, Messages tracking, or none | The selected account/calendar/conversation and initial window. Calendar and Messages do not require Gmail. |
-| Manual or scheduled execution | Timezone for all displayed dates; times and notification preferences only for requested main/Blind schedules. Helpers never get timers. |
-| Chat or self-email | Ask recipient and explicit send opt-in only for email. |
-
-For a new installation, choose an existing durable parent outside the repository and create a dedicated private installation directory with owner-only permissions (`0700`). Save draft settings and copied source files with owner-only permissions (`0600`). Setup checks actual filesystem locations, including differently capitalized paths and not-yet-created children, to keep private data outside the repository. Check existing ownership/permissions before reusing a directory; do not overwrite another installation.
-
-Use **`draft-config.json` and `draft-profile.json`** for the initial inputs. Set the draft config's `profile_path` to the draft profile and `instance_root` to the selected private directory. Reserve **`config.json` and `profile.json` for the normalized snapshots created by `init`**; writing raw drafts under those names can fail initialization. Keep this setup location durable, including when runs are manual.
-
-When rated target companies are selected, offer the [sanitized 103-company starter](<../../Blind Company Research/blind-companies.json>) or the user's own list. Explain that ratings are historical, user-supplied and not freshly verified, with unknown original dates. Copy the selected list into the user's private installation area, review enabled targets, then bind its absolute path as `sources.rated_companies_path`; repository paths are rejected by the validator. Preserve `rating_origin: "user_supplied"` and `rating_as_of: "unknown"` unless actual provenance supports a different value. Recheck career URLs during research. Do not replace existing private targets, add personal notes to the repo, or enable Blind solely because the starter exists.
-
-Do not assume the example's targets, experience, company list, accounts or schedule choices. Discovery targets and applicant qualifications are separate facts. Tracking-only configurations need no discovery lists or helper chats. Public-only/local-Excel/chat configurations need no Google account. Do not collect unused contacts, inbox permissions or resumes merely because an example has a field. If no discovery or tracking source is selected, explain that no work has been chosen and resolve that choice before setup.
-
-When LinkedIn email discovery is selected, run the [separate alert setup check](linkedin-alerts.md) before freezing email queries. Save selected searches/routing intent in a private draft before external changes. Verify desired job searches, email delivery and a narrow label/filter that skips the inbox; reuse existing matches. The guide covers manual settings when a native setup tool is absent and distinguishes Outlook organization from this release's Gmail reader. Transfer/reference the private draft as `evidence/linkedin-alerts-setup.md` after initialization, keeping planned queries, user-confirmed settings and tool-observed results distinct. Do not invent sender queries, add unsupported settings fields or pretend a zero-result mailbox query proves alerts work.
-
-Prepare a v2 private configuration using the [installation example](../support/config/examples/installation-v2.json) and [profile example](../support/config/examples/profile-v2.json) as structure only. Its branch choices are `tracker.provider` (`local_xlsx` or `google_sheets`), `tracker.path` (local absolute path or null for Google), `discovery.email`, `discovery.portals`, `tracking.gmail`, and the existing `modules.blind`, `modules.calendar`, `modules.messages`. Central remains enabled. A Blind-only setup selects `modules.blind` and may leave email, portals and all tracking sources off; it still needs the central tracker/write checks and pilot. The sibling [Blind guide](<../../Blind Company Research/README.md>) explains that source; finish shared setup here without delegating back to its onboarding. Save the user's chosen preferences before any resource creation or external setup.
+Prepare only selected sources. Follow [alert setup](linkedin-alerts.md) before freezing Gmail queries. Retain its raw setup evidence as `evidence/linkedin-alerts-setup.md` or an equivalent private reference. For Blind, use the [company and rating rules](<../../Blind Company Research/run.md#setup>) and bind the reviewed private copy through `sources.rated_companies_path`.
 
 ```sh
 python3 -m job_search_ops setup-plan --config /absolute/private/draft-config.json
 ```
 
-This read-only plan is the canonical list of selected tracker, sources, chats, files, schedules and permissions. Show that concise summary to the user before proceeding. It is not evidence that the operations work. The user's request to set up the features they choose is sufficient authorization for those resources and pilot; do not add another blanket approval gate. Ask only when a necessary choice or authorization is genuinely missing. New installs, connections, credential flows and permission expansions are separate actions, never silent consequences of the plan.
+Show the selected tracker, sources, chats, schedules, and permissions. The plan describes what needs verification. The user's selected setup request authorizes its documented resources and pilot.
 
 ## 2. Check only the selected requirements
 
-Use [tools](tools.md) to inspect the actual capabilities. Distinguish selected, installed, connected, and authorized for the operation. A visible tool does not prove the right identity, scope or write permission. Check the required interpreter and private paths; use existing supported tools first.
-
-Local Excel requires the app-provided Node/spreadsheet editing runtime as well as Python. Discover it through `load_workspace_dependencies`, read the installed spreadsheet skill, and follow its required operation-start step before the first workbook create/edit. Do not install the private artifact package from public npm or substitute an unverified writer.
-
-Gmail reads are needed for selected email alerts or Gmail tracking. Gmail sending/Sent readback is needed for self-email. Drive/Sheets is needed only for the Google tracker. Calendar and Messages checks are needed only for selected tracking sources. Public job research is needed only for selected discovery. Do not make any of these requirements global.
+Use [tools](tools.md) to check the required identity and operations. For local Excel, use Codex's bundled spreadsheet runtime through `load_workspace_dependencies` and follow the spreadsheet skill. Complete the separate alert delivery check when email discovery is selected.
 
 ```sh
 python3 -m job_search_ops init --config /absolute/private/draft-config.json
 python3 -m job_search_ops doctor --config /absolute/private/config.json
 ```
 
-After `init` succeeds, use the generated `/absolute/private/config.json` for subsequent commands; it points to the normalized `profile.json`. Reuse those canonical files on restart. Editing drafts later does not update an initialized installation; follow [the preferences update process](preferences.md) for changed choices.
-
-`doctor --workflow main` and `doctor --workflow blind` check each workflow separately; omit the flag for the whole installation. Missing main Gmail does not block the independent rated-company producer. Its central save still requires the central writer to be ready.
-
-Initialization creates private local state, not cloud resources. Preserve existing journals on rerun. Selected unavailable sources stay unavailable; unselected sources are not setup failures. Continue independent permitted work, but do not mark the affected operation verified or enable its dependent schedule.
-
-`doctor` does not inspect LinkedIn subscriptions or mailbox rules. Complete the alert guide's separate received-message/routing check for selected LinkedIn discovery. Setup-only label/filter changes require actual supported tools and the user's selected scope; daily email discovery remains read-only.
+Use the generated `config.json` after init. Follow [preferences](preferences.md) for later changes. `doctor --workflow main` and `doctor --workflow blind` check those paths independently. Record any missing selected operation and hold work that depends on it.
 
 ## 3. Create or bind the chosen tracker
 
-Use existing verified bindings on restart. Record intent before creating a resource; reconcile unknown outcomes before trying again. Never overwrite an existing workbook or reuse a different live deployment automatically.
+Reuse a verified binding or record intent before creating a tracker. Reconcile a creation with an uncertain outcome through [resource readback](native-evidence.md#bind-new-resources).
 
-**Local Excel:** follow [the local Excel protocol](local-excel.md) to initialize the private workbook, record its identity and verify real saved file contents. Keep it authoritative; do not create a Google copy. Check actual path access and the backend's concurrency/recovery rules. Merely copying an XLSX template or exporting data does not prove future saves work. No Google resource evidence is required for this branch.
+- **Local Excel.** Follow the [local workbook setup](local-excel.md#create-and-use-the-workbook) and verify the actual saved file.
+- **Google Sheets.** Reserve the resource, import the [blank template](../sheets/job-search-tracker.xlsx) with the connector, and follow [snapshot and bootstrap](native-evidence.md#assemble-a-google-sheets-snapshot). Bootstrap only an empty template. Read the saved structure before recording the binding.
 
-**Google Sheets:** reserve the tracker with [`resource-intent`](native-evidence.md#bind-new-resources), then import the checked-in blank [template](../sheets/job-search-tracker.xlsx) through the native Drive connector. Follow the [snapshot/bootstrap procedure](native-evidence.md#assemble-a-google-sheets-snapshot) and its setup readback before `resource-record`. **Bootstrap is for an empty template; do not apply it to an existing tracker.** IDs and links must come from the actual provider. A daily minimal cell snapshot alone cannot prove setup formatting or hidden columns. Use the [Sheets protocol](sheets-protocol.md) for subsequent writes.
-
-Both backends use the shipped schema, stable job identities, exact links, preserved manual fields and accepted-save receipts. Import only the selected user's reviewed company/referral inputs. Keep private correspondence out of tracker notes. Use the bound runtime profile for toolkit operations; the input profile is not proof of a live tracker.
-
-If portal discovery is selected, complete [referral company setup](referrals.md) now. Copy the fictional source format privately, populate the chosen tracker’s watchlist with the `referrals-*` commands and verify `<installation>/portal-registry.json` before accepting the portal pilot. The private company list defines scope; stricter manual holds remain protected.
+When portals are selected, [seed and verify the watchlist and portal registry](referrals.md). For a selected [discovery export](discovery-export.md), bind and check its separate workbook.
 
 ## 4. Create only the selected chats
 
-The setup plan determines the bindings: central always; email iff email discovery; portals iff portal discovery; Blind iff Rated target companies. Tracking runs centrally and adds no helper. Use `create_thread` under the setup authorization; use `list_projects` first if choosing a repository project. Inspect existing receipts before creating replacements.
+Use the setup plan and existing bindings. Use `list_projects` if choosing a project and `create_thread` for a selected new chat. Record real IDs and workspace access. Run `prompts --config ...` after binding, then verify absolute paths and permission to delegate. Report unavailable chat or handoff access and preserve the chosen setup.
 
-Record each actual chat ID and verify its writable workspace. Run `prompts --config ...` after required bindings exist; generated prompts must contain real IDs and permanent absolute paths. Preserve explicit delegation authorization for selected helpers and any selected producer-to-central handoff. If messaging is unavailable, report that dependent gap; do not silently create a different topology.
-
-Producers may have narrower filesystem access. Use the [sealed handoff](handoffs.md#producer-handoff): they save in a verified writable workspace; central verifies/copies/enqueues when the shared queue is inaccessible. Keep staging until archival is acknowledged. Never restart successful research merely because archival is pending.
+Use the [producer handoff](handoffs.md#producer-handoff) to check private staging access and acknowledgement.
 
 ## 5. Pilot the selected path
 
-Run the [start check](operations.md#routine-operation) before source/account access, using `main` for central/email/referrals and `blind` for rated companies. Initial onboarding runs need no preference-update flag. Later preference changes use the [replacement pilot procedure](preferences.md).
+Run the [start check](operations.md#routine-operation). Use a small genuine scope for each selected branch. Verify actual save/readback, deduplication, manual-field preservation, and a real report. Record source gaps, including `awaiting_first_alert` if applicable. Keep fixtures out of the live tracker.
 
-Use a small declared scope for each selected source. Skip unselected branches entirely. A tracking-only pilot checks its selected tracking sources and tracker/report path, without inventing discovery jobs. If no real role qualifies, record that honestly; fixtures must not be inserted as live jobs.
-
-For LinkedIn alerts, verify a genuine alert received after rule creation, its destination outside Inbox, and full-message access through the configured Gmail queries. A read or archived message must still be discoverable. If delivery is pending, retain `awaiting_first_alert`; do not accept the email pilot or enable its dependent schedule. Independent selected branches can proceed.
-
-Exercise the selected backend's save/readback, duplicate protection and manual-field preservation with actual accepted evidence when available. Confirm queued results remain distinct from saved results. Verify a real report through the selected delivery channel; a preview is not delivered. Record the selected first pass using `first-pass-record` and actual evidence. See [native evidence](native-evidence.md) for connector observations and [local Excel](local-excel.md) for file evidence. Offline tests and asserted success flags cannot replace these checks.
+Use `first-pass-record` with actual [pilot evidence](native-evidence.md#first-pass-acceptance-and-delivery). The [preference guide](preferences.md) owns replacement pilots.
 
 ## 6. Finish manually or enable chosen schedules
 
-For manual mode, create no automation intents and request no scheduling access. Give the user the central chat and a short run instruction. Manual Blind output stays pending until central imports it; explain this without adding a timer.
+In manual mode, provide the main chat and first-run request. For requested schedules, use `schedule-plan` only after the relevant checks and pilot pass. Scope it with `--workflow main` or `--workflow blind` when needed. Use `automation_update` and verify the chat, prompt, timezone, notifications, activation, and full daily recurrence. Follow [schedule boundaries](operations.md#routine-operation).
 
-Only for requested schedules, run `schedule-plan` after that workflow's tool checks and first pass are verified. Add `--workflow main` or `--workflow blind` to prepare one independently; omit it to prepare all selected schedules. A pending replacement pilot must pass first.
-
-Use `automation_update` to create/read back the chosen thread heartbeat. Verify its exact chat, prompt, timezone, notifications, activation and **full daily recurrence**: every day at the chosen local time, with no alternate interval, weekday restriction or end condition. The native evidence adapter checks the complete saved rule, not just hour/minute. Each prompt must run the start check before source access; never include `--pilot-update-id` in a timer.
-
-Helpers stay unscheduled. Preserve unrelated automations; never substitute shell cron. A scheduled rated-company producer does not itself save rows or schedule central.
-
-Return and save the same private [setup summary](../../ONBOARDING.md#your-setup-summary). Link the normalized `config.json` and `profile.json`, the installation root containing `installation.json` and its existing `state/` ledger, the actual tracker path/link, and selected chats. Include chosen sources, verified versus pending pilot checks and unresolved gaps, chosen schedules if any, and the exact first-run prompt with the real private installation path. Keep the summary in the selected durable private area.
-
-The summary points to canonical settings, ledgers and evidence; it does not replace them, authorize new actions, clear a pilot hold or certify an unverified effect. Do not claim full setup while a required selected effect remains unverified.
+Save the [private setup summary](../../ONBOARDING.md#your-setup-summary) with canonical paths, tracker and any export, chat bindings, actual check results, schedule details, and the first-run request.
