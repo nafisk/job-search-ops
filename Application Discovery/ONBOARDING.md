@@ -17,13 +17,7 @@ Ask one choice at a time. Reuse saved answers. Choose at least one discovery or 
 
 ## Confirm the search profile
 
-For a new discovery setup, ask for a current résumé. Accept an attachment or a private path. Reuse confirmed facts on repeat onboarding. If the person skips the résumé, ask for the work history and qualifications needed for the selected roles. Tracking-only setup can skip this step.
-
-1. **Review experience.** Summarize engineering work the résumé supports, such as backend, frontend, full-stack or applied AI. For each relevant role family, show the employers or projects and the approximate time supported by the dates. Keep internships and full-time work distinct. Count overlapping time once in any total. Ask the person to correct the summary and clarify dates or project durations it cannot establish.
-2. **Ask what to search for.** Confirm role families, internship or full-time scope, level, location and work mode, remote eligibility, and any exclusions. Confirm enrollment or graduation details if the search requires them. Ask which criteria are required and which are preferences. Separate the preferred posting experience, the highest acceptable mandatory minimum, and how to handle unstated or ranged requirements.
-3. **Read the choices back before making filters.** For example, “Full-time backend or applied AI. NYC onsite or hybrid only. Mid-level preferred. Prefer postings around two years. Maximum mandatory minimum still open.” Ask whether mid-level and two years are strict before treating either as a limit.
-
-Save confirmed facts privately. Use them for qualification checks and use the approved preferences to build search filters. See [agent setup](docs/agent-setup.md#1-establish-the-selected-workflow) for the settings.
+Follow the [résumé intake guide](docs/resume-intake.md) to draft the experience summary, confirm search preferences and prepare the private settings. Tracking-only setup can skip this step.
 
 ## Prepare selected sources
 

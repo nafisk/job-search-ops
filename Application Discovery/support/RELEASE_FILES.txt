@@ -24,6 +24,7 @@ Application Discovery/docs/optional/outlook-alerts.md
 Application Discovery/docs/preferences.md
 Application Discovery/docs/referrals.md
 Application Discovery/docs/report.md
+Application Discovery/docs/resume-intake.md
 Application Discovery/docs/sheets-protocol.md
 Application Discovery/docs/source-map.md
 Application Discovery/docs/tools.md
