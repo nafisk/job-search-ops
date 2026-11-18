@@ -1,7 +1,7 @@
 # Private installation choices
 
 **Required:** the user’s saved onboarding choices and Python 3.10+ for validation.  
-**Runs in:** Codex’s local terminal; preparing settings uses no account or computer control.
+**Runs in:** a local shell; preparing settings uses no account or computer control.
 
 The assistant prepares these settings from the user's answers; users do not need
 to edit JSON. Start with [onboarding](../../ONBOARDING.md), then review the
@@ -64,7 +64,7 @@ runtime profile for reusable toolkit operations; never substitute an example ID.
 
 Google binding requires native metadata/cell readback. Local binding reopens the
 actual XLSX and verifies its bytes, schema and hyperlinks; a Google-shaped fake
-response is not local proof. Local edits use the app-provided artifact runtime
+response is not local proof. Local edits use the verified artifact runtime
 and an atomic, journaled save. The private artifact package is not an npm install.
 Local first-pass acceptance includes the current `tracker_file_sha256` in both
 the captured accepted manifest and its receipt.

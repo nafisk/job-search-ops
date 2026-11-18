@@ -53,7 +53,7 @@
         "always"
       ],
       "required_stage": "operation_verified",
-      "provider": "Codex local host",
+      "provider": "Local filesystem",
       "verification_operations": [
         "workspace_probe",
         "private_state_probe"
@@ -80,7 +80,7 @@
         "always"
       ],
       "required_stage": "operation_verified",
-      "provider": "Codex app",
+      "provider": "Agent host",
       "verification_operations": [
         "thread_read",
         "workspace_probe"
@@ -106,7 +106,7 @@
         "delegation"
       ],
       "required_stage": "operation_verified",
-      "provider": "Codex app",
+      "provider": "Agent host",
       "verification_operations": [
         "authorized_handoff"
       ],
@@ -128,7 +128,7 @@
       "classification": "optional",
       "required_when": [],
       "required_stage": "connected",
-      "provider": "Codex collaboration",
+      "provider": "Agent collaboration tools",
       "verification_operations": [
         "tool_catalog"
       ],
@@ -155,7 +155,7 @@
         "scheduled"
       ],
       "required_stage": "connected",
-      "provider": "Codex app",
+      "provider": "Agent host",
       "verification_operations": [
         "tool_catalog"
       ],
@@ -331,7 +331,7 @@
         "public_research"
       ],
       "required_stage": "operation_verified",
-      "provider": "Codex supported browser",
+      "provider": "Public browser reader",
       "verification_operations": [
         "browser_inventory",
         "public_navigation"
@@ -435,7 +435,7 @@
       "executables": [
         "upstream-supported launcher such as uvx; separate optional install"
       ],
-      "setup": "Optional only: follow https://github.com/carterlasalle/mac_messages_mcp and https://learn.chatgpt.com/docs/extend/mcp. Register local stdio, record the installed version, allow only reviewed read tools, and verify the configured conversation/date window. No custom wrapper, Swift build or local decoder is required. See Application Workflow/docs/messages.md.",
+      "setup": "Optional only: follow https://github.com/carterlasalle/mac_messages_mcp. Register local STDIO with the selected MCP client, record the installed version, allow only reviewed read tools, and verify the configured conversation/date window. No custom wrapper, Swift build or local decoder is required. See Application Workflow/docs/messages.md.",
       "limits": [
         "macOS and user-granted database access required; no permissions are changed by the checker.",
         "Sending, scheduling, availability probes, contact writes and audio fetching/transcription are outside this workflow.",
@@ -461,7 +461,7 @@
       "executables": [
         "node"
       ],
-      "setup": "Core Simplify decoding uses Python zlib. Discover supported bundled Node for local Excel storage or optional artifact rebuild/export; do not require Node for pure Python toolkit tests.",
+      "setup": "Core Simplify decoding uses Python zlib. Verify a compatible Node runtime for local Excel storage or optional artifact rebuild/export. Pure Python toolkit tests do not need Node.",
       "limits": [],
       "permitted_effects": [
         "read"
@@ -475,7 +475,7 @@
         "artifact_tool"
       ],
       "required_stage": "operation_verified",
-      "provider": "app-provided spreadsheet runtime",
+      "provider": "Node and @oai/artifact-tool",
       "verification_operations": [
         "runtime_discovery",
         "workbook_export",
@@ -487,12 +487,12 @@
         "view_image"
       ],
       "packages": [
-        "app-managed @oai/artifact-tool",
-        "app-managed skia-canvas",
-        "app-managed @oai/walnut"
+        "runtime-provided @oai/artifact-tool",
+        "runtime-provided skia-canvas",
+        "runtime-provided @oai/walnut"
       ],
       "executables": [],
-      "setup": "Use the host-provided bundled runtime for local Excel storage or optional rebuild/export; never install the private artifact package from npm. Local Excel is a storage backend, not merely an export option.",
+      "setup": "Use the verified spreadsheet runtime for local Excel storage or optional rebuild/export. Never install the private artifact package from npm. Local Excel can serve as the main jobs tracker.",
       "limits": [
         "Recorded audit version 2.8.99 is not a universal minimum.",
         "Prebuilt template/native Sheets daily operations do not need rebuild tooling."

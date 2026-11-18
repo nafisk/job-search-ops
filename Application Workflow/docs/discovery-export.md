@@ -6,7 +6,7 @@ Export saved jobs to **Local Excel** or **Google Sheets**. The [template](../she
 
 Confirm the export destination for the user's saved discovery history. Use their private `config.json`.
 
-- **Local Excel.** Reuse the confirmed export file or copy the template to a durable private path. Check the tabs and headers with the [bundled Excel runtime](local-excel.md#create-and-use-the-workbook).
+- **Local Excel.** Reuse the confirmed export file or copy the template to a durable private path. Check the tabs and headers with the [Excel writer runtime](local-excel.md#create-and-use-the-workbook).
 - **Google Sheets.** Use the confirmed Drive account and folder. Reuse the export or import the template as a native Sheet. Verify the ID and headers. Restore missing table, date, or dropdown settings. Write, read back, and clear a blank test cell. Confirm it is blank again. Reconcile uncertain imports before retrying.
 
 Add confirmed searches, portal links, and fallback clicks to Targets. For an older export with matching posting headers, add Application status as the last column of each posting table and give it the three dropdown choices above. Record the path or URL in the private setup summary. Export only the template fields.

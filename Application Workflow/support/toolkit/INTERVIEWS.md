@@ -1,7 +1,7 @@
 # Interview facts
 
 **Required:** Python 3.10+, exact application/process identities and independently checked interview evidence. Mac Messages MCP is required only when Messages is selected.  
-**Runs in:** Codex’s local terminal after selected source reads; this helper connects no accounts.
+**Runs in:** A local shell after the selected source reads.
 
 `interviews.py` reconciles accepted interview facts for exact application, process
 and stage identities. It preserves original application source records and opaque legacy

@@ -1,7 +1,7 @@
 # Shared retry accounting and completion
 
 **Required:** Python 3.10+ and one coordinator-owned private retry ledger with durable writes.  
-**Runs in:** Codex’s local terminal; each native read still uses its selected source tool.
+**Runs in:** A local shell. Use the selected tool for each native read.
 
 `retries.py` is a pure ledger and acceptance gate. It performs no external reads,
 file writes, lock acquisition or scheduler/tracker/checkpoint changes. All helpers

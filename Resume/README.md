@@ -26,7 +26,7 @@
 
 ## 🚀 How to use
 
-**Required:** your current resume and an assistant that can read the complete runbook. No Codex, Python or account setup is required for content review. [Repository onboarding](../ONBOARDING.md) covers the other workflows.
+**Required:** your current resume and an assistant that can read the complete runbook. Content review works with supplied files alone. [Repository onboarding](../ONBOARDING.md) covers the other workflows.
 
 1. Give your AI assistant the **entire [runbook](resume-content-optimization.md)**: attach the Markdown file, paste its full contents, or point a file-enabled agent to its path.
 2. Share your current resume. Add your target engineering role, level, and a job description if you have one.

@@ -1,7 +1,7 @@
 # Set up recruiter outreach
 
-> **Required:** Codex desktop on macOS, local file access, Python 3.10+ for private JSON records, a supported browser and your LinkedIn account. Google Drive/Sheets access is required only for the Google tracker.
-> **Runs in:** Codex app. This module does not require an Application Workflow installation.
+> **Required:** Local file access, Python 3.10+ for private JSON records, a supported browser and your LinkedIn account. Google Drive/Sheets access is required only for the Google tracker.
+> **Setup:** Recruiter Outreach uses a separate installation.
 > **Computer use:** Required for live LinkedIn profiles and unsent draft preparation. You log in and perform final sends.
 
 Give the agent this guide and use the setup request below. Setup creates private settings and creates or adopts a tracker; research, message drafting and any later batch each require a separate request. These guides create no schedules.
@@ -34,7 +34,7 @@ Use [tools for your choices](../ONBOARDING.md#tools-for-your-choices) for genera
 
 | Tool | When it is needed |
 | --- | --- |
-| Codex local files and Python 3.10+ | Private settings, tracker state and safe record saves; Python's standard library is enough |
+| Local files and Python 3.10+ | Private settings, tracker state and safe record saves with Python's standard library |
 | Supported browser and your LinkedIn login | Live profile checks and unsent drafts; you log in and send personally |
 | Google Drive/Sheets connection | Only when you select the Google tracker |
 | Available public search/page reads | Finding recruiter leads; live profiles still supply current evidence |

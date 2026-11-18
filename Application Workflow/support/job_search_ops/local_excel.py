@@ -428,7 +428,7 @@ def _patch_native_features(destination, source, changes):
 def _artifact(source, destination, changes, node, node_modules, *, initialize=False):
     node, modules = Path(node), Path(node_modules)
     if not node.is_absolute() or not node.is_file() or not modules.is_absolute() or not (modules / "@oai/artifact-tool").is_dir():
-        raise q.ProtocolError("Use Node and node_modules paths returned by load_workspace_dependencies")
+        raise q.ProtocolError("Use absolute paths to Node and node_modules containing @oai/artifact-tool")
     with tempfile.TemporaryDirectory(prefix="job-search-artifact-") as scratch:
         scratch = Path(scratch)
         shutil.copyfile(SUPPORT / "scripts/local_artifact.mjs", scratch / "local_artifact.mjs")

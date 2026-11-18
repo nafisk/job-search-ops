@@ -7,7 +7,6 @@
 <p>Your job tracker → a checked batch → application tabs ready for you.</p>
 
 <p>
-  <img src="https://img.shields.io/badge/Runs_in-Codex_App-2563eb?style=flat-square" alt="Runs in: Codex app">
   <img src="https://img.shields.io/badge/Computer_use-Required-475569?style=flat-square" alt="Computer use: required">
 </p>
 
@@ -20,7 +19,7 @@
 ## 🚀 Set up
 
 1. Complete the shared [Application Workflow onboarding](<../Application Workflow/ONBOARDING.md>) first, including its initial pilot. Use [LinkedIn alerts](<../Application Workflow/README.md>), [Blind 3.5+ companies](<../Blind Company Research/README.md>) or both; only accepted jobs saved to their shared tracker are available to batches.
-2. Give Codex your private workflow configuration path. Confirm your saved application criteria and the browser/profile it may use.
+2. Give your agent your private workflow configuration path. Confirm your saved application criteria and the browser/profile it may use.
 3. Follow [batch onboarding](ONBOARDING.md) to choose one operating chat, private history location and batch limits: **five pages first, five more next, twenty outstanding maximum** by default.
 
 Copy this setup request:
@@ -33,7 +32,7 @@ Confirm the browser/profile, one operating chat and batch limits with me.
 Save my private setup summary with verified access, gaps and the first run request.
 ```
 
-Replace the bracketed path. Codex needs your existing tracker, saved role restrictions, Python 3.10+ and supported browser control. Use the shared [tools guide](../ONBOARDING.md#tools-for-your-choices) for your selected Excel or Google Sheets access. No additional app, extension or schedule is required.
+Replace the bracketed path. The agent needs your existing tracker, saved role restrictions, Python 3.10+ and supported browser control. Use the shared [tools guide](../ONBOARDING.md#tools-for-your-choices) for your selected Excel or Google Sheets access. No additional app, extension or schedule is required.
 
 ## ▶️ Run
 
@@ -43,7 +42,7 @@ Ask your batch chat: **“Read the batch runbook and my private ledger. Open my 
 2. Check exact jobs, current availability, eligibility and referral holds.
 3. Open accessible employer/ATS application pages and return a short review list.
 
-You fill and submit. Codex leaves your other tabs and edits intact. A closed tab never proves that you applied.
+You fill and submit. The agent leaves your other tabs and edits intact. A closed tab never proves that you applied.
 
 **“Next five”** requests five additional pages within your remaining capacity. **“Check all submissions”** separately checks registered applications using your selected evidence sources. Use the same operating chat for both. Neither action starts recruiter outreach.
 

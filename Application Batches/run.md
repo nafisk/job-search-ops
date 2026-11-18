@@ -1,10 +1,10 @@
 # Open one application batch
 
 > **Required for routine runs:** Completed [batch onboarding](ONBOARDING.md), the private ledger, installed Application Workflow configuration, Python 3.10+, current tracker/role-state reads and a supported authorized browser.
-> **Runs in:** Codex app, only on an explicit human request.
+> **Start:** Open a batch only on an explicit request.
 > **Computer use:** Required for application pages. The user fills and submits.
 
-**Agent procedure:** use [onboarding](ONBOARDING.md) for the user's choices and setup status. Commands and ledger fields below are implementation details for Codex.
+**Agent procedure:** use [onboarding](ONBOARDING.md) for the user's choices and setup status. Commands and ledger fields below are the agent's implementation details.
 
 For setup, use [Agent setup reference](#agent-setup-reference). The first explicitly requested batch may run after all non-pilot onboarding checks pass; its observed handoff completes the batch pilot. The Application Workflow initial pilot and any preference holds must already be satisfied.
 

@@ -23,15 +23,15 @@
 | --- | --- | --- |
 | [1. Resume](Resume/README.md) | Clearer experience bullets grounded in your work | Your resume and an AI assistant |
 | [2. LinkedIn](LinkedIn/README.md) | A profile audit and reviewed improvements | Your resume and profile content; browser access for live changes |
-| [3.1 LinkedIn Job Alerts](<Application Workflow/README.md>) | Jobs from your email alerts, plus shared application tracking and reports | Codex on macOS, Python, selected tracker and Gmail alerts |
+| [3.1 LinkedIn Job Alerts](<Application Workflow/README.md>) | Jobs from your email alerts, plus shared application tracking and reports | Agent with local files, Python, selected tracker and Gmail access |
 | [3.2 Blind 3.5+ Companies](<Blind Company Research/README.md>) | Jobs researched from your chosen rated-company list | Shared jobs tracker/setup, reviewed targets and public web access |
 | [4. Application Batches](<Application Batches/README.md>) | Eligible application pages opened for you | Completed shared setup/pilot, saved jobs from either source, confirmed criteria and browser access |
-| [5. Recruiter Outreach](<Recruiter Outreach/README.md>) | Screened contacts and unsent LinkedIn drafts | Independent Codex setup, browser access and a separate contact tracker |
+| [5. Recruiter Outreach](<Recruiter Outreach/README.md>) | Screened contacts and unsent LinkedIn drafts | Agent with browser access and a separate contact tracker |
 
 ## 🚀 Get started
 
 1. **Resume or LinkedIn review:** open that folder's README and give your assistant the entire linked runbook. Supplied files are enough for a content review.
-2. **Operational workflows:** download the complete repository or reviewed release ZIP, keep it in a permanent folder, and open it in Codex on macOS.
+2. **Operational workflows:** download the complete repository or reviewed release ZIP, keep it in a permanent folder, and give your agent access to the folder.
 3. Follow [guided onboarding](ONBOARDING.md). Choose what you want; the agent explains and checks only the tools those choices need.
 
 You do not need to edit JSON or install every tool. Personal settings, resumes, contacts and history stay in a separate private location.

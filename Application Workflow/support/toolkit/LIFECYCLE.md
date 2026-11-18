@@ -1,7 +1,7 @@
 # Lifecycle and response evidence
 
 **Required:** Python 3.10+, reconciled application identities and independently checked event/reply evidence.  
-**Runs in:** Codex’s local terminal after selected source reads; this helper connects no accounts.
+**Runs in:** A local shell after the selected source reads.
 
 `lifecycle.py` layers independently accepted events over the original application source
 packet through `applications.reconcile`. Confirmed submission remains a separate

@@ -1,22 +1,21 @@
 # Local Excel tracker
 
-> **Required when selected:** Python 3.10+, a private `.xlsx` path and Codex's app-provided Node/spreadsheet runtime. See [runtime setup](tools.md#checks-and-maintenance).
-> **Runs in:** Codex app with local file access; Google Sheets and the Excel desktop app are not required.
+> **Required when selected:** Python 3.10+, a private `.xlsx` path and Node and `@oai/artifact-tool`. See [runtime setup](tools.md#checks-and-maintenance).
 > **Computer use:** None for workbook writes. Keep the file closed in other apps during a write.
 
 Choose `tracker.provider: "local_xlsx"` during [onboarding](../ONBOARDING.md) and set an absolute, private `.xlsx` path. Main, its selected helpers and Blind use this one workbook. Google Drive and Google Sheets are not required. Gmail and Calendar are required only when their corresponding features are selected.
 
-The local writer uses Python's standard library for the queue and file checks, and Codex's bundled `@oai/artifact-tool` for Excel import, editing and export. It does not install Python or Node packages. The assistant loads the Spreadsheets skill, calls `load_workspace_dependencies`, and uses the returned Node executable and Node packages directory. Follow that skill's artifact-operation marker before the first creation/edit command.
+The local writer uses Python's standard library for the queue and file checks, and `@oai/artifact-tool` for Excel import, editing and export. Use the supported runtime supplied by your environment. Verify the absolute path to its Node executable and the `node_modules` directory that contains `@oai/artifact-tool`. The writer takes those paths as arguments.
 
-The bundled artifact runtime cannot calculate `HYPERLINK`, and its documented API does not expose native hyperlinks or column hiding. A narrow post-export fallback adds the actual Jobs hyperlink relationships and the hidden Job Key column. It also corrects the runtime's numeric date caches for exact constant-text formulas; those formulas remain unchanged. Other ZIP parts and worksheet cells are preserved. Excel uses these [native hyperlink relationships](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility attributes](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column). The result is reopened with artifact-tool without another export, then inspected independently; no Google response is fabricated.
+The supported artifact runtime cannot calculate `HYPERLINK`, and its documented API does not expose native hyperlinks or column hiding. A narrow post-export fallback adds the actual Jobs hyperlink relationships and the hidden Job Key column. It also corrects the runtime's numeric date caches for exact constant-text formulas. The formulas remain unchanged. Other ZIP parts and worksheet cells are preserved. Excel uses these [native hyperlink relationships](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility attributes](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column). The result is reopened with artifact-tool without another export, then inspected independently.
 
 ## Create and use the workbook
 
-Run these commands from `Application Workflow/support`, substituting the real paths returned by Codex. Keep runtime paths in the private installation, never in the shared repository.
+Run these commands from `Application Workflow/support`, substituting the verified runtime paths. Keep runtime paths in the private installation, never in the shared repository.
 
 ```sh
-python3 -m job_search_ops local-init --config /absolute/private/config.json --node /absolute/bundled/node --node-modules /absolute/bundled/node_modules
-python3 -m job_search_ops local-sync --config /absolute/private/config.json --node /absolute/bundled/node --node-modules /absolute/bundled/node_modules
+python3 -m job_search_ops local-init --config /absolute/private/config.json --node /absolute/runtime/node --node-modules /absolute/runtime/node_modules
+python3 -m job_search_ops local-sync --config /absolute/private/config.json --node /absolute/runtime/node --node-modules /absolute/runtime/node_modules
 ```
 
 `local-init` creates the tracker from the supplied blank template and records its actual saved-file readback. It refuses to replace an existing unrecognized file. This first version supports this template and its ordinary cell edits; importing arbitrary workbooks, macros, external workbook links, embedded objects, charts, pivots and protected sheets requires a separate migration.
@@ -44,7 +43,7 @@ Tracking-only configurations can update existing rows or record an actual applic
 ```
 
 ```sh
-python3 -m job_search_ops local-update --config /absolute/private/config.json --plan /absolute/private/tracking-plan.json --node /absolute/bundled/node --node-modules /absolute/bundled/node_modules
+python3 -m job_search_ops local-update --config /absolute/private/config.json --plan /absolute/private/tracking-plan.json --node /absolute/runtime/node --node-modules /absolute/runtime/node_modules
 ```
 
 Only Application Status, Notes and Referral Contact are accepted. Every change needs the expected old value and an evidence reference. A changed file or old value stops the update; review fresh evidence before making a new plan. The file adapter does not infer status or contact anyone. Committed tracking receipts join the shared receipt checkpoint automatically. The [report](report.md) freezes them alongside discovery receipts, including recovery of older committed local tracking journals. Delivery acknowledges only that frozen set.

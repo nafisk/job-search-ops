@@ -1,14 +1,14 @@
 # Native evidence and local commands
 
 > **Required:** Python 3.10+, private writable evidence storage and actual responses from each selected tool. Google snapshots require native Drive/Sheets reads.
-> **Runs in:** Codex app with connectors and local helpers; [Local Excel](local-excel.md) uses actual file evidence.
+> **Tools:** Connected operations use native evidence. [Local Excel](local-excel.md) uses actual file evidence.
 > **Computer use:** Only when collecting evidence for a selected browser operation.
 
 This guide applies to connected operations, especially the Google Sheets backend. Local Excel uses actual file verification described in [local Excel](local-excel.md); never label local file evidence as a Google connector response. Read the saved choices first and collect evidence only for selected capabilities.
 
 Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
 
-Codex executes account operations with connected tools. The local helpers retain
+The agent executes account operations with connected tools. The local helpers retain
 requests, validate their returned data, and keep retries consistent. They do not
 hold Google credentials or contact accounts themselves.
 
@@ -38,7 +38,7 @@ not evidence that any real account was checked:
       "operations": ["get_profile"],
       "native_checks": [{
         "operation": "get_profile",
-        "tool": "mcp__codex_apps__gmail_get_profile",
+        "tool": "gmail.get_profile",
         "request": {},
         "response": {"emailAddress": "alex@example.invalid"},
         "assertions": [{"path": "/emailAddress", "equals": "alex@example.invalid"}]
@@ -48,7 +48,7 @@ not evidence that any real account was checked:
 }
 ```
 
-Use the real host tool name and actual returned schema. An assertion's `path` is
+Use the real host tool name and actual returned schema. The bundled checker recognizes the tool identities in the [capability manifest](../support/config/capabilities.json). A host with different identifiers or response shapes needs a compatible evidence adapter before passing live checks. An assertion's `path` is
 a JSON pointer into the unwrapped response. Checks support exact `equals`,
 `contains`, `min_items`, or the SHA-256 of a returned text value. Each operation
 must have retained native data and an assertion appropriate to that operation.

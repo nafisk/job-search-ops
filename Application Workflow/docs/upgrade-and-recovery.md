@@ -1,7 +1,7 @@
 # Upgrade and recovery
 
 > **Required:** The existing private state, journals and resource bindings, Python 3.10+, and access to the selected tracker/report destination.
-> **Runs in:** Codex app with the same tools and identities used by that installation.
+> **Tools:** Use the bound tools and identities for the installation.
 > **Computer use:** Only if recovering a selected browser task; never replace missing connector access with browser account access.
 
 Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.

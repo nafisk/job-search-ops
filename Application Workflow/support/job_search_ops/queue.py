@@ -538,7 +538,7 @@ def confirm_brief_delivery(root, brief_id, delivery_evidence):
         used = {b["delivery_evidence"]["message_id"] for p in (base / "delivery").glob("*.json") if (b := read(p)).get("status") == "delivered"}
         def fresh(seconds):
             number(seconds, "native delivery time", high=1e12)
-            # Native Codex/Gmail timestamps can have second-level precision.
+            # Native chat and Gmail timestamps can have second-level precision.
             if seconds < attempted_seconds or seconds > verified_at.timestamp() + 1:
                 raise ProtocolError("Native delivery predates this attempt or is after its verification")
         if intent.get("channel") == "chat":

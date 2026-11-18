@@ -1,4 +1,4 @@
-"""Local command entrypoint. Connected operations are performed by Codex tools."""
+"""Local command entrypoint. Connected operations are performed by the selected agent tools."""
 from __future__ import annotations
 
 import argparse
@@ -172,7 +172,7 @@ def run_command(args):
         return plan(read_data(args.snapshot)), 0
     from . import queue, sheets
     if name in {"prepare", "tracking-prepare", "authorize-write", "commit", "reconcile"}:
-        # Match the queue's existing root normalization (including macOS /var).
+        # Match the queue's existing root normalization (including platform symlink aliases).
         # Installation config validation still rejects user-configured symlinks.
         manifest_path = no_symlink(Path(args.root).expanduser().resolve() / "installation.json")
         if manifest_path.exists():

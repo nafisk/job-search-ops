@@ -7,7 +7,6 @@
 <p>Named companies → screened contacts → unsent drafts → your final send.</p>
 
 <p>
-  <img src="https://img.shields.io/badge/Runs_in-Codex_App-2563eb?style=flat-square" alt="Runs in: Codex app">
   <img src="https://img.shields.io/badge/Mode-Manual-475569?style=flat-square" alt="Mode: Manual">
 </p>
 
@@ -25,7 +24,7 @@
 
 **Bring:** your target roles and levels, first company, timezone, LinkedIn identity, private folder, tracker choice or existing tracker link, selected channels and verified facts for your message copy.
 
-**Tools:** Codex desktop on macOS, local files, Python 3.10+ and a supported browser with your LinkedIn login. Google Drive/Sheets is needed only for the Google tracker. Start with [tools for your choices](../ONBOARDING.md#tools-for-your-choices).
+**Tools:** Local files, Python 3.10+ and browser controls with your LinkedIn login. Google Drive/Sheets is needed only for the Google tracker. Start with [tools for your choices](../ONBOARDING.md#tools-for-your-choices).
 
 ```text
 Set up Recruiter Outreach with me using Recruiter Outreach/ONBOARDING.md.
@@ -36,13 +35,13 @@ Keep research and the unsent-draft pilot pending until I request them.
 
 **Independent setup:** you do not need Application Workflow. Its job tracker and this recruiter tracker stay separate. Your contacts, message copy and history belong outside the repository.
 
-**Computer use:** required for live LinkedIn research and drafts. Tracker updates use Codex's local files or your selected Google connection. You attach your resume and send every message or invitation.
+**Computer use:** required for live LinkedIn research and drafts. Tracker updates use local files or your selected Google connection. You attach your resume and send every message or invitation.
 
 ## ▶️ Run
 
 - **Find recruiters:** request research for named companies; receive a roster with evidence and uncertainties.
-- **Prepare drafts:** separately name the contacts/company and count. Codex checks history, preserves existing work and leaves verified drafts open.
-- **Record sends:** confirm which drafts you sent; Codex updates their history and preserves earlier dates.
+- **Prepare drafts:** separately name the contacts/company and count. The agent checks history, preserves existing work and leaves verified drafts open.
+- **Record sends:** confirm which drafts you sent. The agent updates their history and preserves earlier dates.
 
 Research, drafting and the next batch each need your request. These guides create no schedules.
 

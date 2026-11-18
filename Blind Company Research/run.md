@@ -1,7 +1,7 @@
 # Run Blind company research
 
-> **Required when selected:** Your reviewed company list and search policy, Python 3.10+, public search/page reads, the supported Codex browser and a working [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>).
-> **Runs in:** Codex app; the central chat saves results to your selected tracker.
+> **Required when selected:** Your reviewed company list and search policy, Python 3.10+, public search/page reads, browser controls for interactive pages and a working [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>).
+> **Writes:** The central chat saves results to the selected tracker.
 > **Computer use:** Browser interaction when career pages need it. Supplied ratings do not require a Blind login.
 
 Read the shared [operating rules](<../Application Workflow/docs/operations.md>) before setup or execution. Use [onboarding](ONBOARDING.md) for new choices. This folder owns the company-research instructions and starter; the existing Application Workflow runtime owns setup, queueing and tracker writes.

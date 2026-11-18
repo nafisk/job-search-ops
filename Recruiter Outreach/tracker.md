@@ -1,7 +1,7 @@
 # Recruiter storage and recovery
 
 > **Required:** A private folder outside the repository, Python 3.10+ with its standard library and one selected tracker: local JSON or native Google Sheets. Google mode also needs the expected Google account and checked workbook access.
-> **Runs in:** Codex local files/terminal and selected Google tools. No bundled database, server or script installation.
+> **Runs in:** Local files, a shell, and selected Google tools. No bundled database, server or script installation.
 > **Computer use:** Not required for ordinary tracker reads/writes; required separately to verify actual LinkedIn profiles and drafts.
 
 Use a **separate recruiter tracker**. The Application Workflow jobs workbook has a different schema and does not store these records. Read this guide before creating storage or saving contact/draft history.
@@ -49,7 +49,7 @@ Use the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for general
 
 | Capability | Setup and proof |
 | --- | --- |
-| Codex and local files | Open the permanent checkout in Codex. Confirm Python 3.10+ is available and a private JSON file can be saved and read back. Python's standard library is sufficient; no extra package is needed. |
+| Local files | Give your agent access to the permanent checkout. Confirm Python 3.10+ is available and a private JSON file can be saved and read back. Use Python's standard library. |
 | Supported browser | Select Chrome or another browser the current host supports using the shared connection guidance above. The user logs into LinkedIn; verify the observed account matches the chosen identity. Preserve unrelated tabs. |
 | Google tracker, if selected | Use the selected native Drive/Sheets connection. Read the installed Google Sheets skill before Google access/effects. Verify account identity, access to the exact workbook, metadata/cell reads and narrow writes with readback. Follow the current tool schemas. |
 | Research | Use available public search/page reads and the supported LinkedIn browser. Search results find leads; live profiles supply current evidence. |
@@ -143,7 +143,7 @@ Research exceptions include the exact profile/query, attempts spent, last observ
 
 ## Save and recover
 
-1. **Own the write.** One coordinator owns the tracker and private state. Re-read actual headers/contact identities or local revision; stop on another writer, unexpected mapping or unresolved conflicting ownership. For local saves, hold a private OS file lock through the reread, journal and replacement; Python's standard-library `fcntl.flock` supplies it on the supported Mac host. External editors may ignore that lock, so resolve active user editing before replacement.
+1. **Own the write.** One coordinator owns the tracker and private state. Re-read actual headers/contact identities or local revision. Stop on another writer, unexpected mapping or unresolved conflicting ownership. For local saves, hold a private OS file lock through the reread, journal and replacement. Python's standard-library `fcntl.flock` supplies it on a POSIX host. External editors may ignore that lock, so resolve active user editing before replacement.
 2. **Journal the change.** Save a `planned` write with exact affected identities, current values and intended values. Mark it `attempted` before the mutation. Preserve original status/date/reply fields unless the requested operation changes them.
 3. **Apply narrowly.** Google mode updates only checked cells/ranges through the selected native tools. Local mode writes a complete validated next JSON file in the same private folder and atomically replaces the master only if its reread revision/content still matches. Increment its revision; preserve the before snapshot in the journal. Never overwrite concurrent user changes.
 4. **Read back.** Compare affected values and preserved fields with the intended result. Only then mark the write `verified`, update the private batch and report saved. A successful tool return alone is insufficient.

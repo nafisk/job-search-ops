@@ -1,7 +1,7 @@
 # Profile contract — versions 1 and 2
 
 **Required:** Python 3.10+ with IANA timezone data; the selected installation’s private profile.  
-**Runs in:** Codex’s local terminal; configuration validation only.
+**Runs in:** A local shell for configuration validation.
 
 The profile is JSON configuration. Unknown fields, unsupported schema versions, duplicate JSON keys and invalid types fail instead of silently selecting defaults. Missing fields never inherit another profile's values. Errors name the field without printing its contents. Profiles contain connection **names**, never passwords, tokens, cookies, keys or authentication URLs.
 

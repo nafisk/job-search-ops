@@ -1,4 +1,4 @@
-// The caller supplies only the Codex bundled Node/artifact-tool runtime.
+// The caller supplies only the verified Node and @oai/artifact-tool runtime.
 // XML verification is in local_excel.py; this is the sole XLSX author.
 import fs from "node:fs/promises";
 import {FileBlob, SpreadsheetFile} from "@oai/artifact-tool";

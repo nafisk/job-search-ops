@@ -637,5 +637,5 @@ def prepare_schedules(config, observations=(), verify=None, now=None, workflow=N
                    "prompt_digest": hashlib.sha256(prompt.encode()).hexdigest()}
         intent = prepare_resource(config, "schedule", name, request)
         proposals.append({"workflow": name, "intent": intent, "prompt": prompt,
-                          "instruction": "Use the supported Codex automation tool for this exact chat and timing. Reconcile an existing intent before creating anything. Save native readback before recording the binding."})
+                          "instruction": "Use the selected scheduler for this exact chat and timing. Reconcile an existing intent before creating anything. Save native readback before recording the binding."})
     return proposals

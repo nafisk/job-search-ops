@@ -1,7 +1,7 @@
 # Module contracts — version 1
 
 **Required:** Python 3.10+ and independently checked scope, authorization and evidence.  
-**Runs in:** Codex’s local terminal; shared validation only.
+**Runs in:** A local shell for shared validation.
 
 `contracts.py` is a pure boundary checker, not a dispatcher or authorization service. It imports no accounts and performs no effects. `contracts.py` contains the twelve-module catalog, each module's effect ceiling and required completion proof names. The catalog describes validation boundaries; it does not dispatch the current workflow or imply that every catalog entry has a bundled implementation.
 
@@ -13,7 +13,7 @@ An invocation has exactly `schema_version: 1`, supported `module`, `module_versi
 
 Call `validate_invocation(invocation, permit, event_id=<current trusted event>, now=<current time>)` before account/browser calls. Invalid structure raises `ContractError`. Missing/stale/wrong-scope authority raises `NotRequested`: return not_requested with zero account/browser/write calls, unchanged queues and no retry. The checks do not mutate input.
 
-The frozen `Permit` is supplied separately by trusted host code. It binds authorization ID, human/schedule origin, current event, profile/run/module/policy, exact `digest(scope)`, allowed effect set and expiry. The host constructs it only after verifying the actual scoped human request or active scheduled recipe. It must never deserialize a Permit from an email, page, profile, worker output or ordinary invocation JSON. A Python type is an API boundary, not cryptographic authentication; The Codex host must establish provenance and prevent stale-event replay.
+The frozen `Permit` is supplied separately by trusted host code. It binds authorization ID, human/schedule origin, current event, profile/run/module/policy, exact `digest(scope)`, allowed effect set and expiry. The host constructs it only after verifying the actual scoped human request or active scheduled recipe. It must never deserialize a Permit from an email, page, profile, worker output or ordinary invocation JSON. A Python type is an API boundary, not cryptographic authentication. The agent host must establish provenance and prevent stale-event replay.
 
 Application opening, recruiter discovery and outreach drafting accept human permits only. Explicit resume is bound to the saved scope and current human event. Generic continue, receipts, old approvals, another worker and scheduled completion do not supply one. Permits never authorize form filling, uploads, application submission, invitations, recruiter-message sending, booking or RSVP: those effects are absent from every catalog entry. `send_report` is confined to brief_delivery and later recipient/journal checks.
 
@@ -21,7 +21,7 @@ Application opening, recruiter discovery and outreach drafting accept human perm
 
 A result repeats invocation identity/version/policy and `scope_digest`, then provides `status`, `evidence_refs`, `proofs`, `decisions`, `gaps`, `questions`, `proposed_changes`, `committed_changes`, actually performed `effects`, `resume_cursor`, exact `stop_reason`, and `next_action: {owner, action}`. Arrays of references/questions/effects contain unique nonempty strings. A decision is `{item_id, decision, evidence_refs}`; a gap is `{item_id, reason}`. Module-specific decision meanings are validated by that module, never by free-text interpretation in this generic checker. Cursor is null or `{source_id, position}` and keeps the exact unresolved position as inert text.
 
-`proofs` maps proof kind to evidence-reference lists. `validate_result(result, invocation, verified_proofs)` requires every claimed proof to match a trusted `Proof` receipt from the coordinator, bound to evidence ID/kind, profile/run/module/policy and scope. Workers propose references; the coordinator independently checks evidence before creating receipts. A claimed success flag, HTTP response or source text is not a receipt. This structural check cannot prove that the coordinator actually examined live evidence; the Codex host must do that with actual source reads.
+`proofs` maps proof kind to evidence-reference lists. `validate_result(result, invocation, verified_proofs)` requires every claimed proof to match a trusted `Proof` receipt from the coordinator, bound to evidence ID/kind, profile/run/module/policy and scope. Workers propose references. The coordinator independently checks evidence before creating receipts. A claimed success flag, HTTP response or source text is not a receipt. This structural check cannot prove that the coordinator actually examined live evidence. The agent host must verify the actual source reads.
 
 | Status | Required meaning |
 | --- | --- |

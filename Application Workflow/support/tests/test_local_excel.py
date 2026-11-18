@@ -76,7 +76,7 @@ class LocalReadTests(unittest.TestCase):
             local._entered(literal, [])
 
 
-@unittest.skipUnless(RUNTIME, "Codex bundled artifact-tool runtime is unavailable; local XLSX integration remains unverified")
+@unittest.skipUnless(RUNTIME, "The artifact-tool runtime is unavailable. Local XLSX integration remains unverified")
 class LocalArtifactTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()

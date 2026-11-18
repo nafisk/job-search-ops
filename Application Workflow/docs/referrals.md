@@ -1,7 +1,7 @@
 # Set up referral companies
 
 > **Required when selected:** Portal discovery, Python 3.10+, a verified tracker and a private company file.
-> **Runs in:** Codex app; Google uses native Sheets tools, Excel uses the [local runtime](local-excel.md).
+> **Writes:** Google uses native Sheets tools. Excel uses the [local writer](local-excel.md).
 > **Computer use:** None for seeding; later portal research may require it.
 
 **One private company list defines scope.** `sources.referral_companies_path` points to that list. Setup projects it into the tracker’s **Referral Watchlist** and writes `<installation>/portal-registry.json` for [toolkit portal checks](../support/toolkit/PORTALS.md). The watchlist is a readable projection; it is not a second independent company list.
@@ -16,11 +16,11 @@ The agent validates the exact example fields. A supplied career URL is a startin
 
 Run commands from `Application Workflow/support/` after the tracker is verified and before the portal pilot. Coordinate with the central writer; seeding uses the exclusive `referral-setup` claim.
 
-**Excel:** close the workbook and use the actual runtime paths returned by Codex:
+**Excel:** close the workbook and use the verified Node and package paths:
 
 ```sh
 python3 -m job_search_ops referrals-prepare --config /absolute/private/config.json
-python3 -m job_search_ops referrals-local --config /absolute/private/config.json --node /absolute/bundled/node --node-modules /absolute/bundled/node_modules
+python3 -m job_search_ops referrals-local --config /absolute/private/config.json --node /absolute/runtime/node --node-modules /absolute/runtime/node_modules
 ```
 
 **Google Sheets:** obtain native workbook metadata and complete `Referral Watchlist!A4:E<allocated-row-count>` CellData with `userEnteredValue`. Retain actual requested ranges in `_read_ranges` and `_cell_fields`; use the [snapshot assembler](native-evidence.md). Capture fresh state again before authorization.

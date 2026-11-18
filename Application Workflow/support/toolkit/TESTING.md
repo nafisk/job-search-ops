@@ -1,7 +1,7 @@
 # Local helper verification
 
 **Required:** Python 3.10+ with IANA timezone data. Test inputs are fictional.  
-**Runs in:** Codex’s local terminal; no account access, browser or computer use.
+**Runs in:** A local shell.
 
 Run from this directory:
 

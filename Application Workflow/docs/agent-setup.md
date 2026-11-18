@@ -18,7 +18,7 @@ Show the selected tracker, sources, chats, schedules, and permissions. The plan 
 
 ## 2. Check only the selected requirements
 
-Use [tools](tools.md) to check the required identity and operations. For local Excel, use Codex's bundled spreadsheet runtime through `load_workspace_dependencies` and follow the spreadsheet skill. Complete the separate alert delivery check when email discovery is selected.
+Use [tools](tools.md) to check the required identity and operations. For local Excel, verify the [Excel writer runtime](local-excel.md). Complete the separate alert delivery check when email discovery is selected.
 
 ```sh
 python3 -m job_search_ops init --config /absolute/private/draft-config.json
@@ -38,7 +38,7 @@ When portals are selected, [seed and verify the watchlist and portal registry](r
 
 ## 4. Create only the selected chats
 
-Use the setup plan and existing bindings. Use `list_projects` if choosing a project and `create_thread` for a selected new chat. Record real IDs and workspace access. Run `prompts --config ...` after binding, then verify absolute paths and permission to delegate. Report unavailable chat or handoff access and preserve the chosen setup.
+Use the setup plan and existing bindings. Use the host's project and session tools for the selected chats. Record real IDs and workspace access. Run `prompts --config ...` after binding, then verify absolute paths and permission to delegate. Report unavailable chat or handoff access and preserve the chosen setup.
 
 Use the [producer handoff](handoffs.md#producer-handoff) to check private staging access and acknowledgement.
 
@@ -50,6 +50,6 @@ Use `first-pass-record` with actual [pilot evidence](native-evidence.md#first-pa
 
 ## 6. Finish manually or enable chosen schedules
 
-In manual mode, provide the main chat and first-run request. For requested schedules, use `schedule-plan` only after the relevant checks and pilot pass. Scope it with `--workflow main` or `--workflow blind` when needed. Use `automation_update` and verify the chat, prompt, timezone, notifications, activation, and full daily recurrence. Follow [schedule boundaries](operations.md#routine-operation).
+In manual mode, provide the main chat and first-run request. For requested schedules, use `schedule-plan` only after the relevant checks and pilot pass. Scope it with `--workflow main` or `--workflow blind` when needed. Use the selected scheduler and verify the chat, prompt, timezone, notifications, activation, and full daily recurrence. Follow [schedule boundaries](operations.md#routine-operation).
 
 Save the [private setup summary](../../ONBOARDING.md#your-setup-summary) with canonical paths, tracker and any export, chat bindings, actual check results, schedule details, and the first-run request.

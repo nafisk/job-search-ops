@@ -1,10 +1,10 @@
 # Change your saved preferences
 
 > **Required:** An initialized version-two installation, its private settings and Python 3.10+.
-> **Runs in:** Codex app; local updates use the CLI, schedule changes use Codex automation tools.
+> **Tools:** Local updates use the CLI. Schedule changes use the selected scheduler.
 > **Computer use:** None unless a newly selected tool requires connection setup.
 
-Ask Codex: **“Update my job-workflow preferences using this guide. Show the changes and preserve my tracker and history.”** Follow [operating rules](operations.md). No re-onboarding or fresh tracker is needed for ordinary settings changes.
+Ask your agent: **“Update my job-workflow preferences using this guide. Show the changes and preserve my tracker and history.”** Follow [operating rules](operations.md). No re-onboarding or fresh tracker is needed for ordinary settings changes.
 
 Supported changes include search criteria, disabling selected sources, report preferences and manual-to-scheduled execution. The updater retains tracker/chat IDs, accepted rows, receipts, source history and first-pass evidence. Changes to accounts, tracker provider/path, installation location or new unbound helper chats need a separate reviewed migration; this command stops instead of guessing those bindings.
 
@@ -51,8 +51,8 @@ Timing-only changes can reuse unaffected pilot evidence. A requested pause can b
 
 Local apply does **not** activate, pause, recreate or delete any automation. An existing timer may remain active, but the durable execution gate stops affected work before source access. Every scheduled invocation must run the [start check](operations.md#routine-operation).
 
-- **No schedule bound:** a requested time produces `create_after_doctor_and_pilot`. Follow [agent setup](agent-setup.md#6-finish-manually-or-enable-chosen-schedules), then use `schedule-plan` and supported Codex automation tools.
-- **Existing schedule:** the plan names its exact resource ID and before/after request. Read that automation through Codex, reconcile any drift, and update only reviewed fields. Retain its ID, chat, timing, activation and notification settings unless that field was requested to change. Disabling a scheduled workflow produces a requested pause, not deletion.
+- **No schedule bound:** a requested time produces `create_after_doctor_and_pilot`. Follow [agent setup](agent-setup.md#6-finish-manually-or-enable-chosen-schedules), then use `schedule-plan` and supported the selected scheduler.
+- **Existing schedule:** the plan names its exact resource ID and before/after request. Read that automation through the scheduler, reconcile any drift, and update only reviewed fields. Retain its ID, chat, timing, activation and notification settings unless that field was requested to change. Disabling a scheduled workflow produces a requested pause, not deletion.
 - Record actual saved readback with `preferences-schedule-record --config /absolute/private/config.json --update UPDATE_ID --workflow main --evidence /absolute/private/schedule-evidence.json --observation OBSERVATION_ID`. Use `blind` for the rated target company source. The [native evidence](native-evidence.md) must bind the installation and `preferences_update_id`, exact automation ID and saved prompt/timing/status. Verify the full saved recurrence: every day at the chosen local time, without alternate intervals, weekday limits or an end condition. Matching only the clock time is insufficient. Pending reconciliation stays visible and prevents another preferences update or new schedule plan.
 
 If an automation update has an unknown outcome, read back that same ID before any retry. Do not create a replacement. Retain the local update backup and pending schedule actions until resolved.

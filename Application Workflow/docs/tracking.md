@@ -1,7 +1,7 @@
 # Application and interview tracking
 
 > **Required when selected:** At least one authorized read source—Gmail, Google Calendar or [Mac Messages MCP](messages.md)—plus Python 3.10+ and the configured tracker. Connect only the sources selected.
-> **Runs in:** Codex app through native connectors/MCP; the central chat saves supported changes.
+> **Writes:** The central chat saves supported changes using the selected connector or local writer.
 > **Computer use:** None for routine tracking; initial account/OS access may need your participation.
 
 Use [applications](../support/toolkit/APPLICATIONS.md), [lifecycle](../support/toolkit/LIFECYCLE.md), [interviews](../support/toolkit/INTERVIEWS.md) and [coverage](../support/toolkit/COVERAGE.md) as pure acceptance helpers. Their inputs must come from independently inspected native evidence. Read saved source choices first. Gmail tracking, Calendar and Apple Messages are independent: run only the selected sources, and skip this phase when none are selected. Email-alert discovery does not enable Gmail tracking. Unselected sources are not configured; missing selected sources retain visible gaps.

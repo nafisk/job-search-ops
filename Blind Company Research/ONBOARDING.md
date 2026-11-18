@@ -1,7 +1,7 @@
 # Set up Blind company research
 
-> **Required:** Codex desktop on macOS, Python 3.10+, the complete repository, a private writable folder outside it, public search/page reads and a supported browser. A shared Application Workflow installation supplies the queue and central tracker writer.
-> **Runs in:** Codex app. Choose local Excel or Google Sheets for the shared jobs tracker.
+> **Required:** A [compatible Python runtime](<../Application Workflow/docs/tools.md#workflow-requirements>), the complete repository, a private writable folder outside it, public search/page reads and a supported browser. A shared Application Workflow installation supplies the queue and central tracker writer.
+> **Tracker:** Choose local Excel or Google Sheets.
 > **Computer use:** Career pages that need interaction; you handle sign-in or permission prompts. Supplied starter ratings need no Blind account.
 
 Use this guide to choose Blind research independently of LinkedIn alerts. The [shared operating rules](<../Application Workflow/docs/operations.md>) govern private storage, permissions, source evidence and the single writer. The [shared tool guide](../ONBOARDING.md#tools-for-your-choices) has installation links.
@@ -36,7 +36,7 @@ The agent completes the existing [setup sequence](<../Application Workflow/docs/
 | Required for this choice | What is checked |
 | --- | --- |
 | All Blind research | Public search/page access, supported browser, Python and private working files |
-| Local Excel tracker | The central chat's app-provided spreadsheet runtime and actual file save/readback; no Google account |
+| Local Excel tracker | The [Excel writer runtime](<../Application Workflow/docs/local-excel.md>) and actual file save/readback |
 | Google Sheets tracker | The central chat's selected Drive/Sheets connection, workbook identity and actual save/readback |
 | Separate research chat | Its private workspace and verified [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>) to central |
 | Scheduling, if chosen | Only the requested workflow's schedule, after its tool checks and pilot |

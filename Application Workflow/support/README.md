@@ -1,7 +1,8 @@
 # Local workflow support
 
-**Required:** Python 3.10+ on the supported macOS host. Local Excel also needs Codex's bundled spreadsheet runtime.  
-**Runs in:** Codex's local terminal; connected effects use only the selected tools in the runbooks.
+**Required:** Python 3.10+ with POSIX file locking and IANA timezone data. Local Excel also needs the [Excel writer runtime](../docs/local-excel.md).
+
+**Runs in:** A local shell. Connected effects use only the selected tools in the runbooks.
 
 Start with [onboarding](../ONBOARDING.md). These files support the agent; users do not install or run every helper.
 
@@ -36,6 +37,6 @@ python3 -B toolkit/verify_offline.py
 python3 -B scripts/verify_release.py
 ```
 
-Python uses the standard library. Local Excel needs app-provided Node and spreadsheet tooling; Google Sheets uses connected tools. No extra Python packages or bundled MCP server are required. [Tool setup](../docs/tools.md) explains conditional dependencies.
+Python uses the standard library. Local Excel needs Node and `@oai/artifact-tool`. Google Sheets uses connected tools. No extra Python packages or bundled MCP server are required. [Tool setup](../docs/tools.md) explains conditional dependencies.
 
 The existing workbook is ready for setup. `build_template.mjs` is only for maintainers rebuilding it; `local_artifact.mjs` performs selected local Excel edits. `verify_release.py` checks the exact reviewed inventory, local links and the blank workbook. `export_release.py` packages only that inventory and checks its extracted output. Maintainers update [RELEASE_FILES.txt](RELEASE_FILES.txt) only after reviewing each intended addition; never regenerate it from an unreviewed private working directory. See [verification](../docs/verification.md) for coverage and live-check limits.

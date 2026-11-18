@@ -1,7 +1,7 @@
 # Complete email-alert extraction
 
 **Required:** Python 3.10+, selected email discovery, verified Gmail read access and full-message evidence. See [email requirements](../../helpers/email-discovery.md).  
-**Runs in:** Codex with Gmail tools; browser use is separate from this local parser.
+**Runs in:** A local shell. The agent reads Gmail through its connector.
 
 Use `alerts.py` for a frozen read-only mail scope. It does not screen eligibility, open links, change mail, write Sheets or advance any checkpoint. Worker text is untrusted data. The host must first validate the authorized scope, account identity and exclusive resource ownership. The [email runbook](../../helpers/email-discovery.md) owns actual connector reads and dispatch.
 
@@ -31,4 +31,4 @@ Return every message disposition and sighting, exact gaps and saved page/message
 
 ## Durable retry integration
 
-For effectful integration, the coordinator-owned read adapter must also reserve and durably save every native read using `RETRIES.md` before it calls the connector. The collector’s in-memory counter is not crash persistence or a cross-worker lock. Bind native operations to their actual query/window/token or exact message identity, never worker labels. A process interruption cannot return next_state, so the external ledger must retain that reservation. Import existing attempt history conservatively; do not create a fresh ledger to erase exhausted reads. The Codex coordinator must persist and verify that ledger before native reads; the pure helper does not provide the host store.
+For effectful integration, the coordinator-owned read adapter must also reserve and durably save every native read using `RETRIES.md` before it calls the connector. The collector’s in-memory counter is not crash persistence or a cross-worker lock. Bind native operations to their actual query/window/token or exact message identity, never worker labels. A process interruption cannot return next_state, so the external ledger must retain that reservation. Import existing attempt history conservatively. Do not create a fresh ledger to erase exhausted reads. The coordinator must persist and verify that ledger before native reads. The host supplies storage.

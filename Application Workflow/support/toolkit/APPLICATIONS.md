@@ -1,7 +1,7 @@
 # Application evidence reconciliation
 
 **Required:** Python 3.10+, private runtime profile and independently read exact-role application evidence.  
-**Runs in:** Codex’s local terminal after selected source reads; this helper connects no accounts.
+**Runs in:** A local shell after the selected source reads.
 
 `applications.py` unions supplied application sources and returns submission-fact
 proposals. It has no account, file, browser, Sheets, checkpoint or dispatch effects.

@@ -1,7 +1,7 @@
 # Reusable official-portal search registry
 
 **Required:** Python 3.10+, the user’s private employer scope, and observed official search evidence.  
-**Runs in:** Codex with public research tools; browser/computer use when filters, login or rendering require it.
+**Runs in:** A local shell. The agent retrieves portal evidence with the selected public research and browser tools.
 
 Keep employer scope, referral contacts/holds and observed searches in a **private** registry. Share this guide and `portals.py`, never a personal company list or account history. The registry seeds future portal validation; it does not fetch jobs or prove current coverage. Saved successful counts and terminal pages are historical evidence only.
 

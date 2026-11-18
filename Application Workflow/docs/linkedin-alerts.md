@@ -1,7 +1,7 @@
 # Set up LinkedIn alerts and keep them out of your inbox
 
 > **Required when selected:** A LinkedIn account, access to the receiving mailbox and the supported signed-in browser. Automated discovery additionally requires native Gmail search/full-message reads.
-> **Runs in:** Codex app plus LinkedIn browser setup. Outlook steps organize mail only; they do not enable ingestion.
+> **Mail:** Gmail supplies automated discovery. The Outlook steps cover mailbox organization.
 > **Computer use:** Required for LinkedIn alerts. You handle login and mailbox-rule settings when native tools cannot manage them.
 
 **Use this step when choosing LinkedIn email discovery in [onboarding](../ONBOARDING.md).** You need active email alerts for the jobs you want before the workflow can discover those jobs from mail. Skip this step for portal-only, Blind-only or tracking-only setups.

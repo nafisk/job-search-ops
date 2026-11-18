@@ -1,7 +1,7 @@
 # Verification and operating limits
 
-> **Required:** Python 3.10+ and a disposable writable test folder; local workbook integration checks also need the [app-provided spreadsheet runtime](local-excel.md). Live checks need the selected connections.
-> **Runs in:** Codex app or a local shell for offline checks; Codex app for live checks.
+> **Required:** Python 3.10+ and a disposable writable test folder. Local workbook integration checks also need the [Excel writer runtime](local-excel.md). Live checks need the selected connections.
+> **Runs in:** A local shell for offline checks. Live checks use the selected agent and connectors.
 > **Computer use:** Only to verify a selected browser feature; offline tests use no accounts.
 
 Normal users start with [Onboarding](../ONBOARDING.md). These checks are for the assistant or a maintainer updating the workflow.
@@ -23,7 +23,9 @@ The package check rejects unlisted files and symlinks, tolerates but excludes no
 relationships and unused shared strings to catch hidden or deleted content;
 unreviewed extra parts are rejected. These checks use explicit validation and remain
 active with `python -O`, `python -OO` and `PYTHONOPTIMIZE`. This complements human review of changed
-release assets. Setup starts from this existing workbook; rebuilding it is optional. Google setup imports it and installs open-ended summary formulas. Local setup imports and saves it through the app-provided spreadsheet runtime, then verifies the actual private file.
+release assets. Setup starts from this existing workbook. Rebuild it only if needed. Google setup imports it and installs open-ended summary formulas. Local setup imports and saves it through the selected spreadsheet runtime, then verifies the actual private file.
+
+For Excel integration checks with an alternate runtime, set `JOB_SEARCH_TEST_NODE` and `JOB_SEARCH_TEST_NODE_MODULES` to the verified absolute runtime paths.
 
 ## Before sharing an export or clone
 
@@ -54,7 +56,7 @@ Local tests cannot establish these live results. Optional MCPs need their own ca
 
 ## Operating limits
 
-The tested runner is Codex desktop with Python 3.10+ on macOS. The helpers use POSIX locking; other hosts and unattended cloud execution have not been certified. There is no separate background service or Google login implementation.
+The local helpers require Python 3.10+, POSIX file locking, and IANA timezone data. The current integration tests ran on macOS. Verify the chosen agent's native tool access and run a scoped live pilot before relying on a different setup. The repository supplies no background service or Google login implementation.
 
 One coordinator owns tracker writes for one private installation. Its local claim does not lock out a human or an unrelated automation. Fresh reads, narrow writes and readback detect conflicts, but a human editing the same managed cell during an update can still race it. Manual status, notes and existing contact values are preserved during repeat sightings.
 

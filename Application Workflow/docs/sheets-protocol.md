@@ -1,7 +1,7 @@
 # Google Sheets write protocol
 
 > **Required:** Python 3.10+, a bound Google tracker and native Drive/Sheets read/write tools.
-> **Runs in:** Codex app; the central chat invokes the connector.
+> **Writes:** The central chat invokes the connector.
 > **Computer use:** None.
 
 Follow [operating rules](operations.md) and the backend-independent [queue and handoff contract](handoffs.md). Commands run from `Application Workflow/support/`; `--root` is the installation directory, never its `state/` child.

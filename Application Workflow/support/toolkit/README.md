@@ -1,7 +1,7 @@
 # Local workflow helpers
 
 **Required:** Python 3.10+; use the private runtime profile created during [setup](../../ONBOARDING.md). No extra Python packages.  
-**Runs in:** Codex’s local terminal. These helpers do not connect accounts or control the computer.
+**Runs in:** a local shell. These helpers do not connect accounts or control the computer.
 
 Users start with [onboarding](../../ONBOARDING.md). Agents use this library only where a runbook calls for it. The main workflow owns live reads, source review, tracker writes and reports.
 

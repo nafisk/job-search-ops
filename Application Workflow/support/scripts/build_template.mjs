@@ -1,5 +1,5 @@
 // Optional maintainer operation; ordinary setup imports the checked-in XLSX.
-// Run with the Codex bundled Node/artifact-tool runtime, not an npm install.
+// Run with the supported Node and @oai/artifact-tool runtime.
 import fs from "node:fs/promises";
 import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
 

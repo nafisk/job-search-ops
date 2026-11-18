@@ -7,7 +7,6 @@
 <p>Your company list → verified openings → the shared jobs tracker.</p>
 
 <p>
-  <img src="https://img.shields.io/badge/Runs_in-Codex_App-2563eb?style=flat-square" alt="Runs in: Codex app">
   <img src="https://img.shields.io/badge/Tracker-Shared_jobs_tracker-475569?style=flat-square" alt="Tracker: shared jobs tracker">
 </p>
 
@@ -20,7 +19,7 @@
 ## 🚀 Set up
 
 1. Follow [onboarding](ONBOARDING.md) to create or reuse the shared Application Workflow installation and its Excel or Google Sheets tracker.
-2. Review the [103-company starter list](blind-companies.json), or supply your own. Choose companies and job criteria; Codex saves your working copy privately.
+2. Review the [103-company starter list](blind-companies.json), or supply your own. Choose companies and job criteria. The agent saves your working copy privately.
 3. Verify the research and central-save path, then choose manual runs or your own schedule.
 
 **The starter has no personal notes. Ratings are historical and not freshly verified; original rating dates are unknown.** Career links are rechecked during research. You can change the rating threshold and targets.

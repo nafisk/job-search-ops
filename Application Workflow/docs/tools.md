@@ -1,7 +1,6 @@
 # Selected tools and permissions
 
-> **Required for the core:** Codex desktop on macOS, Python 3.10+, a permanent checkout and private writable state.
-> **Runs in:** Codex app; the matrix below adds requirements only for selected features.
+> **Required for the core:** A permanent checkout, private writable state, and Python 3.10+ on a POSIX host.
 > **Computer use:** A supported browser is required for discovery; actual interaction depends on the page. Signed-in browser access is required only for selected authenticated tasks.
 
 [Application Workflow onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory covers the shared Application Workflow runtime used by alerts and [Blind Company Research](<../../Blind Company Research/README.md>), not unrelated modules. Blind research uses public research/handoff tools; its accepted results still require the selected tracker and central writer. [Repository onboarding](../../ONBOARDING.md#tools-for-your-choices) holds common installation and connection links. Commands run from `Application Workflow/support`.
@@ -10,17 +9,17 @@
 
 ## Workflow requirements
 
-Use the local Codex desktop host, a permanent checkout and private writable state. Python 3.10+ runs the included helpers with standard-library/POSIX locking and IANA timezone data. Check existing tools first; use the [shared tool setup](../../ONBOARDING.md#tools-for-your-choices) only when a compatible runtime is missing. The supported workflow targets a local Mac; Windows/cloud execution is not certified.
+The helpers use Python's standard library, `fcntl` file locking, and IANA timezone data. The agent needs access to the checkout and private installation. Check the selected tools and run a scoped pilot before relying on another host.
 
-The central chat always coordinates the selected work. Other chats, browser access, Google connections and scheduling capabilities are conditional. Keep the local computer/app available only when relying on local scheduled execution; manual mode needs no automation setup.
+The central chat always coordinates the selected work. Other chats, browser access, Google connections and scheduling capabilities are conditional. For a local schedule, keep the machine and runner available. Manual runs need no scheduler.
 
 ## Capability branches
 
 | Selected feature | Needed capability and allowed scope |
 | --- | --- |
-| Local Excel tracker | Private `.xlsx` path, the shipped [local workbook backend](local-excel.md), and app-provided Node/spreadsheet editing runtime discovered with `load_workspace_dependencies`. Verify actual file reads/writes, identity, schema and readback. No Drive/Sheets connection or Google workbook is needed. |
+| Local Excel tracker | Private `.xlsx` path, the shipped [local workbook backend](local-excel.md), and a compatible Node runtime with `@oai/artifact-tool`. Verify actual file reads/writes, identity, schema and readback. No Drive/Sheets connection or Google workbook is needed. |
 | Google Sheets tracker | Native Google Drive/Sheets identity, import, metadata/CellData read and checked batch writes. Verify the account, selected workbook, seven-tab schema, links and manual-field preservation. |
-| [Discovery export](discovery-export.md) | Local Excel uses the bundled spreadsheet runtime. Google Sheets uses the connected account, native import, metadata and checked batch writes on the separate export workbook. |
+| [Discovery export](discovery-export.md) | Local Excel uses the same spreadsheet runtime as the Excel tracker. Google Sheets uses the connected account, native import, metadata and checked batch writes on the separate export workbook. |
 | Email alerts | Gmail identity, labels/search, full message/MIME reads and pagination. No mail mutations. |
 | Referral portals or [Blind research](<../../Blind Company Research/run.md>) | Public search/open, official pages and a supported public HTTP/browser reader. Optional [curl](https://curl.se/download.html) is unnecessary when a native reader works. Verify scope, pagination and exact job details. |
 | Gmail tracking | Gmail reads for exact-role receipts, replies and Sent history. Independent of email-alert discovery; no mail mutations. |
@@ -29,7 +28,7 @@ The central chat always coordinates the selected work. Other chats, browser acce
 | Self-email report | Explicit recipient/send opt-in, Gmail sending and actual Sent search/readback. Chat reports need no send capability. |
 | Scheduled runs | App automation create/view/readback for the chosen central and/or Blind chat only, after verified pilot. Manual mode creates no timers. |
 
-For selected Google features, use the [shared connection links](../../ONBOARDING.md#tools-for-your-choices) and start a fresh chat when needed. Use native connectors; do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration without a Google export needs neither Google Drive nor Gmail.
+For selected Google features, use the [shared capability checklist](../../ONBOARDING.md#tools-for-your-choices) and start a fresh chat when needed. Use native connectors. Do not install `gws`, extract cookies or create alternate OAuth to bypass missing access. A local-Excel/public-research/chat/manual configuration without a Google export needs neither Google Drive nor Gmail.
 
 ## Native tools and optional additions
 
@@ -37,11 +36,11 @@ Use [LinkedIn alert setup](linkedin-alerts.md) to check alert creation, mailbox 
 
 Discover current schemas instead of assuming exact provider arguments. Relevant Google operations include profile reads, Gmail search/read/send as selected, Drive `import_spreadsheet`, `get_spreadsheet_metadata`, `get_spreadsheet_cells` and `batch_update_spreadsheet`. Calendar uses bounded search and event reads.
 
-Chat operations use `list_projects`, `create_thread`, `read_thread`, `send_message_to_thread` and `wait_threads` for selected bindings and authorized delegation. `automation_update` is used only for selected schedules. Optional collaboration tools can verify disjoint work; they do not create an obligation to add more permanent chats.
+Check that the agent can create or reuse the selected sessions, read their output, and hand work to authorized helpers. Check scheduler controls only when scheduling was selected. The [capability manifest](../support/config/capabilities.json) lists the tool identifiers recognized by the bundled evidence checker.
 
-Public research may use supported `mcp__cua_repl.js` controls. Authenticated Chrome is optional when a selected access path needs it or the user separately requests manual application/recruiter work. Use the [shared browser connection link](../../ONBOARDING.md#tools-for-your-choices), verify the session and preserve user tabs. Never autofill, upload resumes, apply or send outreach automatically. Serialize controls unless the host demonstrates safe isolation.
+Use the agent's public page reader or browser controls for research. For a selected signed-in task, verify the authorized browser profile and preserve user tabs. Never autofill, upload resumes, apply or send outreach automatically. Serialize controls unless the host demonstrates safe isolation.
 
-This release supports Messages through the [external Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) and its reviewed read tools. Follow [Messages setup](messages.md) and [Codex registration](https://learn.chatgpt.com/docs/extend/mcp) only when selected. Other Messages plugins are not assumed compatible; they need their own reviewed tool/evidence mapping before use. Missing transcript support is a source gap, not a requirement to build a decoder.
+This release supports Messages through the [external Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) and its reviewed read tools. Follow [Messages setup](messages.md) when selected. Other Messages plugins are subject to compatibility checks. They need their own reviewed tool/evidence mapping before use. Missing transcript support is a source gap, not a requirement to build a decoder.
 
 ## Checks and maintenance
 
@@ -50,6 +49,6 @@ for an individual schedule). Run the [execution check](operations.md) before eac
 workflow accesses sources; pending preference pilots hold only affected work.
 Then preserve actual file/native evidence for the intended effects. Offline fixtures, tool catalogs and manually asserted flags do not prove live saves or delivery. Unselected sources are not missing dependencies; selected unavailable sources remain disabled/partial with their dependent work held.
 
-Git and shell utilities are operator conveniences. Local Excel authoring, rebuilding the blank template or explicitly exporting XLSX uses the app-provided Node/spreadsheet runtime discovered through `load_workspace_dependencies` and the installed spreadsheet skill. Follow that skill’s operation-start requirement before authoring. Google setup imports shipped assets without a rebuild; never install the private artifact package from public npm or copy another user's cache. Personal skills, Beautiful Soup, Node Simplify decoding, browser automation libraries and custom Messages binaries are not default requirements.
+Use the [Excel writer runtime](local-excel.md) to edit or rebuild an XLSX. Google setup imports the shipped workbook as a native Sheet. Use only the dependencies needed for the selected features.
 
 Do not install software, add credential flows or expand permissions automatically. Update the [capability manifest](../support/config/capabilities.json) when deliberately introducing a new dependency. Keep configuration and history private, and state which selected live checks remain unverified.

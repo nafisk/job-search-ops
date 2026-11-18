@@ -1,7 +1,6 @@
 # Shared queue and producer handoffs
 
 > **Required:** Python 3.10+, the installation’s private settings and shared queue.
-> **Runs in:** Codex app; the same contract serves Excel and Google Sheets.
 > **Computer use:** None for this handoff; source research may need it.
 
 Follow [operating rules](operations.md). Local commands run from `Application Workflow/support/`.

@@ -1,10 +1,10 @@
 # Application Workflow
 
-Find jobs from LinkedIn alerts, referral portals, or [Blind company research](<../Blind Company Research/README.md>). The main Codex chat saves verified jobs to one tracker and can track applications and interviews from the sources you choose.
+Find jobs from LinkedIn alerts, referral portals, or [Blind company research](<../Blind Company Research/README.md>). The main workflow session saves verified jobs to one tracker and can track applications and interviews from the sources you choose.
 
 ## Set up
 
-Read the [operating rules](docs/operations.md), then follow [onboarding](ONBOARDING.md). Use Codex on macOS with Python 3.10 or later. Ask for an existing private setup before starting a new one. Reuse confirmed choices and check access only for selected sources.
+Read the [operating rules](docs/operations.md), then follow [onboarding](ONBOARDING.md). Check the [required tools](docs/tools.md) for the selected features. Ask for an existing private setup before starting a new one. Reuse confirmed choices and check access only for selected sources.
 
 | If the user selects | Follow |
 | --- | --- |

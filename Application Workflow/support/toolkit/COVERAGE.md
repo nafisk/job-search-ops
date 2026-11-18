@@ -1,7 +1,7 @@
 # Configured source coverage
 
 **Required:** Python 3.10+, saved source choices and actual bounded-read evidence for each selected source.  
-**Runs in:** Codex’s local terminal; selected Gmail/Calendar tools or Mac Messages MCP supply evidence.
+**Runs in:** A local shell with evidence from the selected Gmail, Calendar, or Messages tools.
 
 **Distribution policy:** factual source coverage and daily processing status are separate. [Operations](../../docs/operations.md) permits completed processing with disclosed source exceptions; `required_complete` and `all_enabled_complete` remain honest coverage flags, not blanket continuation gates. This pure helper never dispatches live work.
 

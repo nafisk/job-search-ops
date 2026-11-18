@@ -1,10 +1,10 @@
 # Operating rules
 
 > **Required:** Completed [onboarding](../ONBOARDING.md), Python 3.10+, private saved state and the tools for selected sources and tracker.
-> **Runs in:** Codex app; one central chat owns tracker writes.
+> **Ownership:** One central chat owns tracker writes.
 > **Computer use:** Only selected browser tasks; account reads and tracker saves use their documented connector/file paths.
 
-The Codex assistant is the native-tool runner. The deterministic CLI validates configuration and manages private intent, ownership, queue and receipt state. It does not autonomously log into Google, browse, send or create schedules. Follow the runbooks and inspect real tool responses; do not generate “proof” by restating intended results.
+The agent runs the selected tools. The deterministic CLI validates configuration and manages private intent, ownership, queue and receipt state. It does not autonomously log into Google, browse, send or create schedules. Follow the runbooks and inspect real tool responses. Do not generate “proof” by restating intended results.
 
 Read the private saved choices and the read-only setup plan before selecting branches. Central always runs; email/portal helpers, Blind, tracking sources and schedules exist only when selected. Manual runs and chat reports are defaults. Unselected capabilities are not errors to repair.
 
@@ -56,4 +56,4 @@ After the check: inspect unfinished journals and owner state, verify relevant id
 
 Use `doctor --workflow main` or `doctor --workflow blind` to check that workflow's tools; the command also needs `--config` and the current evidence bundle. The rated producer needs its public research and handoff capabilities, not main's Gmail or tracker-writing access. Scoped readiness does not clear a pilot gate.
 
-Create no automation resources for manual mode. When scheduled work was chosen, keep the local machine and Codex app available for its local heartbeats. A scheduled Blind run does not create a central timer; queued results await a central import/run. A missed run resumes from durable checkpoint with overlap; it must not silently drop older intervals. Review new dependency/auth/network changes before adopting them. Do not reactivate retired or manual schedules to invoke stored instructions.
+Create no automation resources for manual mode. When scheduled work was chosen, keep the scheduled runner and its private storage available. A scheduled Blind run does not create a central timer. Queued results await a central import/run. A missed run resumes from durable checkpoint with overlap and includes any missed intervals. Review new dependency/auth/network changes before adopting them. Do not reactivate retired or manual schedules to invoke stored instructions.

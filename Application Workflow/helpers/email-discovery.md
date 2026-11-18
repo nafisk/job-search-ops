@@ -1,7 +1,7 @@
 # Email alert discovery producer
 
-> **Required when selected:** Native Gmail search/full-message reads, configured email alerts, Python 3.10+, public job reads, the supported Codex browser and a [producer handoff](../docs/handoffs.md#producer-handoff). LinkedIn sources also need [verified alert setup](../docs/linkedin-alerts.md).
-> **Runs in:** Codex app with Gmail; Outlook ingestion is unsupported.
+> **Required when selected:** Native Gmail search/full-message reads, configured email alerts, Python 3.10+, public job reads, browser controls for interactive pages and a [producer handoff](../docs/handoffs.md#producer-handoff). LinkedIn sources also need [verified alert setup](../docs/linkedin-alerts.md).
+> **Mail source:** Gmail.
 > **Computer use:** Only when job pages need browser interaction; mail stays in the Gmail connector.
 
 Start with the [shared source checks](../docs/operations.md#start-a-discovery-source). Use the `main` gate.

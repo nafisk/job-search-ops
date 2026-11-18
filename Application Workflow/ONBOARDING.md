@@ -1,6 +1,6 @@
 # Set up Application Workflow
 
-Open the complete repository in Codex on macOS with Python 3.10 or later. Use a durable private setup folder outside the repo.
+Give your agent access to the complete repository and a [compatible Python runtime](docs/tools.md#workflow-requirements). Use a durable private setup folder outside the repo.
 
 ## Choose your workflow
 
@@ -25,7 +25,7 @@ Ask one choice at a time. Reuse saved answers. Choose at least one discovery or 
 
 Read the [operating rules](docs/operations.md). Check [tool access](docs/tools.md) for selected features, then follow [agent setup](docs/agent-setup.md). Show the resources and permissions before setup. Ask before adding software, permissions, or connections.
 
-## Paste into Codex
+## Give this to your agent
 
 ```text
 Read Application Workflow/ONBOARDING.md and guide me through the choices.

@@ -15,11 +15,11 @@ Start with your goal. The agent guides you through the relevant choices, reuses 
 
 **Choose either or both discovery paths.** They share one Application Workflow installation, one jobs tracker and one central writer. Blind-only setup can leave email alerts, referral portals and tracking sources off; the central chat still reviews and saves its findings before Batches can use them. Setup and pilots are completed through the shared [Application Workflow guide](<Application Workflow/ONBOARDING.md>).
 
-You can choose more than one. Resume and supplied-content LinkedIn reviews work with an assistant that can read the supplied material; the operational workflows target **Codex desktop on macOS**. Other hosts are not certified for those workflows.
+Resume and supplied-content LinkedIn reviews need an assistant that can read the material. Operational workflows need an agent with access to the repository, private files, and the tools for the selected features.
 
-## Ask Codex to guide setup
+## Ask your agent to guide setup
 
-For an operational workflow, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder and open that folder in Codex. Keep it available after setup: saved instructions refer to the installed runbooks and helpers.
+For an operational workflow, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder and give your agent access to that folder. Saved instructions use the runbooks and helpers at that path.
 
 ```text
 Read ONBOARDING.md. Help me choose which job-search workflows I need,
@@ -42,11 +42,11 @@ Connect only what your selected work needs. Check what is already available befo
 
 | Tool | Why and when you need it |
 | --- | --- |
-| [Codex desktop](https://developers.openai.com/codex/app/) and [Python 3.10+](https://www.python.org/downloads/) | Application Workflow, Blind Company Research, Batches and Outreach use the local Mac host and private file records. Their Python helpers use the standard library. Resume and supplied-content LinkedIn reviews do not require these helpers. |
-| [Supported browser connection](https://learn.chatgpt.com/docs/chrome-extension) | Live LinkedIn inspection/edits, recruiter drafts, application batches and interactive job pages. You handle sign-in; the agent verifies the selected account/session and preserves existing tabs and edits. |
-| [Google Drive/Sheets connection](https://learn.chatgpt.com/docs/plugins) | Required when you choose a Google tracker or a Google Sheets discovery export. The agent verifies the exact account, workbook and permitted reads/writes. Jobs and recruiter contacts use separate trackers. |
-| Codex's bundled spreadsheet runtime | Required for the local Excel jobs tracker. The agent discovers it through the app; you do not install Excel, Node packages or a spreadsheet MCP for this backend. Outreach's local JSON tracker does not need it. |
-| Selected [Gmail or Calendar connections](https://learn.chatgpt.com/docs/plugins) | Gmail supports selected alert discovery, application tracking or opted-in self-email reports. Calendar supports selected interview tracking independently. Neither is required simply to open application pages or draft LinkedIn messages. |
+| Local file access and [Python 3.10+](https://www.python.org/downloads/) | Operational workflows use private files. The shared runtime uses POSIX file locking through `fcntl` and IANA timezone data. |
+| Browser controls | Live LinkedIn inspection/edits, recruiter drafts, application batches and interactive job pages. You handle sign-in. The agent verifies the selected account/session and preserves existing tabs and edits. |
+| Google Drive and Sheets connector | Required when you choose a Google tracker or a Google Sheets discovery export. The agent verifies the exact account, workbook and permitted reads/writes. Jobs and recruiter contacts use separate trackers. |
+| [Excel runtime](<Application Workflow/docs/local-excel.md>) | The local Excel writer uses Node with a supported `@oai/artifact-tool` runtime. The local JSON outreach tracker uses Python. |
+| Gmail or Calendar connectors | Gmail supports selected alert discovery, application tracking or opted-in self-email reports. Calendar supports selected interview tracking independently. Neither is required simply to open application pages or draft LinkedIn messages. |
 | [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) | Only for selected Messages tracking. Follow [Messages setup](<Application Workflow/docs/messages.md>) for its installation, database permission and scoped read checks. |
 
 Research also needs the host's supported search/page readers. Availability is not proof of the right account, scope or successful operation. The selected runbook defines the actual check and readback. Missing access remains a visible gap for that operation; the feature guide determines what other work may continue. Unselected tools are not setup failures. No extra CLI, credential flow or MCP server is installed automatically.

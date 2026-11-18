@@ -1,8 +1,8 @@
 # Run the application workflow
 
-**Required:** completed [onboarding](ONBOARDING.md), local Codex app on macOS, Python 3.10+, private settings/state, and the tools for your selected tracker and sources.
+**Required:** completed [onboarding](ONBOARDING.md), a [compatible Python runtime](docs/tools.md#workflow-requirements), private settings/state, and the tools for your selected tracker and sources.
 
-**Runs in:** Codex with connected tools and local helpers. Public browser capability is required for discovery; interactive computer use is needed only when a source page requires it.
+**Tools:** Discovery uses public search and page reads. Use browser controls when a source page requires interaction.
 
 **Start with [onboarding](ONBOARDING.md).** This guide runs the choices saved for your installation: local Excel or Google Sheets, selected discovery/tracking sources, manual or scheduled execution, and report delivery.
 
@@ -46,4 +46,4 @@ Daily or manual completion does not authorize filling/submitting applications, u
 
 ## Supporting details
 
-Run local helper commands from `Application Workflow/support`. [Agent setup](docs/agent-setup.md), [tools](docs/tools.md), [operations](docs/operations.md) and [verification](docs/verification.md) contain the supporting checks. Python prepares and verifies effects; Codex uses the configured tools. Google access, when selected, stays connector-only.
+Run local helper commands from `Application Workflow/support`. [Agent setup](docs/agent-setup.md), [tools](docs/tools.md), [operations](docs/operations.md) and [verification](docs/verification.md) contain the supporting checks. Python prepares and verifies effects. The agent uses the selected tools. Google access, when selected, stays connector-only.

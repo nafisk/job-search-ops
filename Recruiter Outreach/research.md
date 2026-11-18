@@ -1,7 +1,7 @@
 # Find recruiters for named companies
 
 > **Required:** Completed [onboarding](ONBOARDING.md), selected private settings/tracker, an explicit company scope, public research tools and the supported signed-in LinkedIn browser.
-> **Runs in:** Codex app; local JSON or selected Google Sheets writes.
+> **Tracker:** Local JSON or Google Sheets.
 > **Computer use:** Required to inspect live LinkedIn profiles. This procedure ends at a roster, without drafting or sending.
 
 Start with a request such as **“Find recruiters at [company] for my saved target roles.”** Read the current settings and [tracker](tracker.md), recover unfinished requested work and record the human request, companies, owner and run ID privately. A report, new application or another agent cannot launch this procedure.

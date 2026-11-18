@@ -84,7 +84,7 @@ def _schedule_actions(old, new, manifest, prompts):
             if after["enabled"]:
                 actions.append({"workflow": name, "action": "create_after_doctor_and_pilot", "resource_id": None,
                                 "local_time": after["local_time"], "timezone": new["_profile"]["timezone"],
-                                "instruction": "Use schedule-plan and the Codex automation tool after doctor and the selected pilot pass; reserve and verify the real binding. No schedule has been activated."})
+                                "instruction": "Use schedule-plan and the selected scheduler after doctor and the selected pilot pass. Reserve and verify the real binding. No schedule has been activated."})
             continue
         require(bound.get("status") == "verified", "preferences", "reconcile the existing uncertain schedule intent before updating preferences")
         desired = copy.deepcopy(bound["request"])
@@ -103,7 +103,7 @@ def _schedule_actions(old, new, manifest, prompts):
         if desired != bound["request"]:
             actions.append({"workflow": name, "action": "update_existing", "resource_id": bound["resource_id"],
                             "before_request": copy.deepcopy(bound["request"]), "request": desired, "prompt": body,
-                            "instruction": "Read this exact existing automation with the Codex tool. Reconcile any drift before changing it. Preserve its ID and all unrequested fields; update only the reviewed changes, then save native readback and use preferences-schedule-record. Never delete or recreate it."})
+                            "instruction": "Read this exact existing automation with the selected scheduler. Reconcile any drift before changing it. Preserve its ID and all unrequested fields. Update only the reviewed changes, then save native readback and use preferences-schedule-record. Never delete or recreate it."})
     return actions
 
 
@@ -270,7 +270,7 @@ def apply_preferences(config_path, plan, expected_digest):
                 "schedule_actions": plan["schedule_actions"], "connected_effects": [],
                 "pilot_required": list(plan["pilot_required"]),
                 "execution_gate": "Affected scheduled and ordinary operations are held until an explicitly requested replacement pilot is verified. Use run-check; only the manual pilot may supply --pilot-update-id.",
-                "next_action": "Use the updated config.json. Run each required manual pilot with this update ID, record first-pass evidence, and complete listed scheduler reconciliation through Codex tools. Local apply never changes live schedules."}
+                "next_action": "Use the updated config.json. Run each required manual pilot with this update ID, record first-pass evidence, and complete listed scheduler reconciliation through the selected scheduler. Local apply never changes live schedules."}
 
 
 def record_schedule_reconciliation(config, update_id, workflow, receipt, verify, *, now=None):
