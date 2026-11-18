@@ -308,6 +308,7 @@ def validate_policy(base, packet):
     policy = config.get("sources", {}).get(packet["source"])
     if not policy or any(policy.get(k) != packet["policy"].get(k) for k in ("id", "version")):
         raise ProtocolError("Packet does not match an enabled approved policy/version")
+    admission = config.get("tracker_admission")
     for job in packet["jobs"]:
         qualification = job["qualification"]
         years = qualification["required_years"]
@@ -327,6 +328,15 @@ def validate_policy(base, packet):
                 raise ProtocolError("Blind core tier exceeds its base experience ceiling")
             if qualification["tier"] == "stretch" and (years is None or years <= base_years):
                 raise ProtocolError("Blind stretch tier requires verified experience above its base ceiling")
+        if admission is not None:
+            if years is None or years >= admission["required_years_below"]:
+                raise ProtocolError("Tracker admission requires a stated mandatory minimum below its exclusive ceiling")
+            level = job.get("level", "").strip().casefold()
+            if level in {"", "unknown", "unclear", "unconfirmed"}:
+                raise ProtocolError("Tracker admission requires a verified level")
+            if any(re.search(r"\b" + re.escape(term.strip().casefold()) + r"\b", level)
+                   for term in admission["excluded_levels"]):
+                raise ProtocolError("Reviewed level is excluded by tracker admission")
     return policy
 
 

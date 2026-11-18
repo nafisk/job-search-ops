@@ -151,7 +151,23 @@ def load_config(path):
             "schema_version", "unsupported version")
     legacy = value["schema_version"] == 1
     fields = "schema_version installation_id profile_path instance_root modules candidate blind_policy sources schedules report adapters"
-    keys(value, fields + ("" if legacy else " tracker discovery tracking"), "installation")
+    if not legacy:
+        fields += " tracker discovery tracking"
+        if "tracker_admission" in value:
+            fields += " tracker_admission"
+    keys(value, fields, "installation")
+    if "tracker_admission" in value:
+        admission = value["tracker_admission"]
+        keys(admission, "required_years_below excluded_levels", "tracker_admission")
+        ceiling = admission["required_years_below"]
+        require(type(ceiling) in (int, float) and 0 < ceiling <= 100,
+                "tracker_admission.required_years_below", "expected a positive exclusive ceiling up to 100")
+        levels = admission["excluded_levels"]
+        require(type(levels) is list and all(type(level) is str and level.strip() and len(level) <= 100
+                and not any(ord(c) < 32 for c in level) for level in levels),
+                "tracker_admission.excluded_levels", "expected bounded level labels")
+        require(len({level.strip().casefold() for level in levels}) == len(levels),
+                "tracker_admission.excluded_levels", "duplicate level labels")
     require(type(value["installation_id"]) is str and re.fullmatch(r"[a-z][a-z0-9_-]{0,63}", value["installation_id"]),
             "installation_id", "expected lowercase identifier")
     root = local_path(value["instance_root"], source.parent, "instance_root", absolute=True)

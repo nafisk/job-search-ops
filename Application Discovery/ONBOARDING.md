@@ -14,6 +14,7 @@ Ask one choice at a time. Reuse saved answers. Choose at least one discovery or 
 | Timing | Timezone and manual or scheduled runs. Confirm times and notifications only for requested schedules. |
 | Reports | Chat by default. For self-email, confirm the recipient and permission to send. |
 | Discovery export | Local Excel, Google Sheets, or off. The [three-tab export](docs/discovery-export.md) is a separate workbook. |
+| Tracker admission | Optional [save rule](docs/handoffs.md#tracker-admission) for stricter experience and level limits than the research scope. |
 
 ## Confirm the search profile
 

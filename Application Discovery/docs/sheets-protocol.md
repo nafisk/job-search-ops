@@ -4,6 +4,8 @@ Central writes to the bound Google tracker through the native Drive and Sheets t
 
 Follow [operating rules](operations.md) and the backend-independent [queue and handoff contract](handoffs.md). Commands run from `Application Discovery/support/`; `--root` is the installation directory, never its `state/` child.
 
+Treat hidden columns and a recent-jobs filter view as presentation choices. Read the complete schema and occupied rows for deduplication, link verification and manual-field preservation. Treat older tracker layouts as a [reviewed migration](upgrade-and-recovery.md#adopt-existing-scheduled-work) before binding them.
+
 This guide covers discovery writes and the common authorize/readback/recovery steps. [Application tracking](tracking.md#save-to-google-sheets) prepares its own narrow change journal, then uses the same steps. Reports follow the separate [report guide](report.md). Local Excel uses [its own writer](local-excel.md).
 
 ## 1. Capture real native Sheets state

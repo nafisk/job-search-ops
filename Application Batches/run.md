@@ -22,7 +22,7 @@ Use actual shell-quoted bindings, including the Excel `local:` prefix. Review th
 
 ## 2. Verify and open
 
-Verify current full role requirements against the saved criteria and known factual qualifications. Read **Job Sources** for the accepted policy ID, version and qualification tier, then apply the current source-specific search policy, including configured Blind stretches. Preserve tier labels and all factual qualification, location and referral checks. Skip applied/terminal jobs, duplicate applications, hard mismatches and unresolved referral routes. Unread or ambiguous eligibility stays held. Reevaluate an old scope exclusion only from fresh evidence; preserve its history. Do not collect personal form answers to open a page.
+Verify current full role requirements against the saved criteria and known factual qualifications. Read **Job Sources** for the accepted policy ID, version and qualification tier. Apply the current source policy and any configured [tracker admission](<../Application Discovery/docs/handoffs.md#tracker-admission>) to new handoffs. Preserve tier labels, qualifications, location and referral checks. Skip applied/terminal jobs, duplicates, hard mismatches and unresolved referral routes. Unread or ambiguous eligibility stays held. Reevaluate old exclusions from fresh evidence and preserve their history. Page opening needs no personal form answers.
 
 For each reserved role:
 

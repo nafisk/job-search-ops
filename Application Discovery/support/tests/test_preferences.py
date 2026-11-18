@@ -251,6 +251,18 @@ class PreferencesTests(unittest.TestCase):
         self.assertEqual(pending.read_text(), '{"original":"evidence"}')
         self.assertEqual((self.h.root / "state/approved-policies.json").read_bytes(), old_policy)
 
+    def test_tracker_admission_change_requires_revised_policies_and_both_pilots(self):
+        admission = {"required_years_below": 3, "excluded_levels": ["senior", "staff"]}
+        change = lambda settings: settings.update(tracker_admission=admission)
+        with self.assertRaisesRegex(ConfigError, "new role_policy.version"):
+            preferences.preference_plan(self.current, self.candidate(change))
+        candidate = self.candidate(change, lambda p: p["role_policy"].update(version="core-v2"))
+        plan = preferences.preference_plan(self.current, candidate)
+        self.assertEqual(set(plan["pilot_required"]), {"main", "blind"})
+        self.assertEqual(plan["new_policies"]["tracker_admission"], admission)
+        self.apply(plan)
+        self.assertEqual(load_config(self.h.root / "config.json")["tracker_admission"], admission)
+
     def test_interrupted_multifile_update_resumes_without_losing_history(self):
         plan = preferences.preference_plan(self.current, self.candidate(lambda c: c["tracking"].update(gmail=False),
                                                                       lambda p: p["role_policy"].update(families=["frontend"], version="core-v2")))

@@ -25,6 +25,8 @@ Choose the [103-company starter](blind-companies.json) or your own list. **Its r
 
 Use the [shared search profile conversation](../ONBOARDING.md#confirm-the-search-profile) to confirm résumé facts, target roles and hard requirements. Then confirm the rating threshold and Blind base/stretch experience policy. See the [runbook](run.md#setup) for the company list format and provenance rules.
 
+If you have verified portal links or search steps, bring the private [source CSV](run.md#reuse-saved-portal-routes). Confirm which research matches belong in chat and which may enter the shared tracker under [tracker admission](../docs/handoffs.md#tracker-admission).
+
 ## 3. Verify the selected tools and handoff
 
 The agent completes the existing [setup sequence](../docs/agent-setup.md) and [tool checks](../docs/tools.md) for these selections:

@@ -64,7 +64,8 @@ def _check_scope(old, new):
                 require(entry[key] == selected[key], "preferences", "active connection and identity bindings must be retained; new bindings need separate verified setup")
     old_policy, new_policy = old["_profile"]["role_policy"], new["_profile"]["role_policy"]
     criteria_changed = (any(old_policy[key] != new_policy[key] for key in old_policy if key != "version") or
-                        old["_profile"]["locations"] != new["_profile"]["locations"] or old["candidate"] != new["candidate"])
+                        old["_profile"]["locations"] != new["_profile"]["locations"] or old["candidate"] != new["candidate"] or
+                        old.get("tracker_admission") != new.get("tracker_admission"))
     if criteria_changed and execution_plan(new)["discovery"]:
         require(old_policy["version"] != new_policy["version"], "preferences", "changing search criteria requires a new role_policy.version so old producer packets cannot be reused")
         if new["modules"]["blind"] and old["blind_policy"] is not None:
@@ -127,7 +128,8 @@ def _build_plan(old, new, manifest):
     main_fields = [field for field in operational if not field.startswith(("config.blind_policy", "config.modules.blind"))]
     if main_fields and "main" not in pilots:
         pilots.append("main")
-    blind_fields = ("config.blind_policy", "config.candidate", "config.modules.blind", "profile.role_policy", "profile.locations", "profile.timezone")
+    blind_fields = ("config.blind_policy", "config.candidate", "config.modules.blind", "config.tracker_admission",
+                    "profile.role_policy", "profile.locations", "profile.timezone")
     if new["modules"]["blind"] and any(field.startswith(blind_fields) for field in operational) and "blind" not in pilots:
         pilots.append("blind")
     pilots = [name for name in pilots if name == "main" or new["modules"]["blind"]]
@@ -154,7 +156,8 @@ def _check_idle(root, plan):
         require(read_json(no_symlink(path)).get("status") in {"delivered", "cancelled"}, "preferences", "finish or reconcile outstanding briefs, or cancel an unattempted brief, before changing preferences")
     # Pending source evidence remains attached to the exact old screening rules.
     # Drain first instead of silently reinterpreting it under new criteria.
-    criteria = ("config.discovery", "config.modules.blind", "config.blind_policy", "config.sources", "profile.role_policy", "profile.locations", "config.candidate")
+    criteria = ("config.discovery", "config.modules.blind", "config.blind_policy", "config.sources",
+                "config.tracker_admission", "profile.role_policy", "profile.locations", "config.candidate")
     if any(change["field"].startswith(criteria) for change in plan["changes"]):
         require(not list((root / "state/queue/pending").glob("*.json")), "preferences", "save and report queued discoveries under the current policy before changing search criteria or discovery sources; queued packets and their policy remain untouched")
 

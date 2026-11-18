@@ -189,6 +189,51 @@ class SelectionTests(unittest.TestCase):
                 queue.enqueue(self.h.root, proposal)
         self.assertEqual(queue.pending(self.h.root), [])
 
+    def test_tracker_admission_filters_all_discovery_sources_before_queueing(self):
+        from test_pipeline import packet
+
+        self.h.settings["discovery"].update(email=True, portals=True)
+        self.h.settings["modules"]["blind"] = True
+        self.h.settings["blind_policy"] = json.loads(
+            (config.SUPPORT_ROOT / "config/legacy/installation.json").read_text()
+        )["blind_policy"]
+        self.h.settings["sources"].update(
+            gmail_queries=["label:alerts"],
+            referral_companies_path=str(self.h.base / "referral_companies_path.json"),
+            rated_companies_path=str(self.h.base / "rated_companies_path.json"),
+        )
+        self.h.profile["role_policy"]["experience"]["max_required_years"] = 3
+        self.h.settings["tracker_admission"] = {"required_years_below": 3, "excluded_levels": ["senior", "sr", "staff"]}
+        cfg = self.load()
+        self.bind_selected(cfg)
+        approved = json.loads((self.h.root / "state/approved-policies.json").read_text())
+        self.assertEqual(approved["tracker_admission"], cfg["tracker_admission"])
+        self.assertEqual(setup.setup_plan(cfg)["tracker_admission"], cfg["tracker_admission"])
+
+        for source in ("email", "portal", "blind"):
+            for index, (years, level, rejection) in enumerate((
+                (2.5, "Mid", None),
+                (3, "Mid", "exclusive ceiling"),
+                (None, "Mid", "stated mandatory minimum"),
+                (2, "Senior individual contributor", "excluded by tracker admission"),
+                (2, "Unknown", "requires a verified level"),
+            )):
+                with self.subTest(source=source, years=years, level=level):
+                    proposal = packet(source, packet_id=f"run-{source}-{index}")
+                    accepted = approved["sources"][source]
+                    proposal["policy"].update(id=accepted["id"], version=accepted["version"])
+                    proposal["workbook_id"] = "shared-workbook"
+                    job = proposal["jobs"][0]
+                    job["level"] = level
+                    tier = "stretch" if source == "blind" and years is not None and years > 2 else "core"
+                    job["qualification"].update(required_years=years, tier=tier)
+                    if rejection:
+                        with self.assertRaisesRegex(queue.ProtocolError, rejection):
+                            queue.enqueue(self.h.root, proposal)
+                    else:
+                        queue.enqueue(self.h.root, proposal)
+        self.assertEqual(len(queue.pending(self.h.root)), 3)
+
     def test_selected_accounts_recipients_and_schedule_times_cannot_be_missing(self):
         self.h.profile["identity"].update(account_identity=None, report_recipient=None)
         with self.assertRaisesRegex(config.ConfigError, "account_identity"):

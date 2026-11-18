@@ -79,6 +79,16 @@
         "resume_path"
       ]
     },
+    "tracker_admission": {
+      "description": "Optional version-two gate for queueing new tracker findings, separate from discovery scope.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_years_below", "excluded_levels"],
+      "properties": {
+        "required_years_below": {"type": "number", "exclusiveMinimum": 0, "maximum": 100},
+        "excluded_levels": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 100}}
+      }
+    },
     "blind_policy": {
       "type": [
         "object",
@@ -408,6 +418,7 @@
           "tracker": false,
           "discovery": false,
           "tracking": false,
+          "tracker_admission": false,
           "blind_policy": {
             "type": "object"
           },

@@ -181,7 +181,8 @@ def _approved_policies(config, workbook_id=None):
                  "forbidden_title_patterns": [r"(?i)\b" + re.escape(x) + r"\b" for x in terms]}
         sources["blind"] = rated
     return {"schema_version": 1, "workbook_id": workbook_id, "timezone": config["_profile"]["timezone"],
-            "sources": sources}
+            "sources": sources,
+            **({"tracker_admission": copy.deepcopy(config["tracker_admission"])} if "tracker_admission" in config else {})}
 
 
 def setup_plan(config):
@@ -205,6 +206,7 @@ def setup_plan(config):
     return {"schema_version": 1, "installation_id": config["installation_id"],
             "private_directory": config["instance_root"], "tracker": plan["tracker"],
             "discovery": plan["discovery"], "tracking": plan["tracking"], "chats": plan["chats"],
+            **({"tracker_admission": config["tracker_admission"]} if "tracker_admission" in config else {}),
             "schedules": {name: config["schedules"][name] for name in plan["schedules"]},
             "timezone": config["_profile"]["timezone"], "report": config["report"],
             "source_files": {name: config["sources"][name] for name in plan["source_files"]},
@@ -524,6 +526,11 @@ def render_prompts(config, manifest):
     if plan["discovery"] and discovery_refs:
         refs = ", ".join(f"`private.refs.{key}`" for key in sorted(discovery_refs))
         prefix += f"Use {refs} from runtime-profile.json for discovery filters and qualification review.\n"
+    if plan["discovery"] and "tracker_admission" in config:
+        prefix += (
+            f"Apply [tracker admission](<{WORKFLOW_ROOT / 'docs/handoffs.md'}#tracker-admission>) "
+            "from config.json before building packets. Keep report-only findings out of the save queue.\n"
+        )
     central = _bound(manifest, "chat:central")
     helper_bindings = ", ".join(f"{name}: {_bound(manifest, 'chat:' + name)}" for name in plan["chats"] if name != "central")
     delegation = (

@@ -17,6 +17,7 @@ Version two makes each branch explicit:
 | `discovery.email`, `discovery.portals` | Independently choose alert and referral-portal research. |
 | `modules.blind` | Choose rated-company discovery separately. |
 | `tracking.gmail`, `modules.calendar`, `modules.messages` | Independently choose tracking sources. None is inferred from discovery. |
+| `tracker_admission` | Optional [tracker save rule](../../docs/handoffs.md#tracker-admission). Applies the same stated-years and level gate to all selected discovery sources. |
 | `modules.main` | True: the central coordinator owns the selected tracker and report. |
 | `schedules.main`, `schedules.blind` | Enable only the schedules requested. Disabled times may be null. |
 | `report` | Chat by default; self-email requires a named recipient and explicit send opt-in. |

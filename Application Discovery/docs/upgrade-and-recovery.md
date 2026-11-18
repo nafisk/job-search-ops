@@ -80,6 +80,16 @@ When upgrading an existing deployment, update repository paths in its saved chat
 5. Validate changes with the selected backend’s actual readback. Update any selected schedule prompts using supported automation tools, verify their saved absolute paths and unchanged unrelated settings, then switch the sole writer. Avoid competing ledgers or two active deployment copies.
 6. Retain an explicit rollback point and document the active schema/code version. Remove obsolete runtime copies only after verified cutover; a documentation redirect is safer than deleting unresolved history.
 
+## Adopt existing scheduled work
+
+Use the repo for shared instructions and code. Keep deployment bindings and history on a private persistent volume or directory accessible to the chosen runner.
+
+1. **Inventory the saved automations.** Read the prompts, target chats, status, timezone, cadence and notification policy. Record the trackers, source routes, checkpoints, pending writes, delivery history and authorized connections each prompt uses. Resolve conflicting old instructions using the latest saved choice.
+2. **Map the policies.** Keep main search criteria, Blind research criteria and [tracker admission](handoffs.md#tracker-admission) distinct. Copy reviewed company lists, referral restrictions, the [Blind source CSV](<../Blind Company Research/run.md#reuse-saved-portal-routes>) and verified portal recipes to private inputs. Preserve original dates and evidence. Re-screen legacy pending proposals against the selected new policy before accepting writes. Keep the old retries and history for reconciliation.
+3. **Check the tracker before adopting it.** Compare its full stored schema with the repo template. An older Jobs tab ending at Notes, for example, needs a reviewed Job Key and provenance migration. Preserve stable identities, statuses, notes, links, referral holds, summary formulas, validation and optional views. Use a private copy for migration and pilot checks.
+4. **Verify replacement runs before switching.** Run setup checks and a manual pilot for each selected entry point. Test handoffs, accepted saves, retry recovery and delivery. In the repo setup, central remains the sole writer. If Blind finishes after a central pass, its packet waits for the next one. Confirm this timing before switching from independent writers.
+5. **Switch the existing bindings.** Use the supported scheduler to point the approved prompts at the installed repo runbooks and private configuration. Preserve timing and notifications. Verify the saved instructions and the first actual runs. Keep legacy state available for rollback and avoid overlapping writers.
+
 ## Optional integrations
 
 A source the user did not select is skipped without a connection test or coverage warning. Missing access for selected Messages or browser work affects only its dependent source/manual module, with an accurate gap. Do not expand OS permissions or switch tools to evade denial. To remove an optional MCP, use the supported configuration tooling for that exact server and preserve other entries. Leave source data untouched. Follow the selected MCP’s own installation and update instructions; this repository does not bundle its implementation.

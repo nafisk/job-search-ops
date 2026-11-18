@@ -15,6 +15,25 @@ Each source (`email`, `portal`, `blind`) has `id`, `version`, `max_required_year
 
 The code checks that these bindings match, applies numeric ceilings/title exclusions/tier/rating rules, and requires quoted identity, full-requirements, location and availability evidence. Interpreting full duties, applicable degree branches, skills, geography and actual availability remains the assigned evidence reviewer's responsibility. Code does not claim to have read a posting merely because evidence fields are present. The quoted requirements must support `required_years`; null means a completely read qualification section states no numeric minimum, not missing evidence.
 
+### Tracker admission
+
+An installation can opt into a stricter save rule independently of its research scope. For example, set this top-level field in a version-two configuration:
+
+```json
+{
+  "tracker_admission": {
+    "required_years_below": 3,
+    "excluded_levels": ["senior", "sr", "staff", "lead", "principal", "manager", "director"]
+  }
+}
+```
+
+The exclusive ceiling admits a stated 2.5-year minimum and blocks 3 years or an unstated minimum. Review every applicable mandatory overall and specialty clause and the applicant's viable degree branch. Put the highest applicable minimum from the accepted branch in `qualification.required_years`. Use the lower bound of an approved explicit range. Hold unread, unclear or conflicting requirements for review. Compare the configured level exclusions with the reviewed `job.level`. Classify ambiguous and numbered titles from duties and requirements.
+
+Before handoff, leave out any finding that fails this rule. A Blind role can still qualify for its chat report as a three-year stretch. Label it report-only, keep its evidence and seen history, and omit it from save packets and save retries. The queue checks admission again against the bound policy. Existing tracker records, manual fields and historical decisions are preserved.
+
+Confirm the source policies as well. A source ceiling can be more restrictive than admission. An installation that wants to permit a stated 30-month minimum needs its source ceiling to allow 2.5 years. Change the relevant role and Blind policy versions through [preferences](preferences.md) when adopting a new admission rule.
+
 ## 2. Enqueue a source-normalized packet
 
 ### Producer handoff
@@ -22,6 +41,8 @@ The code checks that these bindings match, applies numeric ceilings/title exclus
 First verify where each producer can write and where the central chat can read. If the shared private staging and queue are writable, enqueue there. Otherwise save the packet and its evidence in that producer's verified writable workspace, with a manifest of exact file paths, run/source IDs and SHA-256 hashes; return those paths and mark `archive_pending`. Do not weaken permissions or claim the shared queue accepted it.
 
 The central chat reads the authorized files, copies them into the private durable instance, verifies the copied hashes, validates the packet against the configured source policy, and calls `enqueue` itself. Return the archived paths/hashes and queue receipt through the configured handoff. Retain the producer's staging until that acknowledgement; archive failure alone does not require repeating successful research. If the central chat cannot read the files, retain them and report the access gap until a permitted transfer path exists.
+
+If an assigned helper is busy with unrelated work or cannot start, use an alternate worker only when the saved setup authorizes fallback and the original assignment cannot also execute. Give the fallback the same scope and remaining attempts. A pending approval or archive is a reason to check the existing status and continue independent work.
 
 Setup must exercise the selected handoff path for all enabled producers before scheduling. Archival and queue acceptance remain separate from the later verified Sheet save.
 
