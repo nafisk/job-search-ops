@@ -4,9 +4,9 @@ Set `sources.referral_companies_path` to one private company list. Setup project
 
 ## Choose companies
 
-Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository and replace its company, careers link and search scope. Keep stable `company_id` values. Contacts and notes are optional private text; `referral_hold` is an explicit boolean. Set the absolute file path in the private setup draft before `init`.
+After confirming [search preferences](../ONBOARDING.md#confirm-the-search-profile), ask which companies to check and whether the user wants to record anyone they know there. Reuse their existing list and holds. Ask for missing company scope or hold decisions. A name is optional. Confirm which names may go in the selected tracker and keep any others in private local notes.
 
-The agent validates the exact example fields. A supplied career URL is a starting point, not verified portal evidence. The generated registry has no invented official observations; the helper must validate pages and filters during research.
+Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Save each company with a stable `company_id`, optional contact and careers URL, explicit `referral_hold`, and search scope. Leave unknown contacts or URLs blank. Confirm the company list with the user. Set its absolute path in the private draft before `init`.
 
 ## Populate the selected tracker
 
@@ -33,6 +33,24 @@ python3 -m job_search_ops referrals-commit --config /absolute/private/config.jso
 ```
 
 Only verified rows publish the private registry. Confirm each company’s contact/hold, careers URL, scope and observed watchlist row before the helper runs. No empty watchlist is accepted as successful setup for a nonempty selected list.
+
+## Build links for repeat runs
+
+During the first [portal pilot](agent-setup.md#5-pilot-the-selected-path), open each official career board in scope. Apply the approved role, employment type and location filters the portal supports. Use separate searches for distinct scopes when needed, such as NYC and eligible US remote. Screen requirements like years of experience from the full job descriptions when the board lacks a reliable filter.
+
+For each search, confirm the employer, selected filters and complete pagination. Reopen the exact first-page URL in a clean tab. Save it as a reusable link only if it restores the intended filters. If filters do not survive reopening, save the board URL and the ordered controls to apply. Record unavailable routes and untested scopes as pending. Follow the [portal validation checks](../support/toolkit/PORTALS.md#live-recipe-acceptance).
+
+Save checked searches to the existing private `portal-registry.json`. Keep company IDs, holds, scope and prior evidence. Record each search's scope, checked date and evidence references. Use these fields to identify the entry point:
+
+| Route | Registry entry |
+| --- | --- |
+| Direct link | Add the exact filtered URL to `observed_urls`. Set `details.route_kind` to `url` and `details.entry_url` to that URL. |
+| Browser steps | Set `details.route_kind` to `browser_steps`. Record the observed board URL as `details.entry_url` and the ordered controls as `details.steps`. |
+| Pending | Keep `details.status` as `needs_validation` and record the gap. |
+
+Use [registry validation](../support/toolkit/PORTALS.md#build-the-registry) before an atomic update by the coordinator. Keep any original scope that remains uncovered visible. These entries record what worked during setup. Recurring runs still verify the active scope.
+
+List each company and scope in the private setup summary with its clickable link, browser steps or pending gap. If the user chose an export, copy the usable URLs or browser steps into the **Referral Portals** Targets section. Contacts stay in the private scope and selected watchlist. Later runs start from the saved routes and verify today's scope before reporting results.
 
 ## Check before an application handoff
 

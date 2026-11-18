@@ -6,6 +6,8 @@ Keep your current address and route only job alerts to a **Job Alerts** label or
 
 ## 1. Check what is already set up
 
+Use the [confirmed search profile](../ONBOARDING.md#confirm-the-search-profile) to choose alert searches and filters. Review any hard requirements that LinkedIn cannot express when screening the resulting jobs.
+
 The setup assistant reads saved choices first, then checks the selected LinkedIn account, mailbox provider, existing alerts and routing rules. Reuse a matching setup instead of creating duplicate alerts or filters. Ask only for missing choices: target searches, daily/weekly frequency, mailbox, destination label/folder and whether to organize existing matching messages too. Default to future mail only. Save these choices and the proposed rule in a private draft note before external changes; retain pending evidence there until initialization creates the installation's evidence directory.
 
 Use the supported signed-in browser for LinkedIn. For Gmail, use native tools for account identity, message/label reads and any available label/filter management. Discover actual capabilities: a label-creation tool is not a filter-creation tool. If native filter management is unavailable, give the user the exact Gmail settings steps below, then verify the resulting messages through native reads. Preserve the repo's connector-only Google access; do not add a CLI, alternate credentials or browser Google access. Outlook rule setup may use a selected, authorized native tool or supported browser; otherwise guide the user through it.

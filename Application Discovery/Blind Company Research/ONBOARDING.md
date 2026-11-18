@@ -23,7 +23,7 @@ Central owns the shared tracker. Connect email, referrals, Calendar or Messages 
 
 Choose the [103-company starter](blind-companies.json) or your own list. **Its ratings are historical, user-supplied and not freshly verified; original dates are unknown.** The agent copies your chosen list outside the repository, reviews enabled companies and binds the private copy. Never replace an existing personal list automatically or add private notes to the repo.
 
-Confirm rating threshold, role families, excluded titles, locations and eligibility constraints, plus base/stretch experience policy. Search preferences do not change your actual qualifications. The [runbook's setup section](run.md#setup) owns the exact list format, provenance and policy rules; unknown dates stay unknown.
+Use the [shared search profile conversation](../ONBOARDING.md#confirm-the-search-profile) to confirm résumé facts, target roles and hard requirements. Then confirm the rating threshold and Blind base/stretch experience policy. See the [runbook](run.md#setup) for the company list format and provenance rules.
 
 ## 3. Verify the selected tools and handoff
 

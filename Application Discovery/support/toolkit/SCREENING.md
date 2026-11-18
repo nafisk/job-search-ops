@@ -4,6 +4,8 @@ Pass a validated runtime profile, full job descriptions and a separate evidence 
 
 ## Evidence handoff
 
+Read the configured `private.refs.applicant_facts` for confirmed qualifications and `private.refs.search_requirements` for preferences and hard requirements outside the profile schema. When a note is configured, use the relevant fields in both the worker and independent review. Check hard requirements such as employment type, work mode and level against the full posting even if the search filter already covered them. Record the supporting text and leave missing or conflicting evidence unresolved. A role that fails a hard requirement stays out of the accepted queue. The toolkit handles the structured profile checks below.
+
 Give one worker each disjoint exact job link, profile policy, applicant-fact reference, this guide and an owned result path. Use the saved worker settings within the current step. Read the entire description, qualifications, location restrictions and availability; follow the configured access method and shared attempt budget. Retain exact Simplify match/posting URLs. Do not require ATS mapping, an employer duplicate or an application form. Never invent `/p/` aliases for a match link. Login walls, snippets, summaries and incomplete text remain unread/partial.
 
 The packet has exactly these keys:

@@ -344,6 +344,23 @@ class SetupTests(unittest.TestCase):
                 self.assertIn(f"commands from {SUPPORT_ROOT}", text)
                 self.assertIn(f"Repository: {REPO_ROOT}", text)
 
+    def test_discovery_prompts_reference_confirmed_intake_notes(self):
+        refs = {"applicant_facts": "facts.md", "search_requirements": "requirements.md"}
+        for path in refs.values():
+            (self.base / path).write_text("Fictional onboarding notes.\n")
+        self.profile["private"]["refs"].update(refs)
+        self.save_sources()
+        self.config = load_config(self.config_path)
+        self.bind_all()
+        prompts = setup.prepare_prompts(self.config)
+        for path in prompts.values():
+            for ref in refs:
+                self.assertIn(f"`private.refs.{ref}`", Path(path).read_text())
+        runtime = json.loads((self.root / "runtime-profile.json").read_text())
+        self.assertEqual(runtime["private"]["refs"], {
+            key: str(self.base / path) for key, path in refs.items()
+        })
+
     def test_private_messages_identity_reference_requires_exact_resolved_binding(self):
         source = self.base / "private-message-source.json"
         source.write_text('{"identity":"configured-conversation"}')

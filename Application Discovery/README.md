@@ -9,7 +9,7 @@ Read the [operating rules](docs/operations.md) and follow [onboarding](ONBOARDIN
 | Source | Setup |
 | --- | --- |
 | LinkedIn alerts | [Verify Gmail delivery](docs/linkedin-alerts.md) |
-| Referral portals | [Choose companies and referral holds](docs/referrals.md) |
+| Referral portals | [Choose companies and save reusable searches](docs/referrals.md) |
 | [Blind company research](<Blind Company Research/README.md>) | [Choose companies and verify the handoff](<Blind Company Research/ONBOARDING.md>) |
 
 ## Run
