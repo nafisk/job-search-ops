@@ -1,10 +1,8 @@
 # Prepare recruiter drafts for review
 
-> **Required:** Completed [onboarding](ONBOARDING.md), private tracker/state, approved copy, a scoped human drafting request and the supported signed-in LinkedIn browser. Google tools are required only for a Google tracker.
-> **Ownership:** One coordinator owns state. One operator controls the browser at a time.
-> **Computer use:** Required. The user reviews drafts, attaches the resume and performs every final send.
+Complete [onboarding](ONBOARDING.md) and start only on a current drafting request. Record the approved copy and requested scope privately. An explicit continuation can resume that scope.
 
-Request **“Prepare up to two unsent drafts for [company / selected contacts] using my approved copy.”** A completed roster, timer, receipt or old approval does not start a batch. Record the current request and exact scope privately. An explicit continuation may resume its saved scope without asking for the same permission again.
+Use the authorized signed-in browser. Keep one state coordinator and one browser operator. The user reviews drafts, attaches the resume and sends each message.
 
 ## 1. Recover before allocating
 

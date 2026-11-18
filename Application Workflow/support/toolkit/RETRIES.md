@@ -1,13 +1,6 @@
 # Shared retry accounting and completion
 
-**Required:** Python 3.10+ and one coordinator-owned private retry ledger with durable writes.  
-**Runs in:** A local shell. Use the selected tool for each native read.
-
-`retries.py` is a pure ledger and acceptance gate. It performs no external reads,
-file writes, lock acquisition or scheduler/tracker/checkpoint changes. All helpers
-validate inputs and return detached copies; failed calls leave inputs untouched.
-The trusted coordinator is the sole reservation/result owner. Workers report
-outcomes; they do not allocate their own budgets or authorize a new pass.
+Use `retries.py` to validate attempts in one durable, private ledger. The coordinator owns reservations and results and persists returned copies. Workers report outcomes. Failed calls leave inputs untouched. The helper takes no locks and performs no live or file operations.
 
 ## Reserve before reading
 

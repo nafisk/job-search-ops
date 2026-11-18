@@ -1,11 +1,6 @@
 # Private installation choices
 
-**Required:** the user’s saved onboarding choices and Python 3.10+ for validation.  
-**Runs in:** a local shell; preparing settings uses no account or computer control.
-
-The assistant prepares these settings from the user's answers; users do not need
-to edit JSON. Start with [onboarding](../../ONBOARDING.md), then review the
-read-only `setup-plan --config <private-file>` result before creating resources.
+Prepare private JSON from the user's [onboarding](../../ONBOARDING.md) choices. Use Python 3.10+ to review `setup-plan --config <private-file>` before creating resources.
 
 [installation-v2.json](examples/installation-v2.json) and
 [profile-v2.json](examples/profile-v2.json) illustrate a local Excel tracker,

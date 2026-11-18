@@ -1,12 +1,8 @@
 # Referral portal producer
 
-> **Required when selected:** Your private company list, accepted portal registry, Referral Watchlist, search policy, Python 3.10+, public search/page reads, browser controls for interactive pages and a [producer handoff](../docs/handoffs.md#producer-handoff).
-> **Writes:** The central chat saves results.
-> **Computer use:** Dynamic pages need browser interaction. Restricted pages additionally need an authorized signed-in browser and your login.
+Use the `main` gate in the [shared source checks](../docs/operations.md#start-a-discovery-source). Central saves results through the [producer handoff](../docs/handoffs.md#producer-handoff). Use a supported browser for dynamic pages. Restricted pages need an authorized session and user sign-in.
 
-Start with the [shared source checks](../docs/operations.md#start-a-discovery-source). Use the `main` gate.
-
-Read the authoritative file at `sources.referral_companies_path`, the accepted `<installation>/portal-registry.json`, the live Referral Watchlist and [toolkit portals](../support/toolkit/PORTALS.md). [Referral setup](../docs/referrals.md) creates these projections; missing seed/registry is a setup gap, not an empty search. Freeze scope from the private list and overlay stricter live contact/referral holds. Never clear a hold from weaker registry data. Manual scope or contact conflicts require reconciliation. Group verified employer aliases while keeping distinct subsidiaries separate unless explicitly approved.
+Load `sources.referral_companies_path`, the accepted `<installation>/portal-registry.json` and the live **Referral Watchlist**. Follow [portal checks](../support/toolkit/PORTALS.md). Treat missing seeds or registry as a [setup gap](../docs/referrals.md). Freeze the private scope, apply stricter live referral holds and reconcile conflicting scope or contacts. Merge verified aliases only within the same employer unless the user approved combining subsidiaries.
 
 1. Freeze every configured company in scope; partition disjoint companies among workers. Preserve contact/referral holds and exact company keys. A held application route does not prevent public job discovery.
 2. Use official public careers pages and observed ATS endpoints first. A saved URL/endpoint is a starting point, not proof its filters or board identity still work. Verify employer identity, location/filter effects, complete pagination/traversal, clean reopen and layout/empty-result safeguards before treating a portal recipe as validated.

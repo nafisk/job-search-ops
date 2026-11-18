@@ -22,6 +22,6 @@ Start with [README.md](README.md) to identify the requested workflow. For setup,
 
 ## Repository maintenance
 
-Inspect current changes before editing and preserve unrelated work. Keep detailed procedures in their owning workflow; root files route readers instead of duplicating those procedures. Runtime paths and the existing batch prerequisites are unchanged by navigation cleanup.
+Inspect current changes before editing and preserve unrelated work. Keep procedures in the workflow that owns them. Use root files to route readers.
 
-Review intended additions/moves in [RELEASE_FILES.txt](<Application Workflow/support/RELEASE_FILES.txt>) and use the existing [verification guide](<Application Workflow/docs/verification.md>) for appropriate checks. Documentation checks cannot certify a live account, browser pilot or tracker write. Never exercise live workflows merely to validate repository navigation.
+Check additions and moves against [RELEASE_FILES.txt](<Application Workflow/support/RELEASE_FILES.txt>). Follow the [verification guide](<Application Workflow/docs/verification.md>). Validate documentation and navigation offline.

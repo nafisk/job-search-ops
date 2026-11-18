@@ -1,29 +1,22 @@
 # Set up application batches
 
-> **Required:** A completed [Application Workflow installation](<../Application Workflow/ONBOARDING.md>), its private configuration and tracker, Python 3.10+, supported browser control and private file access.
-> **Computer use:** Required to inspect and retain application tabs. Tracker access uses the selected native Google tools or local Excel runtime.
-
-**Give your agent this file and the absolute path to your existing private workflow configuration.** Confirm your application criteria, browser/profile and preferred batch size. The agent handles the setup commands and private ledger described in the [agent setup reference](run.md#agent-setup-reference). Opening pages begins only when you request a batch.
+Give the agent the absolute path to your private [Application Workflow configuration](<../Application Workflow/ONBOARDING.md>). Confirm your application criteria, supported browser profile and batch limits. The agent prepares the ledger using the [setup reference](run.md#agent-setup-reference). Request a batch separately.
 
 ## 1. Connect the existing installation
 
-The agent reuses your existing tracker, criteria, permissions and source choices. It verifies the private configuration and installation paths, tracker identity, saved job aliases, company-wide referral holds and application history. It does not create another workbook or change discovery schedules.
-
-Completed shared Application Workflow onboarding, including its initial pilot, remains required. The tracker can contain accepted jobs from [LinkedIn alerts](<../Application Workflow/README.md>), [Blind Company Research](<../Blind Company Research/README.md>) or both. Pending research packets are not batch candidates; central must save them first. Blind-only setup does not require alert or referral discovery. The [agent setup check](run.md#agent-setup-reference) checks installed configuration and pending preference-pilot holds; it does not prove current tool access or replace that pilot. A held installation follows [preference recovery](<../Application Workflow/docs/preferences.md>) before connected work. Setup cannot waive a pending pilot or fill in missing account access.
+Reuse the completed shared setup and pilot. Verify the installation, tracker, saved job aliases, company-wide holds and application history. Use only accepted jobs saved by central. Check current tool access separately from the [setup check](run.md#agent-setup-reference). Resolve any [preference-pilot hold](<../Application Workflow/docs/preferences.md>) before connected work.
 
 ### Check application criteria
 
-A tracking-only installation may validly omit application criteria. Confirm the roles and levels you want, where you may work, your residency and relocation choice, and your actual experience. The agent asks only for missing values or unconfirmed example defaults. Empty criteria do not mean “anything is eligible.”
+Before marking setup ready or reserving or opening roles, confirm these values in the canonical configuration and profile. Ask only for missing or unconfirmed values. A tracking-only installation may omit them, so check even if its pilot passed.
 
-**Agent preflight:** before declaring batch setup ready or reserving/opening roles, check the canonical configuration and profile for these confirmed choices:
+| Confirm | Required values |
+| --- | --- |
+| Roles and levels | Nonempty `role_policy.families` and `role_policy.preferred_levels` |
+| Where the user can work | `locations.onsite_regions` or `remote_countries` or both, plus `residency_region` and `allow_relocation` |
+| Experience and job requirements | Known `candidate.actual_experience_years` (zero is valid), reviewed `role_policy.experience`, and `blind_policy` if enabled |
 
-| Required input | Where it belongs |
-|---|---|
-| Target role families and levels | Nonempty `role_policy.families` and `role_policy.preferred_levels` |
-| Permitted locations, actual residency and relocation choice | `locations.onsite_regions` and/or `remote_countries`, plus `residency_region` and `allow_relocation` |
-| Truthful experience and preferred job requirements | Known `candidate.actual_experience_years` (zero is valid), reviewed `role_policy.experience` and the selected `blind_policy` when Blind is enabled |
-
-Save needed changes through [preference updates](<../Application Workflow/docs/preferences.md>), read back the canonical files and respect any resulting pilot hold. Do not enable discovery or change sources/schedules to satisfy this check. Until complete, hold batch readiness and new reservations/openings. Missing criteria alone need not block safe recovery or separately requested submission checks; existing execution holds and source permissions still apply.
+Use [preferences](<../Application Workflow/docs/preferences.md>) to save changes. Read back the canonical files and follow any resulting pilot hold. Preserve discovery sources and schedules. Missing criteria block readiness and new pages or reservations. Safe recovery and separate submission checks can continue within existing holds and permissions.
 
 ## 2. Confirm your tools and browser
 

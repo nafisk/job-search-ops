@@ -113,8 +113,7 @@ def _build_plan(old, new, manifest):
     require(not manifest.get("preferences_update", {}).get("pending_schedules"), "preferences", "finish the pending schedule reconciliation before another preference update")
     old_plan, new_plan = execution_plan(old), execution_plan(new)
     missing = [key for key in setup._needed_bindings(new) if manifest["resources"].get(key, {}).get("status") != "verified"]
-    # ponytail: new connections/chats still use the existing verified setup flow.
-    # This updater handles established installations, not resource migration.
+    # Verify new connections and chats through setup before updating preferences.
     require(not missing, "preferences", "complete verified tracker and selected chat bindings before updating; new unbound helpers require separate reviewed setup")
     prompts = setup.render_prompts(new, manifest)
     workbook = manifest["resources"]["tracker:tracker"]["resource_id"]

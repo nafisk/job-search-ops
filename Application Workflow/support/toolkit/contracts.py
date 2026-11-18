@@ -50,7 +50,6 @@ def digest(value):
         raise ContractError("digest: expected finite JSON data") from None
 
 
-# ponytail: one static catalog; no plugin registry until there are real adapters.
 # Each tuple is (permitted effects, required completion proofs, manual-only).
 MODULES = {
     "alert_extraction": ("read_mail write_state", "messages_accounted cards_accounted", False),

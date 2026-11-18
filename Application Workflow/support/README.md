@@ -1,10 +1,6 @@
 # Local workflow support
 
-**Required:** Python 3.10+ with POSIX file locking and IANA timezone data. Local Excel also needs the [Excel writer runtime](../docs/local-excel.md).
-
-**Runs in:** A local shell. Connected effects use only the selected tools in the runbooks.
-
-Start with [onboarding](../ONBOARDING.md). These files support the agent; users do not install or run every helper.
+Use these files from `Application Workflow/support/` after [onboarding](../ONBOARDING.md). The CLI requires Python 3.10+ with POSIX file locks and IANA timezone data. Local Excel also needs the [writer runtime](../docs/local-excel.md). Follow the runbook for connected operations.
 
 ## What each directory does
 

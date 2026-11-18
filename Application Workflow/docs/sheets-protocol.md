@@ -1,8 +1,6 @@
 # Google Sheets write protocol
 
-> **Required:** Python 3.10+, a bound Google tracker and native Drive/Sheets read/write tools.
-> **Writes:** The central chat invokes the connector.
-> **Computer use:** None.
+Central writes to the bound Google tracker through the native Drive and Sheets tools.
 
 Follow [operating rules](operations.md) and the backend-independent [queue and handoff contract](handoffs.md). Commands run from `Application Workflow/support/`; `--root` is the installation directory, never its `state/` child.
 

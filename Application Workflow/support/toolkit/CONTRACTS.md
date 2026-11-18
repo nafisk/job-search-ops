@@ -1,9 +1,6 @@
 # Module contracts — version 1
 
-**Required:** Python 3.10+ and independently checked scope, authorization and evidence.  
-**Runs in:** A local shell for shared validation.
-
-`contracts.py` is a pure boundary checker, not a dispatcher or authorization service. It imports no accounts and performs no effects. `contracts.py` contains the twelve-module catalog, each module's effect ceiling and required completion proof names. The catalog describes validation boundaries; it does not dispatch the current workflow or imply that every catalog entry has a bundled implementation.
+Use `contracts.py` to validate independently checked scope, authorization and evidence. Its twelve-module catalog defines permitted effects and required proof. It performs validation only. Catalog entries can exist without a bundled implementation.
 
 ## Invocation
 

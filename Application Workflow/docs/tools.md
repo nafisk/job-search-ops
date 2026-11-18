@@ -1,11 +1,8 @@
 # Selected tools and permissions
 
-> **Required for the core:** A permanent checkout, private writable state, and Python 3.10+ on a POSIX host.
-> **Computer use:** A supported browser is required for discovery; actual interaction depends on the page. Signed-in browser access is required only for selected authenticated tasks.
+Choose features in [onboarding](../ONBOARDING.md) and inspect their dependencies with `setup-plan --config ...`. Run commands from `Application Workflow/support`. See [repository onboarding](../../ONBOARDING.md#tools-for-your-choices) for common tools.
 
-[Application Workflow onboarding](../ONBOARDING.md) determines the features; `setup-plan --config ...` determines their dependencies. This inventory covers the shared Application Workflow runtime used by alerts and [Blind Company Research](<../../Blind Company Research/README.md>), not unrelated modules. Blind research uses public research/handoff tools; its accepted results still require the selected tracker and central writer. [Repository onboarding](../../ONBOARDING.md#tools-for-your-choices) holds common installation and connection links. Commands run from `Application Workflow/support`.
-
-**Selected**, **installed**, **connected to the expected identity**, and **authorized for the requested operation** are separate facts. Check actual saved preferences and tool responses. Do not turn a tool's availability into permission to use an unselected source.
+For each selected operation, verify that the tool is installed, connected to the expected identity and authorized for that operation. Sign in to the browser only for selected authenticated work.
 
 ## Workflow requirements
 

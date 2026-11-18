@@ -1,16 +1,8 @@
 # Run Blind company research
 
-> **Required when selected:** Your reviewed company list and search policy, Python 3.10+, public search/page reads, browser controls for interactive pages and a working [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>).
-> **Writes:** The central chat saves results to the selected tracker.
-> **Computer use:** Browser interaction when career pages need it. Supplied ratings do not require a Blind login.
+Load the reviewed company list and search policy. Follow the [shared operating rules](<../Application Workflow/docs/operations.md>) and run the [source checks](<../Application Workflow/docs/operations.md#start-a-discovery-source>) with the `blind` gate. Use public search and page reads, with browser controls if needed. Supplied ratings require no Blind login.
 
-Read the shared [operating rules](<../Application Workflow/docs/operations.md>) before setup or execution. Use [onboarding](ONBOARDING.md) for new choices. This folder owns the company-research instructions and starter; the existing Application Workflow runtime owns setup, queueing and tracker writes.
-
-Start with the [shared source checks](<../Application Workflow/docs/operations.md#start-a-discovery-source>). Use the `blind` gate.
-
-This optional producer, run manually or on its own selected schedule, updates the **same configured tracker (local Excel or Google Sheets)** through the central queue and writer. It does not directly mutate Sheets or maintain a competing authoritative workbook. Rated Companies stores the user's target list/provenance; Rated Search Coverage stores current per-company attempts/gaps; Job Sources preserves rated policy evidence alongside email/referral sightings. Local JSON/evidence are durable working state, not a separate master tracker.
-
-The technical source key and saved filename remain `blind` for compatibility. The optional starter comes from a historical Blind 3.5+ list.
+Run manually or on the selected Blind schedule. Queue results through the [producer handoff](<../Application Workflow/docs/handoffs.md#producer-handoff>). Central saves reviewed targets and provenance to **Rated Companies**, attempts and gaps to **Rated Search Coverage**, and accepted evidence to **Job Sources**. Keep the `blind` key and filename for compatibility.
 
 ## Setup
 

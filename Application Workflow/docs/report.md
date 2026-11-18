@@ -1,8 +1,6 @@
 # Report and delivery
 
-> **Required:** Accepted tracker receipts for saved changes, Python 3.10+ and the configured chat with readback. Self-email additionally requires explicit send permission, a recipient and native Gmail send/Sent-read tools.
-> **Delivery:** Chat by default.
-> **Computer use:** None.
+Build the report from accepted tracker receipts. Deliver it in chat by default. Self-email requires an authorized recipient, explicit send permission and native Gmail send and Sent reads.
 
 Local helper commands run from `Application Workflow/support/`. **`--root` is the installation directory containing `installation.json`; never pass its `state/` child.** Follow the shared [operating rules](operations.md).
 

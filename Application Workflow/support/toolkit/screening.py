@@ -203,7 +203,7 @@ def screen(profile, packet, review=None):
             pending.append("Other mandatory branch condition needs review")
         branch_results.append((branch["id"], hard, pending, minimum))
 
-    # ponytail: reviewed clauses, not a natural-language classifier; OR branches and AND clauses only.
+    # Treat branches as OR and clauses within a branch as AND.
     if availability == "closed":
         return result("CLOSED", ["Exact role source explicitly reports closure"])
     if unread:

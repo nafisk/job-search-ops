@@ -1,13 +1,6 @@
 # Interview facts
 
-**Required:** Python 3.10+, exact application/process identities and independently checked interview evidence. Mac Messages MCP is required only when Messages is selected.  
-**Runs in:** A local shell after the selected source reads.
-
-`interviews.py` reconciles accepted interview facts for exact application, process
-and stage identities. It preserves original application source records and opaque legacy
-interview history. It makes proposals only, with no booking, RSVP, sending, file,
-Sheets or delivered-baseline changes. The ponytail simplification is deliberate:
-small supplied snapshots and explicit host interpretations, no parser or datastore.
+Use `interviews.py` to propose interview updates from independently checked facts tied to an exact application, process and stage. It preserves original application records and legacy interview history. Read Messages through its MCP only when selected. Actual updates, bookings, RSVPs and sends remain with the workflow or user.
 
 ## Input and trust boundary
 

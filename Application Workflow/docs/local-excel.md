@@ -5,9 +5,9 @@
 
 Choose `tracker.provider: "local_xlsx"` during [onboarding](../ONBOARDING.md) and set an absolute, private `.xlsx` path. Main, its selected helpers and Blind use this one workbook. Google Drive and Google Sheets are not required. Gmail and Calendar are required only when their corresponding features are selected.
 
-The local writer uses Python's standard library for the queue and file checks, and `@oai/artifact-tool` for Excel import, editing and export. Use the supported runtime supplied by your environment. Verify the absolute path to its Node executable and the `node_modules` directory that contains `@oai/artifact-tool`. The writer takes those paths as arguments.
+Verify the absolute paths to the supported Node executable and the `node_modules` directory containing `@oai/artifact-tool`. Pass both to the writer. Python manages queue and file checks. `@oai/artifact-tool` imports, edits and exports the workbook.
 
-The supported artifact runtime cannot calculate `HYPERLINK`, and its documented API does not expose native hyperlinks or column hiding. A narrow post-export fallback adds the actual Jobs hyperlink relationships and the hidden Job Key column. It also corrects the runtime's numeric date caches for exact constant-text formulas. The formulas remain unchanged. Other ZIP parts and worksheet cells are preserved. Excel uses these [native hyperlink relationships](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility attributes](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column). The result is reopened with artifact-tool without another export, then inspected independently.
+The artifact runtime lacks native links, column hiding and `HYPERLINK` calculation. After export, the bridge adds Jobs link relationships, hides Job Key and corrects numeric date caches for exact constant-text formulas. It preserves formulas, other cells and ZIP parts. Reopen with artifact-tool without exporting again, then inspect the file independently. See the Excel [hyperlink](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column) fields.
 
 ## Create and use the workbook
 

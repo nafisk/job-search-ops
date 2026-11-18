@@ -1,11 +1,8 @@
 # Profile contract — versions 1 and 2
 
-**Required:** Python 3.10+ with IANA timezone data; the selected installation’s private profile.  
-**Runs in:** A local shell for configuration validation.
+Use the selected installation's private JSON profile with Python 3.10+ and IANA timezone data. Unknown fields, unsupported versions, duplicate keys and invalid types fail. Errors name the field without printing its value. Use connection names and keep authentication material in the provider.
 
-The profile is JSON configuration. Unknown fields, unsupported schema versions, duplicate JSON keys and invalid types fail instead of silently selecting defaults. Missing fields never inherit another profile's values. Errors name the field without printing its contents. Profiles contain connection **names**, never passwords, tokens, cookies, keys or authentication URLs.
-
-Version 1 retains the contract below. Version 2 uses `schema_version: 2` and permits null unused `account_identity`/`report_recipient`, empty discovery families/levels and region lists, and null `residency_region`. These allow tracking-only or local-only installations without unrelated questions. The installation validator still requires actual job criteria when discovery is selected, an account identity for selected Google access, and a recipient for self-email. See the [v2 profile example](../config/examples/profile-v2.json); its fictional choices are not defaults. All other validation and permission boundaries remain unchanged.
+Version 2 permits null unused `account_identity`, `report_recipient` and `residency_region`, and empty discovery families, levels and region lists. The installation validator still requires criteria for discovery, identity for selected Google access and a recipient for self-email. See the fictional [v2 example](../config/examples/profile-v2.json).
 
 ## Settings
 

@@ -1,6 +1,6 @@
 # Set up Application Workflow
 
-Give your agent access to the complete repository and a [compatible Python runtime](docs/tools.md#workflow-requirements). Use a durable private setup folder outside the repo.
+Use the complete repo, a [compatible Python runtime](docs/tools.md#workflow-requirements) and a durable private folder outside the repo.
 
 ## Choose your workflow
 

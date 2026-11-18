@@ -1,15 +1,8 @@
 # Configured source coverage
 
-**Required:** Python 3.10+, saved source choices and actual bounded-read evidence for each selected source.  
-**Runs in:** A local shell with evidence from the selected Gmail, Calendar, or Messages tools.
+Call `coverage_status(profile, scopes, checks, *, cutoff, as_of)` with a validated profile and independently checked evidence for selected Gmail, Calendar and Messages reads. `cutoff` freezes the source horizon. `as_of` is the actual evaluation time, which can follow the cutoff.
 
-**Distribution policy:** factual source coverage and daily processing status are separate. [Operations](../../docs/operations.md) permits completed processing with disclosed source exceptions; `required_complete` and `all_enabled_complete` remain honest coverage flags, not blanket continuation gates. This pure helper never dispatches live work.
-
-`coverage.py` projects independently checked mail, Calendar and Messages coverage.
-It reads no account or file, accepts no ingestion checkpoint and changes no delivery
-baseline. Call `coverage_status(profile, scopes, checks, *, cutoff, as_of)` with a
-validated profile. `cutoff` is the frozen source horizon; `as_of` is the later actual
-evaluation time. A source readback can correctly occur after the cutoff.
+Report gaps in `required_complete` and `all_enabled_complete` even if processing finished. The helper projects coverage only. See the [operating rules](../../docs/operations.md) for continuation.
 
 `scopes` maps **every enabled** mail/calendar/messages service to a SHA256 digest of
 its entire approved frozen scope. Do not build this from the subset a worker read.

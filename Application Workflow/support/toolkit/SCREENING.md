@@ -1,9 +1,6 @@
 # Exact-role screening
 
-**Required:** Python 3.10+, validated runtime profile, full job descriptions and a separate evidence review.  
-**Runs in:** A local shell after research. Use browser controls when a full description requires them.
-
-`screening.screen(profile, packet, review=None)` is a pure policy gate. Supply a validated private profile. It never opens a source, writes Sheets, clears referral holds or authorizes applications. Extraction of an alert card is not a full description. The host owns access, retries, account checks and source freshness. The selected source runbook owns actual research and tool access.
+Pass a validated runtime profile, full job descriptions and a separate evidence review to `screening.screen(profile, packet, review=None)`. An alert card is partial evidence. Follow the source runbook for access, identity, retries and freshness. The helper evaluates policy without accessing accounts, saving jobs or clearing holds.
 
 ## Evidence handoff
 

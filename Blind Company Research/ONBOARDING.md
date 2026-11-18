@@ -1,10 +1,6 @@
 # Set up Blind company research
 
-> **Required:** A [compatible Python runtime](<../Application Workflow/docs/tools.md#workflow-requirements>), the complete repository, a private writable folder outside it, public search/page reads and a supported browser. A shared Application Workflow installation supplies the queue and central tracker writer.
-> **Tracker:** Choose local Excel or Google Sheets.
-> **Computer use:** Career pages that need interaction; you handle sign-in or permission prompts. Supplied starter ratings need no Blind account.
-
-Use this guide to choose Blind research independently of LinkedIn alerts. The [shared operating rules](<../Application Workflow/docs/operations.md>) govern private storage, permissions, source evidence and the single writer. The [shared tool guide](../ONBOARDING.md#tools-for-your-choices) has installation links.
+Reuse the shared Application Workflow installation and choose Local Excel or Google Sheets. Follow its [operating rules](<../Application Workflow/docs/operations.md>) and [tool requirements](../ONBOARDING.md#tools-for-your-choices). Use public search and page reads, with browser controls for interactive pages. The user handles sign-in. Supplied ratings require no Blind account.
 
 ```text
 Set up Blind company research with me using this guide. Ask one choice at a time.
@@ -21,7 +17,7 @@ without the required selected authorization. Return and save my setup summary.
 - **Starting fresh:** choose a permanent private folder and either local Excel or Google Sheets. The agent follows the [shared agent setup procedure](<../Application Workflow/docs/agent-setup.md>) directly, using your choices here. Blind alone is a valid discovery selection: enable `modules.blind`, keep central enabled, and leave unselected discovery/tracking sources disabled. Manual runs and chat reports are the defaults.
 - **Already using Application Workflow:** supply the canonical private configuration path. Preserve your tracker, company copy, history, account bindings, chats and schedules. Use [preference updates](<../Application Workflow/docs/preferences.md>) for supported changes and their required replacement pilot. A new unbound research chat or changed storage/account needs the separately reviewed migration described there; do not edit initialized configuration or create a second installation to bypass it.
 
-This is a separate research workflow using the existing shared runtime. It does not create a second jobs tracker or give the Blind chat tracker-write access. No LinkedIn alert setup, Gmail, referral list, Calendar or Messages connection is required unless you separately select those features.
+Central owns the shared tracker. Connect email, referrals, Calendar or Messages only if selected.
 
 ## 2. Choose companies and job criteria
 

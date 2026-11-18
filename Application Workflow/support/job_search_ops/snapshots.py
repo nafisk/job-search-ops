@@ -13,10 +13,9 @@ CELL_FIELDS = ("userEnteredValue,effectiveValue,hyperlink,"
 
 
 def read_data(path):
-    """Native payloads have a separate ceiling from small installation settings.
+    """Read a native payload up to 128 MiB.
 
-    ponytail: 128 MiB per local payload is the single-host v1 ceiling. Split native
-    requests, or stop for reviewed archival/migration when full coverage exceeds it.
+    Split large requests or review archival or migration if coverage requires it.
     """
     source = Path(path)
     require(source.stat().st_size <= 128 * 1024 * 1024, "native data", "payload exceeds 128 MiB; review archival/migration")

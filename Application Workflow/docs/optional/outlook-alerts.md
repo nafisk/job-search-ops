@@ -1,10 +1,6 @@
 # Optional Outlook alert organization
 
-> **Required:** An Outlook mailbox and user-approved alert/routing scope.
-> **Tools:** Outlook tools or manual mailbox settings.
-> **Computer use:** Needed when using mailbox web settings.
-
-This organizes mail only. The workflow currently ingests Gmail; an Outlook folder does not make email discovery ready. Follow the LinkedIn search and real-delivery checks in [alert setup](../linkedin-alerts.md), then use these mailbox-specific steps.
+Use these steps to organize an Outlook mailbox within the user's approved scope. Follow [alert setup](../linkedin-alerts.md) for LinkedIn searches and delivery checks. Automated discovery reads Gmail.
 
 ### Outlook.com / Outlook on the web: move to a folder
 

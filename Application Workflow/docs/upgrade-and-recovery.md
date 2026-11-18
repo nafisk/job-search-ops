@@ -1,12 +1,8 @@
 # Upgrade and recovery
 
-> **Required:** The existing private state, journals and resource bindings, Python 3.10+, and access to the selected tracker/report destination.
-> **Tools:** Use the bound tools and identities for the installation.
-> **Computer use:** Only if recovering a selected browser task; never replace missing connector access with browser account access.
+Run local commands from `Application Workflow/support/`. Use the existing private state, journals, resource bindings and selected tracker and report tools. Verify the bound identities. Keep connector and browser access separate.
 
-Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
-
-Preserve the checkout, private state, resource bindings and selected tracker as separate assets. Back up private state privately; never use the public repository as a personal-data backup. No cleanup of dated sessions authorizes deleting durable job state.
+Back up private state privately. Keep the checkout, state, bindings and tracker separate. Preserve durable state when cleaning up dated sessions.
 
 ## Interrupted setup
 

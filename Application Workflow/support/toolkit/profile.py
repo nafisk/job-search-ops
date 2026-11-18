@@ -198,7 +198,7 @@ def unique_object(pairs):
 
 def load_profile(path):
     try:
-        # ponytail: small local config only; no source documents, accounts or state are loaded here.
+        # Load local configuration only.
         raw = Path(path).read_text(encoding="utf-8")
         profile = json.loads(raw, object_pairs_hook=unique_object)
     except ProfileError:

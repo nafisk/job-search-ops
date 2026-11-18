@@ -14,7 +14,7 @@ Prepare only selected sources. Follow [alert setup](linkedin-alerts.md) before f
 python3 -m job_search_ops setup-plan --config /absolute/private/draft-config.json
 ```
 
-Show the selected tracker, sources, chats, schedules, and permissions. The plan describes what needs verification. The user's selected setup request authorizes its documented resources and pilot.
+Show the selected tracker, sources, chats, schedules and permissions. Verify the capabilities in the plan. The selected setup request authorizes its documented resources and pilot.
 
 ## 2. Check only the selected requirements
 

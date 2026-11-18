@@ -140,7 +140,7 @@ def reconcile(payload, acceptances=None):
     for source in sources:
         if source["origin"] in BASELINES and source["employer_id"] is not None and source["role_id"] is not None:
             seed(source, source["role_id"])
-    # ponytail: supplied small snapshots only; exact indexes are scanned, with no fuzzy identity engine.
+    # Match exact identities in the supplied snapshots.
     for source in sources:
         if source["origin"] in BASELINES and source["event_id"] not in attached:
             matches, reason = _resolve(source, apps, profile_id)

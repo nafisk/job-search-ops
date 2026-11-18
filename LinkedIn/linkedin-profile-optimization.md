@@ -1,29 +1,8 @@
 # Software Engineering LinkedIn Profile Optimization Runbook
 
-Give this entire file, the current resume, and target software engineering roles to your AI assistant. The instructions below guide the agent through a profile audit, proposed changes, and verified updates. Use an authorized browser session for live access, or a profile export/screenshots for recommendations based on the supplied content.
+Read this runbook and the supplied material. Start with a read-only audit for the person's target role, level and career stage. Use a profile export or screenshots for a content review and mark live-only fields unavailable. For live access, the person signs in personally.
 
-## How to use this file
-
-1. Attach this Markdown file, paste its full contents, or point a file-enabled agent to its path.
-2. Provide the inputs listed below and log into LinkedIn yourself if using an authorized browser.
-3. Ask the agent to read the whole file and use it as the guiding instructions for a read-only profile audit.
-
-The full file is the handoff; no separate starting prompt is needed. Review the recommendations before approving any live changes.
-
-## Agent starting instructions
-
-Read this entire runbook and the supplied materials before beginning. Tailor the review to the person's specialization, level, and career stage. The person logs into LinkedIn personally. Never ask them to paste a password, authentication code, session cookie, or token.
-
-Begin with a read-only audit. Compare the LinkedIn profile with the resume and target roles. Complete every applicable item in the deterministic checklist and label inaccessible items as unavailable. When working from an export or screenshots, make recommendations from the supplied content and mark fields that require live access as unavailable.
-
-Do not change anything during the audit. Return:
-1. The current value for every checked field.
-2. The problem or opportunity.
-3. The exact proposed value or action.
-4. The evidence from the person's resume or answers.
-5. Any privacy or notification effect.
-
-Group proposed changes into small approval batches. Apply only the batch the person explicitly approves. After each batch, reopen every edited field, verify the saved value, and report the result.
+Complete each applicable checklist item and use the [recommendation format](#recommendation-format). Apply only the exact changes the person approves, in small batches. Reopen each edited field and verify what was saved.
 
 ## What the person must provide
 
@@ -54,15 +33,10 @@ If the person supplies no target job descriptions, use the target titles and res
 
 ## Access and safety rules
 
-- The person logs in personally.
-- Never request or store credentials or authentication secrets.
-- Start read-only.
-- Do not change the profile, settings, messages, connections, follows, applications, alerts, or company-interest signals without explicit approval for that action.
-- Do not assume authorization for profile edits includes authorization for messages, applications, posts, invitations, or follows.
-- Capture the current value before every approved change.
-- State whether a change may notify the person's network or expose job-search intent.
-- Preserve unrelated fields and settings.
-- If LinkedIn behaves unexpectedly, stop the batch and report what was and was not verified.
+- Never request or store passwords, authentication codes, session cookies or tokens.
+- Get explicit approval for each action that changes the account, including settings, messages, applications, posts, invitations, follows, alerts and company-interest signals.
+- Capture current values and explain visibility or notification effects before applying changes. Preserve unrelated fields and settings.
+- If LinkedIn behaves unexpectedly, stop the batch and report which changes you verified.
 
 ## Deterministic audit checklist
 
@@ -254,7 +228,7 @@ Create a compact consistency table:
 | Work authorization and sponsorship answers |  |  |  |
 | Portfolio links |  |  |  |
 
-The two assets should agree on facts but do not need identical wording. The resume is compact evidence; LinkedIn can provide more context and structured discovery fields.
+Keep facts consistent across both. Use LinkedIn's additional space and structured fields where they help.
 
 ## Recommendation format
 

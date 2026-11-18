@@ -1,10 +1,6 @@
 # Recruiter storage and recovery
 
-> **Required:** A private folder outside the repository, Python 3.10+ with its standard library and one selected tracker: local JSON or native Google Sheets. Google mode also needs the expected Google account and checked workbook access.
-> **Runs in:** Local files, a shell, and selected Google tools. No bundled database, server or script installation.
-> **Computer use:** Not required for ordinary tracker reads/writes; required separately to verify actual LinkedIn profiles and drafts.
-
-Use a **separate recruiter tracker**. The Application Workflow jobs workbook has a different schema and does not store these records. Read this guide before creating storage or saving contact/draft history.
+Keep settings and records in a private folder outside the repo. Use Python 3.10+ and a separate local JSON or native Google Sheets recruiter tracker. For Sheets, verify the account and workbook access.
 
 ## Agent-facing settings
 

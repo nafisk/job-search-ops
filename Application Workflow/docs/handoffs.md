@@ -1,7 +1,5 @@
 # Shared queue and producer handoffs
 
-> **Required:** Python 3.10+, the installation’s private settings and shared queue.
-> **Computer use:** None for this handoff; source research may need it.
 
 Follow [operating rules](operations.md). Local commands run from `Application Workflow/support/`.
 

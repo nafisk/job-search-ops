@@ -1,10 +1,8 @@
 # Set up recruiter outreach
 
-> **Required:** Local file access, Python 3.10+ for private JSON records, a supported browser and your LinkedIn account. Google Drive/Sheets access is required only for the Google tracker.
-> **Setup:** Recruiter Outreach uses a separate installation.
-> **Computer use:** Required for live LinkedIn profiles and unsent draft preparation. You log in and perform final sends.
+Use a separate private installation, Python 3.10+ and a supported browser. Sign in to LinkedIn yourself. Connect Google Drive and Sheets only if you choose the Google tracker.
 
-Give the agent this guide and use the setup request below. Setup creates private settings and creates or adopts a tracker; research, message drafting and any later batch each require a separate request. These guides create no schedules.
+Set up the tracker and approve your copy. Request research, drafts and subsequent batches separately. You send all messages.
 
 ```text
 Set up Recruiter Outreach with me using this guide. Help me choose my inputs,

@@ -80,7 +80,7 @@ def storage(root):
 @contextlib.contextmanager
 def locked(root):
     base = storage(root)
-    # ponytail: one installation-wide local lock serializes small metadata changes.
+    # One installation-wide lock serializes metadata changes.
     # The persistent workbook claim below survives process exits; there is no TTL.
     with (base / ".protocol.lock").open("a+") as stream:
         fcntl.flock(stream, fcntl.LOCK_EX)

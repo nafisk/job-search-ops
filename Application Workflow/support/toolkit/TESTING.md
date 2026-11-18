@@ -1,7 +1,6 @@
 # Local helper verification
 
-**Required:** Python 3.10+ with IANA timezone data. Test inputs are fictional.  
-**Runs in:** A local shell.
+Use Python 3.10+ with IANA timezone data. The tests use fictional inputs.
 
 Run from this directory:
 
@@ -24,7 +23,5 @@ Tests protect retained behavior. Their fixtures are not current job evidence or 
 ## What they do not prove
 
 These pure helpers do not test a live Gmail reader, portal browser, account permission, tracker writer or report send. The current [workflow verification](../../docs/verification.md) covers the separate setup, queue, tracker and native-evidence tests and records remaining live checks.
-
-The previous standalone importer, simulated commit/delivery adapters, migration experiments, backlog/delta helpers and optional report renderer were removed because current runbooks use the workflow support CLI for those responsibilities or do not select them. Their dedicated tests and historical fixtures were removed with them; tests for retained helpers remain.
 
 Use `python3 -B -m unittest discover -s tests -p test_alerts.py -v` for a focused check, replacing the filename as needed. Update the inventory only after reviewing exact file changes. Keep real-source evidence and results in private deployment state.

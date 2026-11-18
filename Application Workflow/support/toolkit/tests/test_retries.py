@@ -19,7 +19,6 @@ FINISH = NOW
 
 
 def source(item="page-1", source_id="example-board"):
-    # ponytail: fixed finite fixtures; expected budgets/decisions are declared in tests.
     return {"source_id": source_id, "item_id": item,
             "cursor": {"page": 1, "url": "https://jobs.example.test/search?query=software&page=1"}}
 

@@ -1,14 +1,8 @@
 # Set up LinkedIn alerts and keep them out of your inbox
 
-> **Required when selected:** A LinkedIn account, access to the receiving mailbox and the supported signed-in browser. Automated discovery additionally requires native Gmail search/full-message reads.
-> **Mail:** Gmail supplies automated discovery. The Outlook steps cover mailbox organization.
-> **Computer use:** Required for LinkedIn alerts. You handle login and mailbox-rule settings when native tools cannot manage them.
+Use this guide for LinkedIn email discovery. Sign in to LinkedIn and verify email delivery. Automated collection uses native Gmail search and full-message reads. [Outlook routing](optional/outlook-alerts.md) is available for mailbox organization.
 
-**Use this step when choosing LinkedIn email discovery in [onboarding](../ONBOARDING.md).** You need active email alerts for the jobs you want before the workflow can discover those jobs from mail. Skip this step for portal-only, Blind-only or tracking-only setups.
-
-Recommended: keep your existing email address, create a **Job Alerts** label/folder, and route only job-alert emails there. A `+jobs` address is optional; it does not create a folder or rule by itself.
-
-**Current reader support:** the shipped Email Discovery helper reads Gmail. The [optional Outlook instructions](optional/outlook-alerts.md) organize alerts in Outlook, but an Outlook folder is not yet an automated input to this package. Record that reader gap explicitly; do not put Outlook searches into `sources.gmail_queries` or claim full email-discovery setup. Other selected sources can still run.
+Keep your current address and route only job alerts to a **Job Alerts** label or folder. A `+jobs` alias still needs a routing rule.
 
 ## 1. Check what is already set up
 

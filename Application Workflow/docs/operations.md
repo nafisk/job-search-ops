@@ -1,12 +1,8 @@
 # Operating rules
 
-> **Required:** Completed [onboarding](../ONBOARDING.md), Python 3.10+, private saved state and the tools for selected sources and tracker.
-> **Ownership:** One central chat owns tracker writes.
-> **Computer use:** Only selected browser tasks; account reads and tracker saves use their documented connector/file paths.
+Read the private settings and setup plan before running. Central owns the tracker. Run only selected helpers, sources and schedules. Manual runs and chat reports are the defaults.
 
-The agent runs the selected tools. The deterministic CLI validates configuration and manages private intent, ownership, queue and receipt state. It does not autonomously log into Google, browse, send or create schedules. Follow the runbooks and inspect real tool responses. Do not generate “proof” by restating intended results.
-
-Read the private saved choices and the read-only setup plan before selecting branches. Central always runs; email/portal helpers, Blind, tracking sources and schedules exist only when selected. Manual runs and chat reports are defaults. Unselected capabilities are not errors to repair.
+Use the CLI for configuration, queue, ownership and receipt state. Use the selected tools for connected operations and inspect their actual responses before recording proof.
 
 ## Setup and permissions
 

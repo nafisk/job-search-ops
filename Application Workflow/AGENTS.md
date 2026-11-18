@@ -1,7 +1,7 @@
 # Application Workflow guidance
 
-**Required:** selected private settings, a [compatible Python runtime](docs/tools.md#workflow-requirements), and the tools for selected features.
+Use the user's private settings and [selected tools](docs/tools.md).
 
-Start with [onboarding](ONBOARDING.md) for shared setup or [run.md](run.md) for a central run. [Blind Company Research](<../Blind Company Research/run.md>) has its own research runbook and starter list, but uses this installation, operating rules and central writer. Email/referral discovery is optional for Blind-only use. The shared [operating rules](docs/operations.md) are authoritative for permissions, one-writer ownership, evidence, private storage, source gaps and completion. Read them before any setup or run.
+Read the [operating rules](docs/operations.md) before setup or a run. Follow [onboarding](ONBOARDING.md) for shared setup, [run.md](run.md) for a central run, and the [Blind runbook](<../Blind Company Research/run.md>) for its producer. Blind uses the same installation and central writer. Other sources are optional.
 
 Reuse saved choices and authorization; ask only for missing relevant information. Preserve live deployments. Commands run from `Application Workflow/support/`. Test changes against [verification](docs/verification.md) and state which live checks remain unperformed.

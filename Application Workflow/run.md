@@ -1,14 +1,10 @@
 # Run the application workflow
 
-**Required:** completed [onboarding](ONBOARDING.md), a [compatible Python runtime](docs/tools.md#workflow-requirements), private settings/state, and the tools for your selected tracker and sources.
+Complete [onboarding](ONBOARDING.md) and load the private settings. Follow the saved source, tracker, timing and delivery choices.
 
-**Tools:** Discovery uses public search and page reads. Use browser controls when a source page requires interaction.
+The central chat coordinates the run and owns tracker writes. Dispatch only selected email and referral helpers. [Blind research](<../Blind Company Research/run.md>) runs separately and queues findings. Only central and Blind have their own optional schedules.
 
-**Start with [onboarding](ONBOARDING.md).** This guide runs the choices saved for your installation: local Excel or Google Sheets, selected discovery/tracking sources, manual or scheduled execution, and report delivery.
-
-The main Job Workflow chat is always the coordinator and sole tracker writer. Email Discovery and Referral Portal Search are helpers only when selected. [Blind Company Research](<../Blind Company Research/run.md>) is a separate optional source feeding the same tracker. Helpers have no schedules; the main and Rated Target Companies chats run manually or on their individually selected schedules.
-
-**Selected discovery → review and save → selected tracking → one report.** Tracking-only and public-research-only configurations are valid. LinkedIn alerts and Blind are separate discovery paths; both feed this central writer. Blind-only runs skip email/referral dispatch when those sources are off.
+Run selected discovery, verify and save the results, reconcile selected tracking sources, then report. Tracking-only and Blind-only setups can skip email and referral discovery.
 
 ## Every run
 

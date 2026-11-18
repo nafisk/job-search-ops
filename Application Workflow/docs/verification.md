@@ -1,10 +1,6 @@
 # Verification and operating limits
 
-> **Required:** Python 3.10+ and a disposable writable test folder. Local workbook integration checks also need the [Excel writer runtime](local-excel.md). Live checks need the selected connections.
-> **Runs in:** A local shell for offline checks. Live checks use the selected agent and connectors.
-> **Computer use:** Only to verify a selected browser feature; offline tests use no accounts.
-
-Normal users start with [Onboarding](../ONBOARDING.md). These checks are for the assistant or a maintainer updating the workflow.
+Use Python 3.10+ and a disposable test folder for offline checks. Workbook integration checks also need the [Excel writer runtime](local-excel.md). For live checks, use the selected connectors or browser and verify actual results.
 
 ## Local checks
 

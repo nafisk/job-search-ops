@@ -2,9 +2,8 @@
 
 > **Required when selected:** At least one authorized read source—Gmail, Google Calendar or [Mac Messages MCP](messages.md)—plus Python 3.10+ and the configured tracker. Connect only the sources selected.
 > **Writes:** The central chat saves supported changes using the selected connector or local writer.
-> **Computer use:** None for routine tracking; initial account/OS access may need your participation.
 
-Use [applications](../support/toolkit/APPLICATIONS.md), [lifecycle](../support/toolkit/LIFECYCLE.md), [interviews](../support/toolkit/INTERVIEWS.md) and [coverage](../support/toolkit/COVERAGE.md) as pure acceptance helpers. Their inputs must come from independently inspected native evidence. Read saved source choices first. Gmail tracking, Calendar and Apple Messages are independent: run only the selected sources, and skip this phase when none are selected. Email-alert discovery does not enable Gmail tracking. Unselected sources are not configured; missing selected sources retain visible gaps.
+Read the saved tracking choices. Run only enabled Gmail, Calendar or Messages sources and report missing access. Email discovery does not enable Gmail tracking. Use independently checked native evidence with [applications](../support/toolkit/APPLICATIONS.md), [lifecycle](../support/toolkit/LIFECYCLE.md), [interviews](../support/toolkit/INTERVIEWS.md) and [coverage](../support/toolkit/COVERAGE.md).
 
 1. Freeze the configured tracking window, overlap and older unresolved items. Verify account identities before private reads. Only if `tracking.gmail` is enabled, read Gmail application receipts, employer/recruiter correspondence and Sent evidence in bounded, fully paginated queries. Do not change mail labels, read state or messages. Calendar-only or Messages-only tracking requires no Gmail access.
 2. Bind each event to exact employer and role/requisition/process using the full message and existing accepted identities. Ambiguous association stays unresolved. A tracker Applied label, browser tab disappearance or prepared form does not create a confirmed submission.

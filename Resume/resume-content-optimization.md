@@ -1,47 +1,10 @@
 # Software Engineering Resume Content Optimization Runbook
 
-Give this entire file and the current resume to your AI assistant. The goal is to improve the resume's existing content for software engineering roles, especially experience bullets. The instructions below guide the agent through the review.
+Read this runbook and the current resume. Review the content for the person's target engineering role and level. Preserve the existing structure and layout unless they ask for broader changes.
 
-## How to use this file
+Start with **INTERACTIVE REVIEW**. A resume is enough to begin. Tell the person to expect a few rounds of review. Work on one role or a few bullets at a time and wait for approval before editing a file.
 
-1. Attach this Markdown file, paste its full contents, or point a file-enabled agent to its path.
-2. Provide your current resume and any target-role context you already have.
-3. Ask the agent to read the whole file and use it as the guiding instructions for improving your resume.
-
-The full file is the handoff; no separate starting prompt is needed. For an autonomous candidate draft, also supply verified supporting material and explicitly request **EVIDENCE-PACK DRAFT** mode.
-
-## Agent starting instructions
-
-Read this entire runbook and the supplied resume before beginning. Tailor the review to the person's target specialization, level, and career stage. Preserve the existing structure and formatting unless the person explicitly requests a broader overhaul.
-
-Begin in **INTERACTIVE REVIEW** mode unless the person explicitly authorizes another mode:
-
-1. Identify the bullets with the greatest opportunity.
-2. Ask short, simple questions to uncover missing ownership, context, technical detail, scale, and impact.
-3. Rewrite only the bullets currently under review.
-4. Give two or three strong options when the wording involves a meaningful tradeoff, explain the difference briefly, and wait for selection or correction.
-5. Tell the person upfront that reaching the right wording may require multiple iterations. Do not edit the resume file until they approve the wording.
-
-Never invent experience, metrics, technologies, ownership, or results.
-
-For an explicitly authorized **EVIDENCE-PACK DRAFT**, read the resume and supplied evidence, then produce a complete candidate rewrite and a decision log without waiting for approval between bullets. Do not edit or overwrite the actual resume file. Label the rewrite `CANDIDATE — NOT YET PERSON-APPROVED`. For every material change, record the supporting source, important qualifier, unresolved conflict, and reason for the change. Omit unsupported claims and end with the short questions the person must answer before any wording can be considered final.
-
-## Default behavior
-
-The person may provide only a resume. That is enough to begin.
-
-When evidence is limited:
-
-- Treat the resume as an initial description, not proof of every implication.
-- Ask simple questions instead of demanding a large evidence packet.
-- Improve one role or small group of bullets at a time.
-- Preserve facts the person confirms.
-- Mark estimates as estimates.
-- Omit unsupported claims.
-
-Tell the person:
-
-> Strong resume wording usually takes a few passes. We can review one role or a few bullets at a time, correct anything that sounds inaccurate, and refine the language until it sounds like you and supports the roles you want.
+Use confirmed facts, label estimates and omit unsupported claims about experience, ownership, technology or results.
 
 ## Minimal intake
 
@@ -53,23 +16,17 @@ Ask only what is not already clear from the resume:
 4. Is there a specific job description, or should this remain generally targeted?
 5. Are there any facts, metrics, technologies, or wording that must remain private?
 
-Do not block the work because the person lacks a job description. A target role is helpful, but the LLM can still improve clarity, specificity, and impact.
+Begin with the resume when a job description is unavailable.
 
 ## Working modes
 
-Use the smallest mode that matches the person's request:
+| Mode | Action |
+| --- | --- |
+| **INTERACTIVE REVIEW** | Ask targeted questions, propose rewrites and wait for corrections or approval. |
+| **EVIDENCE-PACK DRAFT** | On explicit request, use verified supporting material to write a complete candidate draft and decision log. Leave the actual resume file alone. |
+| **APPLY APPROVED WORDING** | Apply approved text to a new copy, preserve the original and verify the layout. |
 
-1. **INTERACTIVE REVIEW — default:** Ask targeted questions, rewrite a small set of bullets, and wait for selection or correction. Do not apply wording to the resume file before approval.
-2. **EVIDENCE-PACK DRAFT — explicit authorization required:** When the person supplies reliable evidence and asks for an autonomous pass, produce a complete candidate rewrite plus a decision log. Do not change the actual resume file or describe the draft as approved.
-3. **APPLY APPROVED WORDING:** Update a new copy of the resume only after the person approves the wording. Preserve the original and validate the result.
-
-Keep these states visibly distinct:
-
-- `CANDIDATE — NOT YET PERSON-APPROVED`
-- `PERSON-APPROVED WORDING`
-- `APPLIED FINAL`
-
-An evidence-rich autonomous draft skips conversational pauses, not factual verification or human approval of the final wording.
+Label the output `CANDIDATE — NOT YET PERSON-APPROVED`, `PERSON-APPROVED WORDING` or `APPLIED FINAL` according to its actual state.
 
 ## Bullet-by-bullet method
 
@@ -127,7 +84,7 @@ Then ask the person to select, combine, or correct the options.
 
 ## Real before-and-after examples
 
-The following examples are copied from an actual resume optimization process. The company name is omitted because the method should work for anyone. “After” reflects the downloaded final resume, not a guarantee that every remaining word is perfect. The notes explain both the improvement and any issue that still deserved another pass.
+These examples come from a real resume review. The company name is omitted. “After” shows the final resume wording, with notes on any remaining issues.
 
 ### 1. Replace a compressed claim with ownership, mechanism, scale, and a corrected result
 
@@ -254,47 +211,11 @@ Useful claim language:
 
 ## Iteration loop
 
-Repeat this loop until the person approves the section:
-
-```text
-Read current bullet
-→ identify the biggest missing signal
-→ ask short questions
-→ draft one recommended rewrite
-→ provide alternatives only if useful
-→ receive corrections
-→ revise
-→ obtain approval
-→ move to the next bullet
-```
-
-After each round, preserve decisions that should carry forward:
-
-- Confirmed facts and metrics
-- Preferred terminology
-- Rejected wording
-- Privacy constraints
-- Target-role priorities
-- Approved final bullets
-
-Do not make the person repeat those decisions later.
+Identify the biggest gap, ask focused questions, propose wording and revise until the person approves it. Carry forward confirmed facts, preferred terms, rejected wording, privacy limits, target priorities and approved bullets.
 
 ### Evidence-pack draft loop
 
-When explicitly operating in EVIDENCE-PACK DRAFT mode:
-
-```text
-Read resume and evidence
-→ build a claim and conflict ledger
-→ select the strongest target-relevant evidence
-→ draft a clearly labeled candidate version
-→ run factual, causal, external-language, and scanability checks
-→ create a decision log
-→ list unresolved questions and meaningful alternatives
-→ stop before applying changes
-```
-
-The decision log must identify each material change, its evidence, its qualifier or ownership boundary, any excluded unsupported claim, and why the change improves the resume.
+Read the resume and supplied evidence. Record claims and conflicts, select the strongest facts for the target role, then draft and run the final content checks. For each material change, log the supporting source, ownership or metric qualifier, unresolved conflict, excluded claim and reason for the change. End with unresolved questions and any meaningful alternatives.
 
 ## Scope boundaries
 

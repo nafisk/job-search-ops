@@ -1,16 +1,8 @@
 # Native evidence and local commands
 
-> **Required:** Python 3.10+, private writable evidence storage and actual responses from each selected tool. Google snapshots require native Drive/Sheets reads.
-> **Tools:** Connected operations use native evidence. [Local Excel](local-excel.md) uses actual file evidence.
-> **Computer use:** Only when collecting evidence for a selected browser operation.
+Collect actual tool responses for selected capabilities and save them in private evidence storage. Google snapshots require native Drive and Sheets reads. Use file verification for [Local Excel](local-excel.md).
 
-This guide applies to connected operations, especially the Google Sheets backend. Local Excel uses actual file verification described in [local Excel](local-excel.md); never label local file evidence as a Google connector response. Read the saved choices first and collect evidence only for selected capabilities.
-
-Local helper commands in this guide run from `Application Workflow/support/` in the permanent checkout.
-
-The agent executes account operations with connected tools. The local helpers retain
-requests, validate their returned data, and keep retries consistent. They do not
-hold Google credentials or contact accounts themselves.
+Run local commands from `Application Workflow/support/` in the permanent checkout.
 
 ## Capture the actual response
 

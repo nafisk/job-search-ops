@@ -17,7 +17,7 @@ SUBMITTED = "2026-10-05T15:00:00Z"
 
 
 def fingerprint(value):
-    # ponytail: independent contract digest, no model-created expected decisions.
+    # Compute the expected digest independently.
     return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
 
 

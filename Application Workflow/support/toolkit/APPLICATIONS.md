@@ -1,14 +1,6 @@
 # Application evidence reconciliation
 
-**Required:** Python 3.10+, private runtime profile and independently read exact-role application evidence.  
-**Runs in:** A local shell after the selected source reads.
-
-`applications.py` unions supplied application sources and returns submission-fact
-proposals. It has no account, file, browser, Sheets, checkpoint or dispatch effects.
-It performs no NLP, title similarity, URL parsing or time-based matching. Full
-original source records and all origins remain available for later reconciliation.
-[Lifecycle](LIFECYCLE.md) handles replies/outcomes and [interviews](INTERVIEWS.md) handles interview stages separately; this module changes
-no lifecycle status, notes, referral hold, exclusion or outreach/application action.
+Use `applications.py` to combine independently read, exact-role evidence into submission proposals. Match by accepted identity. Preserve original records and their origins. Use [lifecycle](LIFECYCLE.md) for replies and outcomes and [interviews](INTERVIEWS.md) for interview stages. The helper returns proposals only.
 
 ## Supply the whole known universe
 

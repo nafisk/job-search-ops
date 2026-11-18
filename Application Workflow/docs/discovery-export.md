@@ -1,6 +1,6 @@
 # Discovery export
 
-Export saved jobs to **Local Excel** or **Google Sheets**. The [template](../sheets/discovery-export.xlsx) has tabs for LinkedIn Alerts, Blind Research, and Referral Portals. Each has Targets above Job postings. Use **Application status** on any posting to choose **Not applied**, **Applied**, or **On hold**. The main jobs tracker handles evidence-based application and interview tracking.
+The [export template](../sheets/discovery-export.xlsx) lists saved jobs in three tabs for LinkedIn Alerts, Blind Research and Referral Portals. Each starts with Targets. Set **Application status** by hand to **Not applied**, **Applied** or **On hold**. The main tracker records application and interview evidence.
 
 ## Set up a destination
 

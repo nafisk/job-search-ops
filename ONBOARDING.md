@@ -1,76 +1,64 @@
-# Set up the parts of your job search you need
+# Set up your job-search workflows
 
-Start with your goal. The agent guides you through the relevant choices, reuses confirmed answers and explains each connection before you use it. You do not need to edit configuration files.
+Choose the workflows you need. Ask the agent to reuse confirmed answers and follow each selected guide.
 
-## Start with your goal
-
-| I want to… | Follow this path |
+| Goal | Guide |
 | --- | --- |
-| Improve my resume | [Resume](Resume/README.md): supply your resume and the complete runbook. No repository installation or account connection is needed for a content review. |
-| Improve my LinkedIn profile | [LinkedIn](LinkedIn/README.md): supply your resume and profile export/screenshots, or use an authorized browser for a live audit. Live edits require your reviewed approval. |
-| Find jobs from LinkedIn alerts | [LinkedIn Job Alerts setup](<Application Workflow/ONBOARDING.md>): choose the shared jobs tracker, connect alerts and optionally select referral research or application/interview tracking. |
-| Find jobs at Blind 3.5+ companies | [Blind Company Research setup](<Blind Company Research/ONBOARDING.md>): choose rated targets and use the same jobs tracker and central writer. Email alerts are optional. |
-| Open application pages in batches | [Application Batches setup](<Application Batches/ONBOARDING.md>): reuse the completed shared Application Workflow installation and confirm application criteria. Saved jobs can come from either discovery path. Standalone batch-only setup is not supported in this release. |
-| Find recruiters and prepare messages | [Recruiter Outreach setup](<Recruiter Outreach/ONBOARDING.md>): independent setup with its own contact tracker. Application Workflow is not required. |
+| Review a resume | [Resume](Resume/README.md) |
+| Audit or edit a LinkedIn profile | [LinkedIn](LinkedIn/README.md) |
+| Find jobs from alerts or referral portals | [Application Workflow](<Application Workflow/ONBOARDING.md>) |
+| Find jobs at selected companies | [Blind Company Research](<Blind Company Research/ONBOARDING.md>) |
+| Open application pages | [Application Batches](<Application Batches/ONBOARDING.md>) |
+| Find recruiters and prepare drafts | [Recruiter Outreach](<Recruiter Outreach/ONBOARDING.md>) |
 
-**Choose either or both discovery paths.** They share one Application Workflow installation, one jobs tracker and one central writer. Blind-only setup can leave email alerts, referral portals and tracking sources off; the central chat still reviews and saves its findings before Batches can use them. Setup and pilots are completed through the shared [Application Workflow guide](<Application Workflow/ONBOARDING.md>).
+Use supplied files for resume and LinkedIn content reviews. For operational workflows, keep the complete repo or reviewed release ZIP contents in a permanent folder the agent can access.
 
-Resume and supplied-content LinkedIn reviews need an assistant that can read the material. Operational workflows need an agent with access to the repository, private files, and the tools for the selected features.
+Alerts, referral portals and Blind research share one tracker and central writer. Choose the sources you need. Batches requires the shared setup and a verified pilot. Outreach uses a separate tracker.
 
 ## Ask your agent to guide setup
 
-For an operational workflow, download the **complete repository or reviewed release ZIP**, extract it to a permanent folder and give your agent access to that folder. Saved instructions use the runbooks and helpers at that path.
-
 ```text
-Read ONBOARDING.md. Help me choose which job-search workflows I need,
-one choice at a time. Reuse my existing setup and confirmed answers.
-Explain only the tools and permissions my choices require.
+Read ONBOARDING.md and guide me through the workflows I choose. Reuse my
+setup and confirmed answers. Explain the tools and permissions I need.
 
-Set up the features I select using their own onboarding guides. I authorize
-their selected setup actions, including required trackers, chosen chats and
-documented delegation. Ask before new software, connections or expanded access.
-Keep existing live workflows unchanged. Do not send recruiter messages or
-submit applications. Keep manual outreach and batch pilots separately requested.
-Finish with my private setup summary, any blockers and the exact next request.
+I authorize the documented setup for my choices, including the required
+trackers, selected chats and delegation. Ask before installing software,
+adding connections or expanding access. Preserve unrelated workflows.
+Wait for separate requests for Batches and Outreach pilots. Never send
+recruiter messages or submit applications.
+Save my private setup summary with any blockers and the exact next request.
 ```
-
-The agent follows each selected guide's setup and verification rules. This page is a route map; it does not create a universal installation, run Application Workflow checks for unrelated features, or turn setup into permission to run every module. Existing source, pilot and scheduling requirements still apply.
 
 ## Tools for your choices
 
-Connect only what your selected work needs. Check what is already available before installing anything.
-
-| Tool | Why and when you need it |
+| Tool | When to use it |
 | --- | --- |
-| Local file access and [Python 3.10+](https://www.python.org/downloads/) | Operational workflows use private files. The shared runtime uses POSIX file locking through `fcntl` and IANA timezone data. |
-| Browser controls | Live LinkedIn inspection/edits, recruiter drafts, application batches and interactive job pages. You handle sign-in. The agent verifies the selected account/session and preserves existing tabs and edits. |
-| Google Drive and Sheets connector | Required when you choose a Google tracker or a Google Sheets discovery export. The agent verifies the exact account, workbook and permitted reads/writes. Jobs and recruiter contacts use separate trackers. |
-| [Excel runtime](<Application Workflow/docs/local-excel.md>) | The local Excel writer uses Node with a supported `@oai/artifact-tool` runtime. The local JSON outreach tracker uses Python. |
-| Gmail or Calendar connectors | Gmail supports selected alert discovery, application tracking or opted-in self-email reports. Calendar supports selected interview tracking independently. Neither is required simply to open application pages or draft LinkedIn messages. |
-| [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) | Only for selected Messages tracking. Follow [Messages setup](<Application Workflow/docs/messages.md>) for its installation, database permission and scoped read checks. |
+| Local files and [Python 3.10+](https://www.python.org/downloads/) | Operational workflows. The shared runtime requires POSIX file locking through `fcntl` and IANA timezone data. |
+| Public search and page reads | Job and recruiter research. |
+| Browser controls | Live LinkedIn work, application pages and interactive career sites. Sign in yourself. The agent verifies the selected session and preserves existing tabs and edits. |
+| Google Drive and Sheets connector | A Google tracker or Sheets discovery export. Verify the account, workbook and permitted operations. |
+| [Excel runtime](<Application Workflow/docs/local-excel.md>) | Local Excel writes require Node and `@oai/artifact-tool`. The local outreach tracker uses Python and JSON. |
+| Gmail or Calendar connectors | Gmail for selected discovery, tracking or report email. Calendar for selected interview tracking. |
+| [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) | Selected Messages tracking. Follow the [Messages setup guide](<Application Workflow/docs/messages.md>). |
 
-Research also needs the host's supported search/page readers. Availability is not proof of the right account, scope or successful operation. The selected runbook defines the actual check and readback. Missing access remains a visible gap for that operation; the feature guide determines what other work may continue. Unselected tools are not setup failures. No extra CLI, credential flow or MCP server is installed automatically.
-
-Application-specific capability checks remain in [Application Workflow tools](<Application Workflow/docs/tools.md>); recruiter storage checks remain in [Outreach tracker setup](<Recruiter Outreach/tracker.md>). LinkedIn alert subscriptions and inbox routing have their own [setup guide](<Application Workflow/docs/linkedin-alerts.md>). [Blind Company Research](<Blind Company Research/README.md>) owns the optional [Blind starter](<Blind Company Research/blind-companies.json>); its historical ratings are not freshly verified.
+Use the selected guide's access checks and report any missing access that affects the requested work. See [Application Workflow tools](<Application Workflow/docs/tools.md>) and [Outreach tracker checks](<Recruiter Outreach/tracker.md>).
 
 ## Reuse an existing setup
 
-Provide the private configuration or ledger path for the selected workflow. Read its existing choices and verification records first. Ask only for missing information; reuse confirmed facts without silently changing another workflow's preferences or permissions.
+Provide the private configuration or ledger path. Read its choices and verification records before asking for missing information. Preserve active settings, trackers and history.
 
-Operational settings, evidence, contacts and history belong in a durable private folder **outside the repository and shared exports**. Check actual filesystem locations, including symlinks and case aliases. Follow the selected guide's owner-only file permissions. Preserve existing authoritative locations; adding a workflow does not authorize moving data, replacing trackers or resetting history.
-
-Keep one authoritative configuration for each workflow. A shared summary can link those configurations, but must not become a second editable profile. Use each workflow's preference process for changes. Application Batches uses one active chat per ledger, including submission checks; see its [ownership instructions](<Application Batches/ONBOARDING.md#4-give-the-chat-a-durable-starting-point>).
+Keep private data outside the repo and shared exports. Check resolved paths, including symlinks and case aliases, and follow the guide's permissions. Keep one authoritative configuration per workflow. Batches uses [one active chat per ledger](<Application Batches/ONBOARDING.md#4-give-the-chat-a-durable-starting-point>), including submission checks.
 
 ## Your setup summary
 
-At the end of operational setup, the agent returns a short handoff and saves or updates **`setup-summary.md` in your chosen private setup folder**, outside the repository. Preserve unrelated entries if that summary already exists. Resume and supplied-content LinkedIn reviews need only a handoff in the conversation; they do not require a private installation.
+Update `setup-summary.md` in the private setup folder. Preserve unrelated entries. For supplied-content reviews, return the handoff in chat.
 
-Include these five items:
+Include these items:
 
-1. **Selected workflows and current status:** what was actually verified, what still needs a login/decision/pilot, and what was not selected. Separate storage/tool readiness from a successful live run.
-2. **Tracker:** the actual file path or verified workbook link for each selected tracker.
-3. **Private records:** absolute links to the canonical configuration/profile, ledger and installed runbook as applicable. Keep records in their current locations; never copy credentials or private correspondence into the summary.
-4. **Operating chats and timing:** the assigned existing/selected chat links or identities, their ownership roles, and manual mode or actual verified schedules. Do not create extra chats or schedules merely to fill this summary.
-5. **One next request:** a ready-to-paste request with actual installed/private paths and the selected scope. If blocked, state the missing step instead of claiming the workflow is ready.
+1. Selected workflows, verified setup, actual pilot results and outstanding gaps.
+2. The actual tracker file path or verified workbook link.
+3. Absolute links to the canonical settings, ledger and runbook. Keep credentials and private correspondence out of the summary.
+4. Assigned chats, ownership and manual mode or verified schedules.
+5. One copyable next request with actual paths and scope, or the step needed to unblock setup.
 
-This summary is a navigation aid, not runtime configuration or evidence that a check passed. On resume, the agent reads the linked canonical settings and current verification state. A summary cannot clear a pilot hold, grant access, release a reservation or authorize a send.
+Read the linked records when resuming. Follow the current verification state and holds. A summary grants no permission.

@@ -447,8 +447,7 @@ def _artifact(source, destination, changes, node, node_modules, *, initialize=Fa
 
 @contextmanager
 def _writer_lock(path):
-    # ponytail: this serializes this package's writers, not an interactive Excel
-    # process. The user must close the workbook; hashes catch outside changes.
+    # This lock covers package writers. Close Excel during writes. Hashes detect outside edits.
     lock = path.with_name("." + path.name + ".job-search.lock")
     if lock.is_symlink():
         raise q.ProtocolError("Local workbook lock must not be a symlink")

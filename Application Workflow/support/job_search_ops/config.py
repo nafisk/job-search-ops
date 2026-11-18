@@ -98,7 +98,6 @@ def local_path(value, base, field, *, absolute=False):
 
 
 def toolkit_profile_module():
-    # ponytail: the existing standalone validator has no third-party imports.
     path = SUPPORT_ROOT / "toolkit" / "profile.py"
     require(path.is_file(), "toolkit", "reviewed profile validator is missing")
     spec = importlib.util.spec_from_file_location("job_ops_profile_validator", path)

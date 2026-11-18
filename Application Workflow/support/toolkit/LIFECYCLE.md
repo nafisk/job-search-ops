@@ -1,14 +1,6 @@
 # Lifecycle and response evidence
 
-**Required:** Python 3.10+, reconciled application identities and independently checked event/reply evidence.  
-**Runs in:** A local shell after the selected source reads.
-
-`lifecycle.py` layers independently accepted events over the original application source
-packet through `applications.reconcile`. Confirmed submission remains a separate
-fact when a role is rejected, paused, withdrawn, interviewed, offered or hired.
-An old receipt cannot downgrade a newer outcome. This module performs no external
-or file actions. Actual interview
-process/booking evidence belongs to [interviews](INTERVIEWS.md); an INTERVIEWING label does not create one.
+Use `lifecycle.py` to apply independently accepted replies and events over the original application records via `applications.reconcile`. Preserve confirmed submission as its own fact across later outcomes. An older receipt cannot downgrade a newer outcome. Use [interviews](INTERVIEWS.md) for interview evidence. The helper returns proposals only.
 
 ## Supply exact accepted events
 

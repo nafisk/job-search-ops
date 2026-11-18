@@ -1,14 +1,8 @@
 # Change your saved preferences
 
-> **Required:** An initialized version-two installation, its private settings and Python 3.10+.
-> **Tools:** Local updates use the CLI. Schedule changes use the selected scheduler.
-> **Computer use:** None unless a newly selected tool requires connection setup.
+Use the existing version-two installation and Python 3.10+. Follow [operating rules](operations.md).
 
-Ask your agent: **“Update my job-workflow preferences using this guide. Show the changes and preserve my tracker and history.”** Follow [operating rules](operations.md). No re-onboarding or fresh tracker is needed for ordinary settings changes.
-
-Supported changes include search criteria, disabling selected sources, report preferences and manual-to-scheduled execution. The updater retains tracker/chat IDs, accepted rows, receipts, source history and first-pass evidence. Changes to accounts, tracker provider/path, installation location or new unbound helper chats need a separate reviewed migration; this command stops instead of guessing those bindings.
-
-To switch where the three-tab discovery workbook is published, use [discovery export](discovery-export.md#switch-the-next-export). That choice takes effect on the next export and keeps the jobs tracker binding.
+Update criteria, disable sources, change reporting or switch between manual and scheduled runs using the supported updater. It preserves tracker and chat IDs, accepted rows, receipts and history. Changing accounts, tracker provider or path, installation location or unbound chats requires a reviewed migration.
 
 ## Agent procedure
 

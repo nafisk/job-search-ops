@@ -1,10 +1,6 @@
 # Optional Apple Messages
 
-> **Required when selected:** macOS, a connected [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp), user-granted database access and an explicitly selected conversation/date window.
-> **Runs in:** The selected agent's MCP client, using the server's reviewed read tools.
-> **Computer use:** You grant macOS access during setup. Routine reads do not need UI automation.
-
-Skip this module unless you want the workflow to use a particular Messages conversation. Job discovery, the chosen tracker and reports work without it. This repository links to an upstream MCP; it does not bundle a server, wrapper, decoder, dependency lock or private message data.
+For selected Messages tracking, use macOS, the [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) and user-granted database access. Use the server's reviewed read tools for the authorized conversation and date window.
 
 ## Set up only when selected
 

@@ -1,10 +1,6 @@
 # Set up referral companies
 
-> **Required when selected:** Portal discovery, Python 3.10+, a verified tracker and a private company file.
-> **Writes:** Google uses native Sheets tools. Excel uses the [local writer](local-excel.md).
-> **Computer use:** None for seeding; later portal research may require it.
-
-**One private company list defines scope.** `sources.referral_companies_path` points to that list. Setup projects it into the tracker’s **Referral Watchlist** and writes `<installation>/portal-registry.json` for [toolkit portal checks](../support/toolkit/PORTALS.md). The watchlist is a readable projection; it is not a second independent company list.
+Set `sources.referral_companies_path` to one private company list. Setup projects it into **Referral Watchlist** using Sheets or the [local Excel writer](local-excel.md). It also creates `<installation>/portal-registry.json` for [portal checks](../support/toolkit/PORTALS.md). Update scope in the private list.
 
 ## Choose companies
 
