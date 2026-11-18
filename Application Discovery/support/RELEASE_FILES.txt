@@ -1,0 +1,130 @@
+.gitignore
+AGENTS.md
+Application Batches/ONBOARDING.md
+Application Batches/README.md
+Application Batches/batch-state.example.json
+Application Batches/run.md
+Application Discovery/AGENTS.md
+Application Discovery/Blind Company Research/ONBOARDING.md
+Application Discovery/Blind Company Research/README.md
+Application Discovery/Blind Company Research/blind-companies.json
+Application Discovery/Blind Company Research/run.md
+Application Discovery/ONBOARDING.md
+Application Discovery/README.md
+Application Discovery/docs/agent-setup.md
+Application Discovery/docs/discovery-export.md
+Application Discovery/docs/handoffs.md
+Application Discovery/docs/linkedin-alerts.md
+Application Discovery/docs/local-excel.md
+Application Discovery/docs/messages.md
+Application Discovery/docs/native-evidence.md
+Application Discovery/docs/operations.md
+Application Discovery/docs/optional/manual-actions.md
+Application Discovery/docs/optional/outlook-alerts.md
+Application Discovery/docs/preferences.md
+Application Discovery/docs/referrals.md
+Application Discovery/docs/report.md
+Application Discovery/docs/sheets-protocol.md
+Application Discovery/docs/source-map.md
+Application Discovery/docs/tools.md
+Application Discovery/docs/tracking.md
+Application Discovery/docs/upgrade-and-recovery.md
+Application Discovery/docs/verification.md
+Application Discovery/helpers/email-discovery.md
+Application Discovery/helpers/referral-portals.md
+Application Discovery/run.md
+Application Discovery/sheets/discovery-export.xlsx
+Application Discovery/sheets/job-search-tracker.xlsx
+Application Discovery/sheets/workbook-schema.json
+Application Discovery/support/README.md
+Application Discovery/support/RELEASE_FILES.txt
+Application Discovery/support/config/README.md
+Application Discovery/support/config/capabilities.json
+Application Discovery/support/config/examples/installation-v2.json
+Application Discovery/support/config/examples/profile-v2.json
+Application Discovery/support/config/examples/rated-companies.json
+Application Discovery/support/config/examples/referral-companies.json
+Application Discovery/support/config/installation.schema.json
+Application Discovery/support/config/legacy/installation.json
+Application Discovery/support/config/legacy/profile.json
+Application Discovery/support/job_search_ops/__init__.py
+Application Discovery/support/job_search_ops/__main__.py
+Application Discovery/support/job_search_ops/bootstrap.py
+Application Discovery/support/job_search_ops/config.py
+Application Discovery/support/job_search_ops/discovery_export.py
+Application Discovery/support/job_search_ops/doctor.py
+Application Discovery/support/job_search_ops/google_tracking.py
+Application Discovery/support/job_search_ops/host_evidence.py
+Application Discovery/support/job_search_ops/local_excel.py
+Application Discovery/support/job_search_ops/preferences.py
+Application Discovery/support/job_search_ops/queue.py
+Application Discovery/support/job_search_ops/referrals.py
+Application Discovery/support/job_search_ops/setup.py
+Application Discovery/support/job_search_ops/sheets.py
+Application Discovery/support/job_search_ops/snapshots.py
+Application Discovery/support/scripts/build_template.mjs
+Application Discovery/support/scripts/export_release.py
+Application Discovery/support/scripts/local_artifact.mjs
+Application Discovery/support/scripts/verify_release.py
+Application Discovery/support/tests/test_execution_gates.py
+Application Discovery/support/tests/test_local_excel.py
+Application Discovery/support/tests/test_native_bridge.py
+Application Discovery/support/tests/test_pipeline.py
+Application Discovery/support/tests/test_preferences.py
+Application Discovery/support/tests/test_referrals.py
+Application Discovery/support/tests/test_release.py
+Application Discovery/support/tests/test_role_merge.py
+Application Discovery/support/tests/test_schedule_guards.py
+Application Discovery/support/tests/test_selection.py
+Application Discovery/support/tests/test_selection_boundaries.py
+Application Discovery/support/tests/test_settlement.py
+Application Discovery/support/tests/test_setup.py
+Application Discovery/support/tests/test_tracking.py
+Application Discovery/support/toolkit/ALERTS.md
+Application Discovery/support/toolkit/APPLICATIONS.md
+Application Discovery/support/toolkit/CONTRACTS.md
+Application Discovery/support/toolkit/COVERAGE.md
+Application Discovery/support/toolkit/INTERVIEWS.md
+Application Discovery/support/toolkit/LIFECYCLE.md
+Application Discovery/support/toolkit/PORTALS.md
+Application Discovery/support/toolkit/PROFILE.md
+Application Discovery/support/toolkit/README.md
+Application Discovery/support/toolkit/RETRIES.md
+Application Discovery/support/toolkit/SCREENING.md
+Application Discovery/support/toolkit/SHAREABLE_FILES.txt
+Application Discovery/support/toolkit/TESTING.md
+Application Discovery/support/toolkit/alerts.py
+Application Discovery/support/toolkit/applications.py
+Application Discovery/support/toolkit/contracts.py
+Application Discovery/support/toolkit/coverage.py
+Application Discovery/support/toolkit/examples/alex.json
+Application Discovery/support/toolkit/examples/sam.json
+Application Discovery/support/toolkit/interviews.py
+Application Discovery/support/toolkit/lifecycle.py
+Application Discovery/support/toolkit/portals.py
+Application Discovery/support/toolkit/profile.py
+Application Discovery/support/toolkit/retries.py
+Application Discovery/support/toolkit/screening.py
+Application Discovery/support/toolkit/sheet_values.py
+Application Discovery/support/toolkit/tests/test_alerts.py
+Application Discovery/support/toolkit/tests/test_applications.py
+Application Discovery/support/toolkit/tests/test_contracts.py
+Application Discovery/support/toolkit/tests/test_coverage.py
+Application Discovery/support/toolkit/tests/test_interviews.py
+Application Discovery/support/toolkit/tests/test_lifecycle.py
+Application Discovery/support/toolkit/tests/test_portals.py
+Application Discovery/support/toolkit/tests/test_profile.py
+Application Discovery/support/toolkit/tests/test_retries.py
+Application Discovery/support/toolkit/tests/test_screening.py
+Application Discovery/support/toolkit/verify_offline.py
+LinkedIn/README.md
+LinkedIn/linkedin-profile-optimization.md
+ONBOARDING.md
+README.md
+Recruiter Outreach/ONBOARDING.md
+Recruiter Outreach/README.md
+Recruiter Outreach/research.md
+Recruiter Outreach/run.md
+Recruiter Outreach/tracker.md
+Resume/README.md
+Resume/resume-content-optimization.md

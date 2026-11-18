@@ -16,7 +16,7 @@ Choose a permanent private folder outside this repository and any shared export 
 
 Choose **local JSON** for the smallest setup, or **Google Sheets** for a visible cloud tracker. Both keep draft reservations and recovery records in private local JSON. CSV is an optional local view, not a second master.
 
-You can adopt an existing recruiter tracker after reviewing its field mapping, contacts, history and unresolved drafts. Supply its path or workbook link. Adoption must preserve existing records; do not use the separate Application Workflow jobs tracker or another person's files.
+You can adopt an existing recruiter tracker after reviewing its field mapping, contacts, history and unresolved drafts. Supply its path or workbook link. Adoption must preserve existing records; do not use the separate Application Discovery jobs tracker or another person's files.
 
 ## 2. Supply your inputs and selected tools
 
@@ -37,7 +37,7 @@ Use [tools for your choices](../ONBOARDING.md#tools-for-your-choices) for genera
 | Google Drive/Sheets connection | Only when you select the Google tracker |
 | Available public search/page reads | Finding recruiter leads; live profiles still supply current evidence |
 
-The agent follows the [outreach tool checks](tracker.md#outreach-tool-checks) to verify actual identity and access. Standalone outreach has no dependency on Application Workflow setup. A missing selected tool remains a recorded setup blocker; a connection never grants permission to send.
+The agent follows the [outreach tool checks](tracker.md#outreach-tool-checks) to verify actual identity and access. Standalone outreach has no dependency on Application Discovery setup. A missing selected tool remains a recorded setup blocker; a connection never grants permission to send.
 
 ## 3. Save your choices and approved copy
 

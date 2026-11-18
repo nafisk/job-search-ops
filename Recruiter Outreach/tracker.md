@@ -50,7 +50,7 @@ Use the [shared tool setup](../ONBOARDING.md#tools-for-your-choices) for general
 | Google tracker, if selected | Use the selected native Drive/Sheets connection. Read the installed Google Sheets skill before Google access/effects. Verify account identity, access to the exact workbook, metadata/cell reads and narrow writes with readback. Follow the current tool schemas. |
 | Research | Use available public search/page reads and the supported LinkedIn browser. Search results find leads; live profiles supply current evidence. |
 
-Standalone outreach uses these checks, not Application Workflow's configuration, `doctor`, start check or capability manifest. Gmail, Calendar, Messages and scheduling are not outreach requirements. Do not install a CLI, email-finder service, extra MCP server or alternate credential flow for this setup. If a selected capability is unavailable, record the missing step and keep setup incomplete; never substitute another account. Access does not grant permission to send.
+Standalone outreach uses these checks, not Application Discovery's configuration, `doctor`, start check or capability manifest. Gmail, Calendar, Messages and scheduling are not outreach requirements. Do not install a CLI, email-finder service, extra MCP server or alternate credential flow for this setup. If a selected capability is unavailable, record the missing step and keep setup incomplete; never substitute another account. Access does not grant permission to send.
 
 ## Set up storage
 

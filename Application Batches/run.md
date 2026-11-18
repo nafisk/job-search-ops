@@ -8,7 +8,7 @@ Continue only the request's saved scope. Treat “continue” as authorization o
 
 ## 1. Recover and reserve
 
-1. Read [shared operating rules](<../Application Workflow/docs/operations.md>), verify the ledger's installation/tracker binding, and run `run-check --config '/absolute/private/config.json' --workflow main` from `Application Workflow/support/` using `python3 -m job_search_ops`. A held installation stays held. Before reserving or opening any role, repeat the [application criteria check](ONBOARDING.md#check-application-criteria) against current saved settings; `run-check` alone does not establish eligibility readiness.
+1. Read [shared operating rules](<../Application Discovery/docs/operations.md>), verify the ledger's installation/tracker binding, and run `run-check --config '/absolute/private/config.json' --workflow main` from `Application Discovery/support/` using `python3 -m job_search_ops`. A held installation stays held. Before reserving or opening any role, repeat the [application criteria check](ONBOARDING.md#check-application-criteria) against current saved settings; `run-check` alone does not establish eligibility readiness.
 2. Inspect `active_run`, earlier handoffs, recorded tabs and uncertain reservations. Follow [one active chat per ledger](ONBOARDING.md#4-give-the-chat-a-durable-starting-point); keep that chat's coordinator as ledger/browser owner. If another owner may still be active, stop new work until ownership is resolved.
 3. Refresh current tracker status, actual links and application history. Read accepted aliases and restrictions using the command below. Match stable identities rather than row numbers; a sort or alternate URL does not create a new job.
 4. Confirm the requested scope and count. First batch targets `first_total` accessible pages including carryovers. “Next five” requests five additional; a generic next batch uses `next_additional`. All allocations must fit `max_outstanding`.
@@ -18,7 +18,7 @@ Continue only the request's saved scope. Treat “continue” as authorization o
 python3 -m job_search_ops role-state --root '/absolute/private/installation' --workbook 'VERIFIED_TRACKER_ID'
 ```
 
-Use actual shell-quoted bindings, including the Excel `local:` prefix. Review the returned `aliases`, `alias_urls` and `referral_restrictions` alongside the current company watchlist and user instructions; the stricter restriction wins. Follow [role restrictions](<../Application Workflow/docs/referrals.md#check-before-an-application-handoff>) for any ambiguity. This request does not release a referral hold.
+Use actual shell-quoted bindings, including the Excel `local:` prefix. Review the returned `aliases`, `alias_urls` and `referral_restrictions` alongside the current company watchlist and user instructions; the stricter restriction wins. Follow [role restrictions](<../Application Discovery/docs/referrals.md#check-before-an-application-handoff>) for any ambiguity. This request does not release a referral hold.
 
 ## 2. Verify and open
 
@@ -42,11 +42,11 @@ Every successful handoff is `handoff_kind: open_only`, `prepared_verified: false
 
 Finish the run record and clear `active_run` only after saving its result. Accessible handoffs remain outstanding. Do not automatically open another batch, scan receipts, research recruiters, draft outreach or start a schedule.
 
-The tracker is read-only during page opening. Keep handoff notes in the private ledger; do not mark Saved/Applied or change Notes because a tab opened. Actual tracker changes belong to separately requested [tracking](<../Application Workflow/docs/tracking.md>), through its existing writer and verified readback.
+The tracker is read-only during page opening. Keep handoff notes in the private ledger; do not mark Saved/Applied or change Notes because a tab opened. Actual tracker changes belong to separately requested [tracking](<../Application Discovery/docs/tracking.md>), through its existing writer and verified readback.
 
 ## Check all submissions
 
-An explicit request starts reconciliation, not another batch. Read the whole known application history, tracker and registered handoffs, including older unresolved associations. Use only selected, authorized sources through [tracking](<../Application Workflow/docs/tracking.md>) and the [exact-role application helper](<../Application Workflow/support/toolkit/APPLICATIONS.md>). That helper accepts reviewed evidence; it connects no accounts and opens no pages.
+An explicit request starts reconciliation, not another batch. Read the whole known application history, tracker and registered handoffs, including older unresolved associations. Use only selected, authorized sources through [tracking](<../Application Discovery/docs/tracking.md>) and the [exact-role application helper](<../Application Discovery/support/toolkit/APPLICATIONS.md>). That helper accepts reviewed evidence; it connects no accounts and opens no pages.
 
 Require an exact-role user report or independent native confirmation. A tracker label, timing guess or missing tab is insufficient. Preserve unknown actual submission dates. If Gmail tracking is selected, read fresh full relevant messages with the documented overlap and coverage; if it is unselected, do not access it or claim mail reconciliation. Keep evidence gaps visible.
 
@@ -54,17 +54,17 @@ Record confirmed outcomes and explicitly resolved/abandoned handoffs without del
 
 ## Agent setup reference
 
-Use this section while following [onboarding](ONBOARDING.md). Read the saved configuration and [shared operating rules](<../Application Workflow/docs/operations.md>); reuse the verified tracker, criteria, permissions and source choices. Do not create another workbook or change discovery schedules.
+Use this section while following [onboarding](ONBOARDING.md). Read the saved configuration and [shared operating rules](<../Application Discovery/docs/operations.md>); reuse the verified tracker, criteria, permissions and source choices. Do not create another workbook or change discovery schedules.
 
-From `Application Workflow/support/`, run the existing start check with the actual quoted configuration path:
+From `Application Discovery/support/`, run the existing start check with the actual quoted configuration path:
 
 ```sh
 python3 -m job_search_ops run-check --config '/absolute/private/config.json' --workflow main
 ```
 
-This checks the installed configuration and pending preference-pilot holds. It does not verify current tools or the initial onboarding pilot; completed Application Workflow onboarding remains required. If it is held, follow [preference recovery](<../Application Workflow/docs/preferences.md>) before starting connected work. Setup cannot waive a pending pilot or fill in missing account access. Apply the authoritative [application criteria preflight](ONBOARDING.md#check-application-criteria) before declaring readiness or reserving/opening roles.
+This checks the installed configuration and pending preference-pilot holds. It does not verify current tools or the initial onboarding pilot; completed Application Discovery onboarding remains required. If it is held, follow [preference recovery](<../Application Discovery/docs/preferences.md>) before starting connected work. Setup cannot waive a pending pilot or fill in missing account access. Apply the authoritative [application criteria preflight](ONBOARDING.md#check-application-criteria) before declaring readiness or reserving/opening roles.
 
-Read the selected tracker and [accepted role state](<../Application Workflow/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases, company-wide referral holds and existing application history are required inputs.
+Read the selected tracker and [accepted role state](<../Application Discovery/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases, company-wide referral holds and existing application history are required inputs.
 
 Copy [batch-state.example.json](batch-state.example.json) to a new private location, such as `<installation>/application-batches/state.json`. The directory must be outside the repository and release folder. Check its actual filesystem location, including symlinks and alternate capitalization. Give this dedicated directory owner-only access (`0700`) and its ledger, temporary files and backups owner-only access (`0600`). Never overwrite an existing ledger; recover it instead.
 
@@ -78,7 +78,7 @@ Populate the exact template fields:
 | `created_at`, `updated_at` | Actual timezone-qualified timestamps |
 | `schema_version`, `active_run`, `runs`, `handoffs` | Keep version `1`, `null`, `[]`, `[]` until the first requested run |
 
-Use [one active chat per ledger](ONBOARDING.md#4-give-the-chat-a-durable-starting-point), including submission checks, and save the actual bindings in that chat's private instructions. The template does not implement an automatic lock or background process. Keep backups and every past run private. Do not add unsupported settings to the existing Application Workflow configuration or create a schedule.
+Use [one active chat per ledger](ONBOARDING.md#4-give-the-chat-a-durable-starting-point), including submission checks, and save the actual bindings in that chat's private instructions. The template does not implement an automatic lock or background process. Keep backups and every past run private. Do not add unsupported settings to the existing Application Discovery configuration or create a schedule.
 
 ## Private ledger contract
 

@@ -6,7 +6,7 @@ After [onboarding](ONBOARDING.md), research only the companies named in the curr
 
 Use the named companies, configured specialties and candidate levels. Ask only for scope that the request does not establish. Keep parents/subsidiaries separate unless both are selected. A standalone recruiter request does not require a submitted application.
 
-If the user selects companies *because they applied there*, verify that selection from their actual application history. When using [Application Workflow](../Application%20Workflow/README.md), consult its accepted role identities and [tracking evidence](../Application%20Workflow/docs/tracking.md); do not infer submission from an open tab. This dependency does not automatically trigger recruiter research or change application records.
+If the user selects companies *because they applied there*, verify that selection from their actual application history. When using [Application Discovery](../Application%20Discovery/README.md), consult its accepted role identities and [tracking evidence](../Application%20Discovery/docs/tracking.md); do not infer submission from an open tab. This dependency does not automatically trigger recruiter research or change application records.
 
 Read canonical profile identities, exclusions, opt-outs, replies, prior outreach and existing reservations before adding contacts. Matching names alone cannot merge people. Normalize observed profile URLs by removing tracking parameters and equivalent trailing slashes; merge materially different URLs only with evidence that they identify the same person.
 

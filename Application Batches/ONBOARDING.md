@@ -1,10 +1,10 @@
 # Set up application batches
 
-Give the agent the absolute path to your private [Application Workflow configuration](<../Application Workflow/ONBOARDING.md>). Confirm your application criteria, supported browser profile and batch limits. The agent prepares the ledger using the [setup reference](run.md#agent-setup-reference). Request a batch separately.
+Give the agent the absolute path to your private [Application Discovery configuration](<../Application Discovery/ONBOARDING.md>). Confirm your application criteria, supported browser profile and batch limits. The agent prepares the ledger using the [setup reference](run.md#agent-setup-reference). Request a batch separately.
 
 ## 1. Connect the existing installation
 
-Reuse the completed shared setup and pilot. Verify the installation, tracker, saved job aliases, company-wide holds and application history. Use only accepted jobs saved by central. Check current tool access separately from the [setup check](run.md#agent-setup-reference). Resolve any [preference-pilot hold](<../Application Workflow/docs/preferences.md>) before connected work.
+Reuse the completed shared setup and pilot. Verify the installation, tracker, saved job aliases, company-wide holds and application history. Use only accepted jobs saved by central. Check current tool access separately from the [setup check](run.md#agent-setup-reference). Resolve any [preference-pilot hold](<../Application Discovery/docs/preferences.md>) before connected work.
 
 ### Check application criteria
 
@@ -16,7 +16,7 @@ Before marking setup ready or reserving or opening roles, confirm these values i
 | Where the user can work | `locations.onsite_regions` or `remote_countries` or both, plus `residency_region` and `allow_relocation` |
 | Experience and job requirements | Known `candidate.actual_experience_years` (zero is valid), reviewed `role_policy.experience`, and `blind_policy` if enabled |
 
-Use [preferences](<../Application Workflow/docs/preferences.md>) to save changes. Read back the canonical files and follow any resulting pilot hold. Preserve discovery sources and schedules. Missing criteria block readiness and new pages or reservations. Safe recovery and separate submission checks can continue within existing holds and permissions.
+Use [preferences](<../Application Discovery/docs/preferences.md>) to save changes. Read back the canonical files and follow any resulting pilot hold. Preserve discovery sources and schedules. Missing criteria block readiness and new pages or reservations. Safe recovery and separate submission checks can continue within existing holds and permissions.
 
 ## 2. Confirm your tools and browser
 
@@ -24,11 +24,11 @@ Use the shared [tools guide](../ONBOARDING.md#tools-for-your-choices) to connect
 
 | Tool | Why it is needed |
 |---|---|
-| Supported external browser control | Inspect the actual application destination and leave its tab open. Follow [browser setup](<../Application Workflow/docs/tools.md#native-tools-and-optional-additions>) and discover the host's current controls. |
-| Existing tracker access | Read current jobs, statuses, links and holds through [Google Sheets](<../Application Workflow/docs/sheets-protocol.md>) or [local Excel](<../Application Workflow/docs/local-excel.md>). |
+| Supported external browser control | Inspect the actual application destination and leave its tab open. Follow [browser setup](<../Application Discovery/docs/tools.md#native-tools-and-optional-additions>) and discover the host's current controls. |
+| Existing tracker access | Read current jobs, statuses, links and holds through [Google Sheets](<../Application Discovery/docs/sheets-protocol.md>) or [local Excel](<../Application Discovery/docs/local-excel.md>). |
 | Public search/page reads | Verify current role details and the official application route. |
 | Local files and Python 3.10+ | Keep the private ledger and read accepted role aliases/restrictions with the shared CLI. |
-| Selected submission sources, later | Only an explicit submission-check request needs the sources enabled in [tracking](<../Application Workflow/docs/tracking.md>). Opening pages needs neither Gmail, Calendar nor Apple Messages. |
+| Selected submission sources, later | Only an explicit submission-check request needs the sources enabled in [tracking](<../Application Discovery/docs/tracking.md>). Opening pages needs neither Gmail, Calendar nor Apple Messages. |
 
 Confirm the browser name and authorized profile/session. The agent inspects supported controls without visiting application pages during setup. Do not install Simplify, browser libraries, new credentials or an alternate Google CLI. This workflow does not autofill forms.
 
@@ -45,7 +45,7 @@ Choose how many pages you want and where to keep the private batch ledger. This 
 
 These are configurable limits, not promises of eligible jobs. The first target includes accessible carryovers; a subsequent request adds pages. All unresolved handoffs and reservations count toward the ceiling, even when their accessibility is uncertain. Lowering the ceiling never discards existing work.
 
-The agent creates or recovers the ledger using the [agent setup reference](run.md#agent-setup-reference) and [private ledger contract](run.md#private-ledger-contract). Keep it, its backups and every past run private. The ledger is agent-managed state. It does not provide an automatic lock or background process. Do not add unsupported settings to the existing Application Workflow configuration.
+The agent creates or recovers the ledger using the [agent setup reference](run.md#agent-setup-reference) and [private ledger contract](run.md#private-ledger-contract). Keep it, its backups and every past run private. The ledger is agent-managed state. It does not provide an automatic lock or background process. Do not add unsupported settings to the existing Application Discovery configuration.
 
 ## 4. Give the chat a durable starting point
 
@@ -73,7 +73,7 @@ Setup is ready when the application criteria are confirmed and saved, one operat
 
 Ask the operating chat to update batch limits or browser/session bindings in the private ledger, preserve history and verify the saved values. Limits must be positive integers; both batch sizes must fit the outstanding maximum. Lowering that maximum preserves existing reservations and may leave no capacity for more pages. Follow the ownership handoff above before switching chats.
 
-Change role criteria or source choices through [Application Workflow preferences](<../Application Workflow/docs/preferences.md>), retaining its canonical files and any resulting pilot hold. These changes do not start a batch or enable a schedule.
+Change role criteria or source choices through [Application Discovery preferences](<../Application Discovery/docs/preferences.md>), retaining its canonical files and any resulting pilot hold. These changes do not start a batch or enable a schedule.
 
 ## Your setup summary
 

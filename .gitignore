@@ -24,4 +24,4 @@ token*.json
 *.key
 
 # Workbook rebuild previews are local inspection artifacts.
-Application Workflow/sheets/previews/
+Application Discovery/sheets/previews/
