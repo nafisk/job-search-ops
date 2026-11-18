@@ -24,3 +24,5 @@ Start with [README.md](README.md) to identify the requested workflow. For setup,
 Inspect current changes before editing and preserve unrelated work. Keep procedures in the workflow that owns them. Use root files to route readers.
 
 Check additions and moves against [RELEASE_FILES.txt](<Application Discovery/support/RELEASE_FILES.txt>). Follow the [verification guide](<Application Discovery/docs/verification.md>). Validate documentation and navigation offline.
+
+After verifying a major change, make a local commit scoped to that work so it can be reverted independently. Include the commit hash in the handoff.
