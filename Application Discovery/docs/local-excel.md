@@ -3,7 +3,7 @@
 > **Required when selected:** Python 3.10+, a private `.xlsx` path and Node and `@oai/artifact-tool`. See [runtime setup](tools.md#checks-and-maintenance).
 > **Computer use:** None for workbook writes. Keep the file closed in other apps during a write.
 
-Set `tracker.provider` to `local_xlsx` and choose an absolute private workbook path during [onboarding](../ONBOARDING.md). All selected sources share that workbook. Pass verified absolute paths for Node and `node_modules` to the local writer.
+Set `tracker.provider` to `local_xlsx` and choose a stable, absolute workbook path during [onboarding](../ONBOARDING.md). All selected sources share that workbook. Choose an existing owner-only folder outside the repo if you want to open the workbook directly from Documents. Keep settings and run history in the private installation. Pass verified absolute paths for Node and `node_modules` to the local writer.
 
 The artifact runtime lacks native links, column hiding and `HYPERLINK` calculation. After export, the bridge adds Jobs link relationships, hides Job Key and corrects numeric date caches for exact constant-text formulas. It preserves formulas, other cells and ZIP parts. Reopen with artifact-tool without exporting again, then inspect the file independently. See the Excel [hyperlink](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column) fields.
 

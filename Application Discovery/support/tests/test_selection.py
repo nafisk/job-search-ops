@@ -34,6 +34,17 @@ class SelectionTests(unittest.TestCase):
     def local(self):
         self.h.settings["tracker"] = {"provider": "local_xlsx", "path": str(self.h.root / "tracker.xlsx")}
 
+    def test_local_tracker_can_use_a_separate_owner_only_folder(self):
+        self.local()
+        folder = self.h.base / "Job Search"
+        folder.mkdir(mode=0o700)
+        path = folder / "Job Tracker.xlsx"
+        self.h.settings["tracker"]["path"] = str(path)
+        self.assertEqual(self.load()["tracker"]["path"], str(path))
+        folder.chmod(0o755)
+        with self.assertRaisesRegex(config.ConfigError, "owner-only"):
+            self.load()
+
     def bind_selected(self, cfg):
         setup.init_instance(cfg)
         if cfg["tracker"]["provider"] == "google_sheets":
@@ -270,8 +281,8 @@ class SelectionTests(unittest.TestCase):
         with self.assertRaisesRegex(config.ConfigError, "local_time"):
             self.load()
 
-    def test_local_tracker_cannot_escape_private_instance_or_use_managed_state(self):
-        for target in (self.h.base / "tracker.xlsx", self.h.root / "state/tracker.xlsx", config.REPO_ROOT / "LinkedIn/tracker.xlsx"):
+    def test_local_tracker_requires_an_existing_external_folder_and_avoids_managed_state(self):
+        for target in (self.h.base / "missing/tracker.xlsx", self.h.root / "state/tracker.xlsx", config.REPO_ROOT / "LinkedIn/tracker.xlsx"):
             self.h.settings["tracker"] = {"provider": "local_xlsx", "path": str(target)}
             with self.subTest(path=target), self.assertRaises(config.ConfigError):
                 self.load()

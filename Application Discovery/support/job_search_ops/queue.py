@@ -546,10 +546,11 @@ def confirm_brief_delivery(root, brief_id, delivery_evidence):
             native = _native_delivery(delivery_evidence.get("native_chat_readback"))
             if native.get("thread", {}).get("id") != intent["thread_id"]:
                 raise ProtocolError("Native chat readback belongs to another chat")
+            expected_text = intent["bodies"]["text/markdown"].removesuffix("\n")
             matches = []
             def scan(value):
                 if isinstance(value, dict):
-                    if value.get("type") == "agentMessage" and value.get("phase") in {"final_answer", "final"} and value.get("text", "").replace("\r\n", "\n") == intent["bodies"]["text/markdown"]:
+                    if value.get("type") == "agentMessage" and value.get("phase") in {"final_answer", "final"} and value.get("text", "").replace("\r\n", "\n").removesuffix("\n") == expected_text:
                         if value.get("id"):
                             matches.append(value["id"])
                     for child in value.values():

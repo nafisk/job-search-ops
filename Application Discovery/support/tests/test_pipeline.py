@@ -534,7 +534,7 @@ class PipelineTests(unittest.TestCase):
         snapshot.write_text(json.dumps({"roles": receipt["new_jobs"]}))
         body = self.root / "body.md"
         rendered = "Example Company — Software Engineer [Apply](https://careers.example.com/jobs/req-1)"
-        body.write_text(rendered)
+        body.write_text(rendered + "\n")
         queue.mark_brief_sending(self.root, "chat-daily", {"channel": "chat", "thread_id": "central", "snapshot_path": str(snapshot), "chat_body_path": str(body)})
         raw = {"thread": {"id": "central"}, "turns": [{"status": "completed", "completedAt": int(time.time()), "items": [{"type": "agentMessage", "phase": "final_answer", "id": "final-1", "text": rendered}]}]}
         wrong = copy.deepcopy(raw)

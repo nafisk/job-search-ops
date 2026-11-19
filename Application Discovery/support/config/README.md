@@ -13,7 +13,7 @@ Version two makes each branch explicit:
 | Setting | Selection |
 | --- | --- |
 | `tracker.provider` | `google_sheets` or `local_xlsx`. |
-| `tracker.path` | Null for Google; an absolute `.xlsx` path inside the private instance for local Excel. |
+| `tracker.path` | Null for Google. Local Excel uses an absolute `.xlsx` path in the private instance or in a separate owner-only workbook folder outside the repo. |
 | `discovery.email`, `discovery.portals` | Select email alerts and referral portal research independently. |
 | `discovery.coordinated` | Use one search profile for selected Gmail alerts and Blind research. Run selected referral portals on request. |
 | `modules.blind` | Choose rated-company discovery separately. |

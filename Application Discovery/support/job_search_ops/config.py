@@ -5,6 +5,7 @@ import copy
 import importlib.util
 import json
 import math
+import os
 import re
 from pathlib import Path
 
@@ -217,8 +218,17 @@ def load_config(path):
         require(value["tracker"]["provider"] in ("google_sheets", "local_xlsx"), "tracker.provider", "unsupported tracker")
         if value["tracker"]["provider"] == "local_xlsx":
             target = local_path(value["tracker"]["path"], source.parent, "tracker.path", absolute=True)
-            require(target.is_relative_to(root) and target.suffix.lower() == ".xlsx", "tracker.path", "choose an .xlsx file inside the private instance")
-            require(target.relative_to(root).parts[0] not in {"state", "staging", "prompts", "evidence", "integrations"}, "tracker.path", "use a dedicated workbook path outside managed state")
+            require(target.suffix.lower() == ".xlsx" and not filesystem_contains(REPO_ROOT, target),
+                    "tracker.path", "choose an .xlsx file outside the repository")
+            if target.is_relative_to(root):
+                require(target.relative_to(root).parts[0].casefold() not in {"state", "staging", "prompts", "evidence", "integrations"},
+                        "tracker.path", "use a dedicated workbook path outside managed state")
+            else:
+                require(not filesystem_contains(root, target) and target.parent.is_dir(), "tracker.path",
+                        "choose an existing private workbook folder outside the installation or use its exact path")
+                directory = target.parent.stat()
+                require(directory.st_uid == os.getuid() and not directory.st_mode & 0o077, "tracker.path",
+                        "the workbook folder must have owner-only permissions")
             value["tracker"]["path"] = str(target)
         else:
             require(value["tracker"]["path"] is None, "tracker.path", "Google tracker uses its verified native ID, not a local path")
