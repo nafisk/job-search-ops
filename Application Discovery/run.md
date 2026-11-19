@@ -2,6 +2,8 @@
 
 Load the private installation from [onboarding](ONBOARDING.md). The coordinator writes the tracker and delivers the brief through the saved channel. In coordinated mode, [Gmail alerts](helpers/email-discovery.md) and [Blind research](<Blind Company Research/run.md>) share a search profile. Run [referral portal searches](helpers/referral-portals.md) on request for named companies. An existing separate Blind schedule follows its saved plan until cutover.
 
+Use sub-agents for independent source collection and evidence review where supported. Give each worker a distinct scope and evidence path. Use the coordinator's model at high reasoning when available. Never run a sub-agent at ultra reasoning. The coordinator owns the shared queue, tracker writes and report delivery.
+
 ## Every run
 
 **Run this check before source access or dispatch.** Run it from `Application Discovery/support/`.
