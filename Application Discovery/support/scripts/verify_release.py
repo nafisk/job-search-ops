@@ -2,8 +2,10 @@
 from __future__ import annotations
 
 import json
+from itertools import chain
 from pathlib import Path
 import re
+import subprocess
 import sys
 from urllib.parse import unquote, urlsplit
 import xml.etree.ElementTree as ET
@@ -58,17 +60,32 @@ def files(root=None):
         path = Path(entry)
         if not entry or path.is_absolute() or ".." in path.parts or path.as_posix() != entry:
             raise ValueError("release inventory contains an unsafe path")
+        if path.parts[0].casefold() == "private":
+            raise ValueError("release inventory includes the local private directory")
         if path.parts[0] == ".git" or generated_file(path):
             raise ValueError("release inventory includes generated or Git files")
+    private = root / "private"
+    if private.is_symlink() or (private.exists() and not private.is_dir()):
+        raise ValueError("the local private path must be a real directory")
+    if (root / ".git").exists():
+        result = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "-z", "--", ":(icase)private"],
+            capture_output=True,
+        )
+        if result.returncode:
+            raise ValueError("could not check Git tracking for the local private directory")
+        if result.stdout:
+            raise ValueError("the local private directory contains Git-tracked files")
     observed = set()
-    for path in root.rglob("*"):
-        relative = path.relative_to(root)
-        if relative.parts[0] == ".git":
+    for top in root.iterdir():
+        if top.name in {".git", "private"}:
             continue
-        if path.is_symlink():
-            raise ValueError("distributed symlink: " + relative.as_posix())
-        if path.is_file() and not generated_file(path):
-            observed.add(relative.as_posix())
+        for path in chain((top,), top.rglob("*")):
+            relative = path.relative_to(root)
+            if path.is_symlink():
+                raise ValueError("distributed symlink: " + relative.as_posix())
+            if path.is_file() and not generated_file(path):
+                observed.add(relative.as_posix())
     if observed != set(entries):
         missing, extra = sorted(set(entries) - observed), sorted(observed - set(entries))
         raise ValueError(f"release inventory differs; missing={missing}; unreviewed={extra}")

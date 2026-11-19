@@ -9,11 +9,11 @@ node_modules/
 *.egg-info/
 .pytest_cache/
 
-# Personal runtime data belongs outside this repository.
+# Local private files and runtime artifacts stay out of Git.
 .env
 .env.*
 !.env.example
-private/
+/private/
 state/
 staging/
 runs/

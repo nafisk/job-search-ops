@@ -13,7 +13,7 @@ Start with [README.md](README.md) to identify the requested workflow. For setup,
 - Reuse the selected user's confirmed facts and canonical private settings. Examples are shapes, not real choices, facts, accounts or authorization. Never substitute another person's deployment.
 - LinkedIn alerts and Blind research are separate entry points into one jobs tracker. Keep the existing `email`, `portal` and `blind` source keys and source-specific policies. Blind research queues evidence; only central accepts and saves it. Do not initialize a second tracker or require email/referrals for a Blind-only setup.
 - Connect only selected tools and respect the requested operation. Application Discovery's initialization, `doctor`, writer and scheduling rules do not apply to standalone Resume or LinkedIn work.
-- Keep operational private data outside the repository and exports. Preserve existing locations, IDs, history, user edits and unrelated live workflows. Read only private material relevant to the selected scope.
+- Use `private/setup-summary.md` if the checkout has one. Keep personal inputs in the ignored `private/` folder or a separate private location. Keep runtime state outside the checkout and private files out of releases. Preserve existing IDs, history, user edits and unrelated live workflows.
 - Follow each guide's setup, pilot and run boundaries. The user fills and submits applications. LinkedIn profile edits follow that runbook's reviewed approval process.
 - Finish operational setup with the [private setup summary](ONBOARDING.md#your-setup-summary). Link authoritative records and report actual verification/gaps; the summary grants no permissions and overrides no execution holds.
 

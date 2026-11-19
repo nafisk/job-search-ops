@@ -43,11 +43,11 @@ Use the selected guide's access checks and report any missing access that affect
 
 Provide the private configuration or ledger path. Read its choices and verification records before asking for missing information. Preserve active settings, trackers and history.
 
-Keep private data outside the repo and shared exports. Check resolved paths, including symlinks and case aliases, and follow the guide's permissions. Keep one authoritative configuration per workflow.
+Keep personal inputs in the Git-ignored `private/` folder or a separate private location. Keep the runtime installation and its state outside the checkout. Use owner-only permissions and one authoritative configuration per workflow.
 
 ## Your setup summary
 
-Update `setup-summary.md` in the private setup folder. Preserve unrelated entries. For supplied-content reviews, return the handoff in chat.
+Update `private/setup-summary.md` if you use the checkout's private folder. Otherwise, put the summary in your private setup folder. Preserve unrelated entries. For supplied-content reviews, return the handoff in chat.
 
 Include these items:
 

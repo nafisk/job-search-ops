@@ -18,7 +18,7 @@ Use these local helpers with Python 3.10+ and the private runtime profile from [
 
 The [workflow support CLI](../README.md) manages setup, the shared queue, tracker journals, verified saves and delivery receipts. Do not substitute an old simulated storage or delivery adapter. Native access comes from the selected tools in [tool requirements](../../docs/tools.md).
 
-Personal profiles, working company lists/notes, resumes, evidence and history belong outside the repository. The approved [starter list](<../../Blind Company Research/blind-companies.json>) is copied and reviewed during onboarding; its historical ratings are not freshly verified. Example values never authorize access or stand in for live evidence.
+Keep personal inputs in the main checkout's ignored `private/` folder or another private location. Keep runtime state and evidence in the external installation. The approved [starter list](<../../Blind Company Research/blind-companies.json>) is copied and reviewed during onboarding; its historical ratings are not freshly verified. Example values never authorize access or stand in for live evidence.
 
 ## Maintenance only
 

@@ -33,7 +33,7 @@ For a controlled export, review source changes and the inventory, run local chec
 python3 -B scripts/export_release.py /absolute/output/job-search-ops.zip
 ```
 
-The destination must be new and outside the repository. The exporter refuses unexpected files (including `.env`, personal documents and unknown cache contents), packages only reviewed paths, and verifies the exact extracted archive. It prints the ZIP hash and file count. It does not commit, publish or change live state.
+The destination must be new and outside the repository. The exporter skips the checkout's `private/` directory and rejects Git-tracked files there. Elsewhere, it refuses unexpected files, packages only reviewed paths and verifies the extracted archive. It prints the ZIP hash and file count. It does not commit, publish or change live state.
 
 Extract that archive into a separate folder and run all local checks **from the extracted copy**. Exercise fictional setup outside it: Excel + rated targets/manual/chat, Google + email/portals, and tracking-only choices. Confirm unselected tools stay absent, missing live evidence stays unready, manual mode proposes no schedules and starter ratings retain historical/unknown-date provenance. Check the new preference, referral and tracking procedures. Fixtures cannot certify live behavior.
 

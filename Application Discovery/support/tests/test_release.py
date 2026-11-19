@@ -49,6 +49,17 @@ class ReleaseInventoryTests(unittest.TestCase):
                 release.files(self.root)
             path.unlink()
 
+    def test_local_private_directory_is_excluded_and_cannot_be_allowlisted(self):
+        directory = self.root / "private"
+        directory.mkdir()
+        file = directory / "profile.json"
+        file.write_text("fictional private input")
+        self.assertNotIn(file, release.files(self.root))
+        with self.manifest.open("a") as manifest:
+            manifest.write("private/profile.json\n")
+        with self.assertRaisesRegex(ValueError, "local private directory"):
+            release.files(self.root)
+
     def test_generated_cache_is_not_exported(self):
         cache = self.root / '__pycache__/module.cpython-313.pyc'
         cache.parent.mkdir()

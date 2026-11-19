@@ -47,8 +47,10 @@ Profile version two allows null `account_identity` and `report_recipient` when
 unused. Selected Google access requires its account identity, and self-email
 requires its recipient. Runtime profiles make unselected integrations inert.
 
-Keep the private instance outside the entire repository. Its parent must already
-exist; initialization creates owner-only directories and files. Symlinks, parent
+Keep the private runtime instance outside the checkout. Résumés, profile references
+and private source lists can live under the checkout's ignored `private/` directory.
+The instance parent must already exist. Initialization creates owner-only files
+and directories. Symlinks, parent
 traversal, substitutions and URLs are not private path syntax. Existing state is
 preserved. Change ordinary preferences through [plan/apply](../../docs/preferences.md); replacing accounts, tracker or paths requires a separately reviewed migration.
 

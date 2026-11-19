@@ -97,6 +97,14 @@ def local_path(value, base, field, *, absolute=False):
     return no_symlink(path)
 
 
+def check_private_input(path, field):
+    path = Path(path)
+    if filesystem_contains(REPO_ROOT, path):
+        private = no_symlink(REPO_ROOT / "private")
+        require(filesystem_contains(private, path.parent), field,
+                "must be outside repository or under its ignored private/ directory")
+
+
 def toolkit_profile_module():
     path = SUPPORT_ROOT / "toolkit" / "profile.py"
     require(path.is_file(), "toolkit", "reviewed profile validator is missing")
@@ -190,7 +198,7 @@ def load_config(path):
     require(Path(resolved["state_root"]) == root / "state", "private.state_root", "must match instance_root/state")
     for name, ref in resolved.items():
         no_symlink(ref)
-        require(not filesystem_contains(REPO_ROOT, ref), "private reference", "must be outside repository")
+        check_private_input(ref, "private reference")
 
     keys(value["modules"], " ".join(MODULES), "modules")
     require(all(type(v) is bool for v in value["modules"].values()), "modules", "expected booleans")
@@ -250,7 +258,7 @@ def load_config(path):
     resume = value["candidate"]["resume_path"]
     if resume is not None:
         resume = local_path(resume, source.parent, "candidate.resume_path", absolute=True)
-        require(not filesystem_contains(REPO_ROOT, resume), "candidate.resume_path", "must remain outside repository")
+        check_private_input(resume, "candidate.resume_path")
         value["candidate"]["resume_path"] = str(resume)
     if legacy or value["modules"]["blind"] or value["blind_policy"] is not None:
         keys(value["blind_policy"], "version max_required_years stretch_required_years exclude_explicit_senior min_rating excluded_title_terms", "blind_policy")
@@ -276,7 +284,7 @@ def load_config(path):
         ref = value["sources"][name]
         if ref is not None:
             ref = local_path(ref, source.parent, f"sources.{name}")
-            require(not filesystem_contains(REPO_ROOT, ref), f"sources.{name}", "private source choices must be outside repository")
+            check_private_input(ref, f"sources.{name}")
             value["sources"][name] = str(ref)
 
     keys(value["schedules"], "main blind", "schedules")

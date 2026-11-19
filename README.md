@@ -10,6 +10,6 @@ Choose a workflow and give your agent its runbook.
 
 ## Get started
 
-For a resume or LinkedIn content review, supply the material and the complete runbook. For job discovery, keep the complete repo or release ZIP contents in a permanent folder and follow [onboarding](ONBOARDING.md). Keep settings and personal data in a private folder outside this repo.
+For a resume or LinkedIn content review, supply the material and the complete runbook. For job discovery, keep the complete repo or release ZIP contents in a permanent folder and follow [onboarding](ONBOARDING.md). Keep personal inputs in the local `private/` folder. Git and release exports exclude it. Discovery keeps its runtime state in its separate installation folder.
 
 Alerts, referrals and Blind research share one tracker. See the [Application Discovery guide index](<Application Discovery/docs/source-map.md>) for the runbook and schedule checks.

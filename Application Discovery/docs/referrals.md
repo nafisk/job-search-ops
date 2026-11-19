@@ -6,7 +6,7 @@ Set `sources.referral_companies_path` to your private company list. Coordinated 
 
 Reuse the user's referral companies. Ask for missing decisions. A contact name is optional. Confirm which names may go in the selected tracker and keep any others in private notes.
 
-Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Confirm each employer and its stable `company_id` with the user. Add an optional `aliases` array of confirmed employer names. Include a subsidiary only when the user confirms that their referral covers it. Leave unknown contacts and careers links blank.
+Copy the [fictional example](../support/config/examples/referral-companies.json) into the ignored `private/` folder or a separate private location. Confirm each employer and its stable `company_id` with the user. Add an optional `aliases` array of confirmed employer names. Include a subsidiary only when the user confirms that their referral covers it. Leave unknown contacts and careers links blank.
 
 The Jobs **Referral** column shows **Available** for a unique employer match and is blank otherwise. A match means the employer is on your list. If a name points to more than one company, review it before adding an alias. Use **Application Status** or **Notes** to track your next step.
 

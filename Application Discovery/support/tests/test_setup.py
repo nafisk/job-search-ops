@@ -146,6 +146,25 @@ class SetupTests(unittest.TestCase):
                     with self.assertRaisesRegex(ConfigError, "outside repository"):
                         load_config(self.config_path)
 
+    def test_local_private_directory_can_supply_personal_inputs(self):
+        checkout = self.base / "workflow-checkout"
+        private = checkout / "private"
+        private.mkdir(mode=0o700, parents=True)
+        resume = private / "resume.pdf"
+        source = private / "companies.json"
+        notes = private / "facts.md"
+        self.settings["candidate"]["resume_path"] = str(resume)
+        self.settings["sources"]["rated_companies_path"] = str(source)
+        self.profile["private"]["refs"]["applicant_facts"] = str(notes)
+        self.save_sources()
+
+        with patch("job_search_ops.config.REPO_ROOT", checkout):
+            config = load_config(self.config_path)
+            self.assertEqual(config["candidate"]["resume_path"], str(resume))
+            self.assertEqual(config["sources"]["rated_companies_path"], str(source))
+            self.assertEqual(config["_private_paths"]["applicant_facts"], str(notes))
+            self.assertEqual(config["instance_root"], str(self.root))
+
     def test_main_does_not_require_authenticated_browser_but_manual_outreach_does(self):
         self.profile["integrations"]["browser"] = {"enabled": False, "required": False,
                                                      "connection_ref": None, "expected_identity": None}
