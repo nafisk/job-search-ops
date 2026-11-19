@@ -20,7 +20,7 @@ Run commands from `Application Discovery/support/`. Pass the private directory c
 
    For **chat**, the intent uses `channel: "chat"`, the configured `thread_id`, `snapshot_path` and `chat_body_path`. Return the frozen body as the final response in that chat. On the next invocation, read and save the native history through the completed turn. Match the actual final message and full body to the intent.
 
-   For **self-email**, use `recipient`, `subject` and `plain_body_path` and/or `html_body_path` in the intent, then send through authorized native Gmail after verifying the account and recipient. Read Sent by exact report identity, recipient and time window. Read the full matching email and confirm the `SENT` label and decoded body. Reconcile uncertainty before any retry. Outreach requires its own request.
+   For **self-email**, use the [Job Search email template](#job-search-email-template). Record `recipient`, `subject` and `plain_body_path` and/or `html_body_path` in the intent, then send through authorized native Gmail after verifying the account and recipient. Read Sent by exact report identity, recipient and time window. Read the full matching email and confirm the `SENT` label and decoded body. Reconcile uncertainty before any retry. Outreach requires its own request.
 5. **Record delivery from readback.** The evidence file includes `verified_at` and either `native_chat_readback` or `native_sent_readback`, pointing to the retained native response. Require a complete error-free final chat message or actual Sent message at or after the attempt, with a message ID that no other brief acknowledged.
 
    ```sh
@@ -28,6 +28,26 @@ Run commands from `Application Discovery/support/`. Pass the private directory c
    ```
 
 Keep the brief and its frozen set pending while delivery is uncertain. Newly saved receipts wait for the next brief. See [native evidence](native-evidence.md#first-pass-acceptance-and-delivery) for the binding checks.
+
+## Job Search email template
+
+Use `Job Search {Month} {ordinal day}` as the subject, based on the run date in the configured timezone. For example, `Job Search November 18th`. Use the full month name, with `th` for days 11, 12 and 13.
+
+Use one line per saved job with the escaped company name, a middle dot and the linked exact job title. Group jobs by source and list each job once. Use `<p>No new matches.</p>` for a source with zero saves and describe any incomplete coverage on its own line. Put unique companies with verified referrals from the saved jobs in the final section. Use `None` when there are no matches.
+
+```html
+<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.55">
+  <p><strong>Gmail alerts</strong></p>
+  {{gmail_content}}
+  <hr style="border:0;border-top:1px solid #ddd;margin:18px 0">
+  <p><strong>Blind research</strong></p>
+  {{blind_content}}
+  <hr style="border:0;border-top:1px solid #ddd;margin:18px 0">
+  <p><strong>Referrals for this run</strong> · {{referral_companies}}</p>
+</div>
+```
+
+Use a bulleted list with one company and linked title per job. Use the same section order and both separators in the plain-text MIME alternative, with the exact URL after each title.
 
 ## Stay quiet without blocking later reports
 
