@@ -79,6 +79,13 @@ Read native `CellData` for all managed columns from row 4 through the **last all
 userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns
 ```
 
+If an adopted Jobs tab uses a native table dropdown, include the actual
+`sheets[].tables` metadata in preparation and fresh prewrite reads. If the
+connector's metadata call omits tables, use a same-value sheet-property readback
+batch with `include_spreadsheet_in_response: true` and grid data off. Take the
+returned Jobs table range and status column options from that response. The
+writer uses the table dropdown for rows inserted within its range.
+
 Split large reads into contiguous bounded chunks. Save each raw cell response with its **actual** request:
 
 ```json

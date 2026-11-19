@@ -172,7 +172,7 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
         addition_rows = []
         for item in plan.get("new_records", []):
             links[item["job_key"]] = {"url": item["url"]}
-            addition_rows.append(next_rows["Jobs"])
+            addition_rows.append((next_rows["Jobs"], item["status"]))
             for tab, values in new_record_rows(item, policy["timezone"], q.now()).items():
                 row = next_rows[tab]
                 next_rows[tab] += 1
@@ -201,17 +201,20 @@ def prepare(root, workbook_id, snapshot, plan, owner="central"):
             bounds = {"sheetId": table["id"], "startRowIndex": change["row"], "endRowIndex": change["row"] + 1, "startColumnIndex": change["column"], "endColumnIndex": change["column"] + 1}
             requests.append({"updateCells": {"range": bounds, "rows": [{"values": [{"userEnteredValue": change["after"]}]}], "fields": "userEnteredValue"}})
         table = snap.tables["Jobs"]
-        for row in addition_rows:
+        status_table = snap.status_table()
+        for row, status in addition_rows:
             def bounds(field):
                 col = table["headers"][field]
                 return {"sheetId": table["id"], "startRowIndex": row, "endRowIndex": row + 1, "startColumnIndex": col, "endColumnIndex": col + 1}
             requests.append({"repeatCell": {"range": bounds("Job Link"), "cell": {"userEnteredFormat": {"textFormat": {}}, "textFormatRuns": []}, "fields": "userEnteredFormat.textFormat.link,textFormatRuns"}})
             for field in ("First Seen", "Last Seen"):
                 requests.append({"repeatCell": {"range": bounds(field), "cell": {"userEnteredFormat": {"numberFormat": {"type": "DATE", "pattern": "yyyy-mm-dd"}}}, "fields": "userEnteredFormat.numberFormat"}})
-            requests.append({"setDataValidation": {"range": bounds("Application Status"), "rule": {"condition": {"type": "ONE_OF_LIST", "values": [{"userEnteredValue": value} for value in sheets.STATUSES]}, "strict": True, "showCustomUi": True}}})
+            requests.extend(sheets.status_validation(table, status_table, insertion_starts["Jobs"], row, status))
         if addition_rows:
             key_col = table["headers"]["Job Key"]
             requests.append({"updateDimensionProperties": {"range": {"sheetId": table["id"], "dimension": "COLUMNS", "startIndex": key_col, "endIndex": key_col + 1}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
         journal = {"schema_version": 1, "journal_id": journal_id, "operation": "tracking", "provider": "google_sheets", "workbook_id": workbook_id, "owner": owner, "status": "prepared", "prepared_at": q.now(), "policy_sha256": q.digest(policy), "packet_keys": [], "packet_hashes": {}, "before_state": before, "changes": changes, "insertions": insertions, "requests": requests, "new_jobs": [], "source_events": [], "expected_links": links, "attempts": 0, "tracking_plan": plan, "tracking_changes": tracking_changes, "before_geometry": {name: table["rows"] for name, table in snap.tables.items()}}
+        if status_table:
+            journal["status_table"] = status_table
         q.atomic(sheets._journal_path(base, journal_id), journal)
         return journal

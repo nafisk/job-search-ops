@@ -186,6 +186,23 @@ class Snapshot:
         if self.summary is None:
             raise q.ProtocolError("Snapshot needs Daily Summary A4:B12 for formula verification")
 
+    def status_table(self):
+        """Return the native Jobs table dropdown, if present in metadata."""
+        jobs = self.tables["Jobs"]
+        column = jobs["headers"]["Application Status"]
+        sheet = next(item for item in self.raw["sheets"] if item["properties"]["sheetId"] == jobs["id"])
+        for table in sheet.get("tables", []):
+            bounds = table.get("range", {})
+            start = bounds.get("startColumnIndex", 0)
+            if not start <= column < bounds.get("endColumnIndex", 0):
+                continue
+            for prop in table.get("columnProperties", []):
+                if prop.get("columnIndex", 0) == column - start and prop.get("columnType") == "DROPDOWN":
+                    rule = prop.get("dataValidationRule", {}).get("condition", {})
+                    options = [value.get("userEnteredValue") for value in rule.get("values", [])]
+                    return {"range": bounds, "options": options}
+        return None
+
     @staticmethod
     def _coverage(name, columns, rows, ranges):
         spans = {c: [] for c in columns}
@@ -232,6 +249,20 @@ class Snapshot:
                 rows.append(item)
             result[name] = {"id": table["id"], "headers": table["headers"], "rows": rows}
         return result
+
+
+def status_validation(jobs, table, insert_at, row, value):
+    """Use the native table dropdown for rows inserted inside its bounds."""
+    if table and table["range"].get("startRowIndex", 0) < insert_at < table["range"]["endRowIndex"]:
+        if value not in table["options"]:
+            raise q.ProtocolError("Application Status is unavailable in the native Jobs table dropdown")
+        return []
+    col = jobs["headers"]["Application Status"]
+    bounds = {"sheetId": jobs["id"], "startRowIndex": row, "endRowIndex": row + 1,
+              "startColumnIndex": col, "endColumnIndex": col + 1}
+    rule = {"condition": {"type": "ONE_OF_LIST", "values": [{"userEnteredValue": status} for status in STATUSES]},
+            "strict": True, "showCustomUi": True}
+    return [{"setDataValidation": {"range": bounds, "rule": rule}}]
 
 
 def snapshot_view(value, workbook_id):
@@ -646,6 +677,7 @@ def prepare(root, workbook_id, snapshot, owner):
             requests.append({"updateCells": {"range": {"sheetId": table["id"], "startRowIndex": change["row"], "endRowIndex": change["row"] + 1, "startColumnIndex": change["column"], "endColumnIndex": change["column"] + 1}, "rows": [{"values": [{"userEnteredValue": change["after"]}]}], "fields": "userEnteredValue"}})
         jobs_table = snap.tables["Jobs"]
         requests.append({"updateDimensionProperties": {"range": {"sheetId": jobs_table["id"], "dimension": "COLUMNS", "startIndex": jobs_table["headers"]["Job Key"], "endIndex": jobs_table["headers"]["Job Key"] + 1}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
+        status_table = snap.status_table() if snap.provider == "google_sheets" else None
         for job in new_jobs:
             row = jobs[job["job_key"]][0]
             link_col = jobs_table["headers"]["Job Link"]
@@ -653,8 +685,7 @@ def prepare(root, workbook_id, snapshot, owner):
             for field in ("First Seen", "Last Seen"):
                 col = jobs_table["headers"][field]
                 requests.append({"repeatCell": {"range": {"sheetId": jobs_table["id"], "startRowIndex": row, "endRowIndex": row + 1, "startColumnIndex": col, "endColumnIndex": col + 1}, "cell": {"userEnteredFormat": {"numberFormat": {"type": "DATE", "pattern": "yyyy-mm-dd"}}}, "fields": "userEnteredFormat.numberFormat"}})
-            col = jobs_table["headers"]["Application Status"]
-            requests.append({"setDataValidation": {"range": {"sheetId": jobs_table["id"], "startRowIndex": row, "endRowIndex": row + 1, "startColumnIndex": col, "endColumnIndex": col + 1}, "rule": {"condition": {"type": "ONE_OF_LIST", "values": [{"userEnteredValue": s} for s in STATUSES]}, "strict": True, "showCustomUi": True}}})
+            requests.extend(status_validation(jobs_table, status_table, insertion_starts["Jobs"], row, "New"))
         journal_id = q.digest([workbook_id, [e["packet_key"] for e in entries], q.digest(before)])
         journal = {"schema_version": 1, "journal_id": journal_id, "workbook_id": workbook_id, "owner": owner, "status": "prepared", "prepared_at": q.now(), "policy_sha256": q.digest(q.read(base / "approved-policies.json")), "packet_keys": [e["packet_key"] for e in entries], "packet_hashes": {e["packet_key"]: e["packet_sha256"] for e in entries}, "before_state": before, "changes": changes, "insertions": insertions, "requests": requests, "new_jobs": new_jobs, "source_events": source_events, "expected_links": {key: {"url": url} for url, key in existing_urls.items()}, "attempts": 0}
         journal.update(role_aliases=role_aliases, referral_restrictions=[restrictions[key] for key in sorted(touched_restrictions)], referral_updates=referral_updates)
@@ -665,6 +696,8 @@ def prepare(root, workbook_id, snapshot, owner):
         if referral_review:
             journal["referral_review"] = referral_review
         journal["provider"] = snap.provider
+        if status_table:
+            journal["status_table"] = status_table
         if snap.provider == "local_xlsx":
             journal.update(requests=[], insertions={})
         q.atomic(_journal_path(base, journal_id), journal)
@@ -707,6 +740,8 @@ def authorize_write(root, journal_id, fresh_snapshot):
         if view.provider != journal.get("provider", "google_sheets"):
             raise q.ProtocolError("Readback provider differs from journal")
         actual = view.state()
+        if view.provider == "google_sheets" and view.status_table() != journal.get("status_table"):
+            raise q.ProtocolError("Jobs table dropdown changed since planning; cancel and re-plan")
         if journal.get("operation") == "tracking" and {name: table["rows"] for name, table in view.tables.items()} != journal["before_geometry"]:
             raise q.ProtocolError("Workbook geometry changed since tracking planning; cancel and re-plan")
         if actual != journal["before_state"]:

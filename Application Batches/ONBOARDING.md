@@ -4,7 +4,7 @@ Give the agent the absolute path to your private [Application Discovery configur
 
 ## 1. Connect the existing installation
 
-Reuse the completed shared setup and pilot. Verify the installation, tracker, saved job aliases, company-wide holds and application history. Use only accepted jobs saved by central. Check current tool access separately from the [setup check](run.md#agent-setup-reference). Resolve any [preference-pilot hold](<../Application Discovery/docs/preferences.md>) before connected work.
+Reuse the completed shared setup and pilot. Verify the installation, tracker, saved job aliases and application history. Use only accepted jobs saved by central. Check current tool access separately from the [setup check](run.md#agent-setup-reference). Resolve any [preference-pilot hold](<../Application Discovery/docs/preferences.md>) before connected work.
 
 ### Check application criteria
 
@@ -25,9 +25,9 @@ Use the shared [tools guide](../ONBOARDING.md#tools-for-your-choices) to connect
 | Tool | Why it is needed |
 |---|---|
 | Supported external browser control | Inspect the actual application destination and leave its tab open. Follow [browser setup](<../Application Discovery/docs/tools.md#native-tools-and-optional-additions>) and discover the host's current controls. |
-| Existing tracker access | Read current jobs, statuses, links and holds through [Google Sheets](<../Application Discovery/docs/sheets-protocol.md>) or [local Excel](<../Application Discovery/docs/local-excel.md>). |
+| Existing tracker access | Read current jobs, statuses and links through [Google Sheets](<../Application Discovery/docs/sheets-protocol.md>) or [local Excel](<../Application Discovery/docs/local-excel.md>). |
 | Public search/page reads | Verify current role details and the official application route. |
-| Local files and Python 3.10+ | Keep the private ledger and read accepted role aliases/restrictions with the shared CLI. |
+| Local files and Python 3.10+ | Keep the private ledger and read accepted job aliases with the shared CLI. |
 | Selected submission sources, later | Only an explicit submission-check request needs the sources enabled in [tracking](<../Application Discovery/docs/tracking.md>). Opening pages needs neither Gmail, Calendar nor Apple Messages. |
 
 Confirm the browser name and authorized profile/session. The agent inspects supported controls without visiting application pages during setup. Do not install Simplify, browser libraries, new credentials or an alternate Google CLI. This workflow does not autofill forms.

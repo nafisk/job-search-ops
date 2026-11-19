@@ -218,6 +218,25 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(queue.pending(self.root), [])
         self.assertEqual(sheets.verify_and_commit(self.root, journal["journal_id"], self.connector.snapshot()), receipt)
 
+    def test_native_jobs_table_keeps_its_dropdown_on_insert(self):
+        tab = self.connector.tab("Jobs")
+        tab["tables"] = [{
+            "range": {"sheetId": tab["properties"]["sheetId"], "startRowIndex": 3,
+                      "endRowIndex": 5, "startColumnIndex": 0, "endColumnIndex": 16},
+            "columnProperties": [{
+                "columnIndex": 5, "columnType": "DROPDOWN",
+                "dataValidationRule": {"condition": {"type": "ONE_OF_LIST",
+                                                    "values": [{"userEnteredValue": "New"}]}},
+            }],
+        }]
+        journal = self.prepare(packet())
+        self.assertFalse(any("setDataValidation" in request for request in journal["requests"]))
+        snapshot = self.connector.snapshot()
+        snapshot["sheets"][0]["tables"][0]["columnProperties"][0]["dataValidationRule"]["condition"]["values"] = []
+        with self.assertRaisesRegex(queue.ProtocolError, "dropdown changed"):
+            sheets.authorize_write(self.root, journal["journal_id"], snapshot)
+        self.assertEqual(sheets.authorize_write(self.root, journal["journal_id"], self.connector.snapshot())["requests"], journal["requests"])
+
     def test_referral_matching_updates_one_verified_row_across_sources(self):
         path = self.root.resolve() / "referrals.json"
         base = queue.storage(self.root)
