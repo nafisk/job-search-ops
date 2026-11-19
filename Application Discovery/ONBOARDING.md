@@ -8,7 +8,7 @@ Ask one choice at a time. Reuse saved answers. Choose at least one discovery or 
 
 | Choice | Ask or confirm |
 | --- | --- |
-| Job discovery | LinkedIn email alerts, referral portals, Blind companies, or a combination. Confirm the search profile below. |
+| Job discovery | Gmail job alerts, Blind companies, or both. Save a referral list to label matches. Ask for targeted portal searches when needed. |
 | Jobs tracker | Local Excel path or Google account and workbook destination. |
 | Application tracking | Gmail, Calendar, Messages, or off. Confirm the selected accounts, scope, and initial window. |
 | Timing | Timezone and manual or scheduled runs. Confirm times and notifications only for requested schedules. |
@@ -20,10 +20,12 @@ Ask one choice at a time. Reuse saved answers. Choose at least one discovery or 
 
 Follow the [résumé intake guide](docs/resume-intake.md) to draft the experience summary, confirm search preferences and prepare the private settings. Tracking-only setup can skip this step.
 
+Set `discovery.coordinated` to `true` to run the selected Gmail and Blind sources with the same search profile. Use the main schedule if requested. Set `discovery.portals` to `true` only if you want on-demand portal searches. Referral matching uses the saved company list with either setting.
+
 ## Prepare selected sources
 
 - [LinkedIn alerts](docs/linkedin-alerts.md) for saved searches and verified Gmail delivery.
-- [Referral portals](docs/referrals.md) for the user's companies, optional contacts and holds. Test reusable searches during the pilot.
+- [Referral matching](docs/referrals.md) for companies and holds. Review a matched and unmatched job in the tracker pilot. Test a reusable portal search if selected.
 - [Blind companies](<Blind Company Research/ONBOARDING.md>) for the target list and rating policy. Blind-only setups can skip email and referrals.
 
 ## Connect only what you need
@@ -36,8 +38,8 @@ Read the [operating rules](docs/operations.md). Check [tool access](docs/tools.m
 Read Application Discovery/ONBOARDING.md and guide me through the choices.
 Reuse my private setup and ask only for missing information. For discovery,
 start with my resume and confirm my experience and search preferences before
-building filters. For referrals, ask for my companies and optional contacts,
-then test and save repeatable portal searches during the pilot.
+building filters. For referrals, ask for my companies and any holds.
+Set up targeted portal searches only if I select them.
 I authorize setup and a small pilot for the features I select, including their tracker,
 chats, and documented handoffs. If I choose LinkedIn alerts, I authorize
 the selected searches and narrow routing rules described in its setup guide.

@@ -70,9 +70,12 @@ def _check_scope(old, new):
         require(old_policy["version"] != new_policy["version"], "preferences", "changing search criteria requires a new role_policy.version so old producer packets cannot be reused")
         if new["modules"]["blind"] and old["blind_policy"] is not None:
             require(old["blind_policy"]["version"] != new["blind_policy"]["version"], "preferences", "shared criteria changes also require a new blind_policy.version for selected rated-company discovery")
-    if new["modules"]["blind"] and old["blind_policy"] != new["blind_policy"] and old["blind_policy"] is not None:
+    blind_rules_changed = old["blind_policy"] != new["blind_policy"] or execution_plan(old)["coordinated"] != execution_plan(new)["coordinated"]
+    if new["modules"]["blind"] and blind_rules_changed and old["blind_policy"] is not None:
         require(old["blind_policy"]["version"] != new["blind_policy"]["version"], "preferences", "changing rated-company rules requires a new blind_policy.version")
     for name in ("referral_companies_path", "rated_companies_path"):
+        if name == "referral_companies_path" and old["sources"][name] is None and execution_plan(new)["referral_lookup"]:
+            continue
         require(old["sources"][name] == new["sources"][name], "preferences", "retain existing private company-list paths; update their reviewed contents separately")
 
 
@@ -128,7 +131,7 @@ def _build_plan(old, new, manifest):
     main_fields = [field for field in operational if not field.startswith(("config.blind_policy", "config.modules.blind"))]
     if main_fields and "main" not in pilots:
         pilots.append("main")
-    blind_fields = ("config.blind_policy", "config.candidate", "config.modules.blind", "config.tracker_admission",
+    blind_fields = ("config.blind_policy", "config.candidate", "config.modules.blind", "config.discovery.coordinated", "config.tracker_admission",
                     "profile.role_policy", "profile.locations", "profile.timezone")
     if new["modules"]["blind"] and any(field.startswith(blind_fields) for field in operational) and "blind" not in pilots:
         pilots.append("blind")

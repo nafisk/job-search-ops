@@ -1,4 +1,4 @@
-"""Seed a private referral scope into either tracker, then publish its registry.
+"""Read the private referral list and seed optional portal searches.
 
 The company file is authoritative. This setup-only bridge never replaces a
 nonblank watchlist row, clears a hold, or invents observed portal evidence.
@@ -20,11 +20,11 @@ OWNER = "referral-setup"
 def validate_source(value):
     require(type(value) is dict and set(value) == {"schema_version", "companies"} and type(value["schema_version"]) is int and value["schema_version"] == 1,
             "referrals", "expected schema_version 1 and companies")
-    require(type(value["companies"]) is list and bool(value["companies"]), "referrals", "select at least one company or disable portal discovery")
+    require(type(value["companies"]) is list and bool(value["companies"]), "referrals", "select at least one referral company")
     seen_ids, seen_names = set(), set()
     fields = {"company_id", "company", "referral_contact", "referral_hold", "careers_url", "alert_method", "targeting_notes", "search_scope"}
     for company in value["companies"]:
-        require(type(company) is dict and set(company) == fields, "referrals", "use the supplied company example fields")
+        require(type(company) is dict and set(company) - {"aliases"} == fields, "referrals", "use the supplied company example fields")
         q.identifier(company["company_id"], "company_id")
         for field in fields - {"referral_hold"}:
             q.text(company[field], field, empty=field in {"referral_contact", "careers_url", "alert_method", "targeting_notes"})
@@ -32,10 +32,27 @@ def validate_source(value):
         require(type(company["referral_hold"]) is bool, "referrals", "referral_hold must be explicit")
         if company["careers_url"]:
             q.url(company["careers_url"])
+        aliases = company.get("aliases", [])
+        require(type(aliases) is list, "referrals", "aliases must be a list of confirmed employer names")
+        for alias in aliases:
+            q.text(alias, "referral alias")
         key = company["company"].casefold()
         require(company["company_id"] not in seen_ids and key not in seen_names, "referrals", "duplicate company ID or name; reconcile aliases explicitly")
         seen_ids.add(company["company_id"]); seen_names.add(key)
     return copy.deepcopy(value)
+
+
+def company_name(name):
+    return " ".join(name.casefold().split())
+
+
+def company_index(path):
+    source = validate_source(read_json(no_symlink(path)))
+    index = {}
+    for company in source["companies"]:
+        for name in {company_name(name) for name in [company["company"], *company.get("aliases", [])]}:
+            index.setdefault(name, []).append(company)
+    return index
 
 
 def context(config):

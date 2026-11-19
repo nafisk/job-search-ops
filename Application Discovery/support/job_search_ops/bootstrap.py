@@ -36,8 +36,9 @@ def plan(snapshot):
         if name not in ("How to Use", "Daily Summary"):
             requests.append({"setBasicFilter": {"filter": {"range": {"sheetId": sheet_id, "startRowIndex": 3, "startColumnIndex": 0, "endColumnIndex": len(headers)}}}})
     jobs_id = tables["Jobs"]["properties"]["sheetId"]
+    key_col = SCHEMAS["Jobs"].index("Job Key")
     requests += [
-        {"updateDimensionProperties": {"range": {"sheetId": jobs_id, "dimension": "COLUMNS", "startIndex": 14, "endIndex": 15}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}},
+        {"updateDimensionProperties": {"range": {"sheetId": jobs_id, "dimension": "COLUMNS", "startIndex": key_col, "endIndex": key_col + 1}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}},
         {"setDataValidation": {"range": {"sheetId": jobs_id, "startRowIndex": 4, "startColumnIndex": 5, "endColumnIndex": 6}, "rule": {"condition": {"type": "ONE_OF_LIST", "values": [{"userEnteredValue": x} for x in STATUSES]}, "strict": True, "showCustomUi": True}}},
         {"repeatCell": {"range": {"sheetId": jobs_id, "startRowIndex": 4, "startColumnIndex": 0, "endColumnIndex": 2}, "cell": {"userEnteredFormat": {"numberFormat": {"type": "DATE", "pattern": "yyyy-mm-dd"}}}, "fields": "userEnteredFormat.numberFormat"}}
     ]
@@ -75,7 +76,7 @@ def verify_structure(response, workbook_id):
             require(bounds.get("sheetId") == props["sheetId"] and bounds.get("startRowIndex") == 3 and bounds.get("startColumnIndex", 0) == 0 and bounds.get("endColumnIndex") == len(headers), "bootstrap readback", "filter does not cover the data range")
     hidden = []
     for block in tabs["Jobs"].get("data", []):
-        index = 14 - block.get("startColumn", 0)
+        index = SCHEMAS["Jobs"].index("Job Key") - block.get("startColumn", 0)
         columns = block.get("columnMetadata", [])
         if 0 <= index < len(columns): hidden.append(columns[index].get("hiddenByUser"))
     require(True in hidden and False not in hidden, "bootstrap readback", "Job Key hiding was not observed")

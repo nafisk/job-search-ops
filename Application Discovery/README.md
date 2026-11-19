@@ -8,13 +8,13 @@ Read the [operating rules](docs/operations.md) and follow [onboarding](ONBOARDIN
 
 | Source | Setup |
 | --- | --- |
-| LinkedIn alerts | [Verify Gmail delivery](docs/linkedin-alerts.md) |
-| Referral portals | [Choose companies and save reusable searches](docs/referrals.md) |
+| Gmail job alerts | [Verify LinkedIn alert delivery](docs/linkedin-alerts.md) |
+| Referral matching and portal searches | [Save your referral list and optional searches](docs/referrals.md) |
 | [Blind company research](<Blind Company Research/README.md>) | [Choose companies and verify the handoff](<Blind Company Research/ONBOARDING.md>) |
 
 ## Run
 
-Follow the [central runbook](run.md) in the configured chat. The helpers check sources. The central chat verifies postings, saves them and reports coverage gaps. Blind can run separately and queue results for the next central run.
+Follow the [central runbook](run.md) in the configured chat. A coordinated run checks Gmail alerts and Blind, matches verified jobs to your referral list, and saves to one tracker. To check a specific employer's portal, request a [targeted run](helpers/referral-portals.md).
 
 ## Change settings
 

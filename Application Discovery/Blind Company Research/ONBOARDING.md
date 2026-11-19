@@ -23,7 +23,7 @@ Central owns the shared tracker. Connect email, referrals, Calendar or Messages 
 
 Choose the [103-company starter](blind-companies.json) or your own list. **Its ratings are historical, user-supplied and not freshly verified; original dates are unknown.** The agent copies your chosen list outside the repository, reviews enabled companies and binds the private copy. Never replace an existing personal list automatically or add private notes to the repo.
 
-Use the [shared search profile conversation](../ONBOARDING.md#confirm-the-search-profile) to confirm résumé facts, target roles and hard requirements. Then confirm the rating threshold and Blind base/stretch experience policy. See the [runbook](run.md#setup) for the company list format and provenance rules.
+Use the [shared search profile](../ONBOARDING.md#confirm-the-search-profile) to confirm résumé facts, target roles and requirements. Set the rating threshold. Confirm separate base and stretch limits only for standalone Blind research. See the [runbook](run.md#setup) for the company list format.
 
 If you have verified portal links or search steps, bring the private [source CSV](run.md#reuse-saved-portal-routes). Confirm which research matches belong in chat and which may enter the shared tracker under [tracker admission](../docs/handoffs.md#tracker-admission).
 
@@ -48,7 +48,7 @@ Before any source access, follow the [runbook's mandatory start check](run.md). 
 1. Research a declared small scope with actual sources. Preserve gaps and do not insert fixture jobs when none qualify.
 2. Verify the packet is durably handed off or queued, then have central save/read back accepted results and report them. Record the existing setup acceptance evidence; a queued packet alone does not prove the tracker works.
 3. Complete the required scoped pilot checks for the selected installation. For an existing preference update, follow its exact replacement-pilot process; never put the pilot override in a schedule.
-4. Choose manual mode or requested schedules. The research chat and central writer may have separate times. **A Blind-only schedule leaves packets waiting until the next central run; it does not schedule central for you.**
+4. Choose manual mode or schedule the coordinator in coordinated mode. If you keep a separate Blind timer, plan the central run that saves its packets.
 
 Save and return your [private setup summary](../../ONBOARDING.md#your-setup-summary): canonical configuration/list paths, tracker, research and central chats, verified or pending checks, selected timing and exact next run requests using actual permanent paths. Keep pending checks visible; do not call the path ready until required evidence is accepted.
 

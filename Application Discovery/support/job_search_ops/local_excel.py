@@ -202,7 +202,7 @@ class LocalSnapshot(sheets.Snapshot):
                         if label in headers:
                             raise q.ProtocolError("Duplicate managed header")
                         headers[label] = c
-                if set(headers) != set(sheets.SCHEMAS[name]):
+                if not sheets.has_required_headers(name, headers):
                     raise q.ProtocolError(f"Missing/changed {name} headers")
                 table = {"name": name, "id": int(tab.attrib["sheetId"]), "rows": max(12, max((r + 1 for r, _ in cells), default=5)), "columns": max((c + 1 for _, c in cells), default=1), "headers": headers, "cells": cells}
                 if name == "Jobs":

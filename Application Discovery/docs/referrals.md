@@ -1,16 +1,20 @@
-# Set up referral companies
+# Set up referral matching and portal searches
 
-Set `sources.referral_companies_path` to one private company list. Setup projects it into **Referral Watchlist** using Sheets or the [local Excel writer](local-excel.md). It also creates `<installation>/portal-registry.json` for [portal checks](../support/toolkit/PORTALS.md). Update scope in the private list.
+Point `sources.referral_companies_path` at your private company list. In coordinated mode, the writer checks this list after screening and deduplication. Use the same list if you also run targeted portal searches.
 
 ## Choose companies
 
-After confirming [search preferences](../ONBOARDING.md#confirm-the-search-profile), ask which companies to check and whether the user wants to record anyone they know there. Reuse their existing list and holds. Ask for missing company scope or hold decisions. A name is optional. Confirm which names may go in the selected tracker and keep any others in private local notes.
+Reuse the user's companies and holds. Ask for missing decisions. A contact name is optional. Confirm which names may go in the selected tracker and keep any others in private notes.
 
-Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Save each company with a stable `company_id`, optional contact and careers URL, explicit `referral_hold`, and search scope. Leave unknown contacts or URLs blank. Confirm the company list with the user. Set its absolute path in the private draft before `init`.
+Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Confirm each employer, its stable `company_id` and `referral_hold` with the user. Add an optional `aliases` array of confirmed employer names. Include a subsidiary only when the user confirms that their referral covers it. Leave unknown contacts and careers links blank.
+
+The Jobs **Referral** column shows **Available** for an employer match or **On hold** when the list or the job's saved history calls for a hold. It stays blank for unmatched jobs. If a name points to more than one company, review it before adding an alias. A match means the employer is on your list. Check with your contact about the specific opening before acting on it.
 
 ## Populate the selected tracker
 
-Run commands from `Application Discovery/support/` after the tracker is verified and before the portal pilot. Coordinate with the central writer; seeding uses the exclusive `referral-setup` claim.
+For referral matching alone, the private list and the Jobs **Referral** column are enough. To enable portal searches, follow the steps below to populate **Referral Watchlist** and create `portal-registry.json`.
+
+Run commands from `Application Discovery/support/` after verifying the tracker and before the portal pilot. Coordinate with the central writer for the `referral-setup` claim.
 
 **Excel:** close the workbook and use the verified Node and package paths:
 

@@ -74,7 +74,7 @@ responses solely to verify the protocol and cannot establish live readiness.
 
 ## Assemble a Google Sheets snapshot
 
-This is the authoritative snapshot contract for discovery, tracking, authorization and recovery. Read current metadata to resolve sheet IDs and allocated grid row counts; never reuse remembered IDs. The [seven-tab schema](../sheets/workbook-schema.json) defines required headers and managed columns. Every required header must occur once on row 4. Jobs includes the hidden managed **Job Key** column (O in the blank template); resolve it by header after a user reorder.
+Read current metadata for sheet IDs and allocated row counts. Use the [seven-tab schema](../sheets/workbook-schema.json) to find managed headers on row 4. Read through the hidden **Job Key**, now in P in the blank template. Older trackers may place it in O. Read the full **Referral** column when present.
 
 Read native `CellData` for all managed columns from row 4 through the **last allocated row** of **Jobs**, **Job Sources**, **Rated Companies** and **Rated Search Coverage**, plus **Daily Summary A4:B12**. Include trailing empty areas. Use this complete mask on every request:
 
@@ -89,7 +89,7 @@ Split large reads into contiguous bounded chunks. Save each raw cell response wi
   {
     "request": {
       "spreadsheet_id": "ACTUAL_RETURNED_ID",
-      "ranges": ["'Jobs'!A1:O1000"],
+      "ranges": ["'Jobs'!A1:P1000"],
       "cell_fields": "userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns"
     },
     "response": {"spreadsheetId": "ACTUAL_RETURNED_ID", "sheets": []}

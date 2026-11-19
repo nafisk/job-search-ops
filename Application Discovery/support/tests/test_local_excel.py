@@ -125,7 +125,10 @@ class LocalArtifactTests(unittest.TestCase):
         self.assertEqual(snapshot.rows("Job Sources")[0][1]["Observed At"], original["observed_at"])
         self.assertEqual(queue.enqueue(self.root, original)["status"], "done")
         self.assertEqual(self.sync()["status"], "empty")
-        changes = [{"tab": "Jobs", "row": 4, "column": col, "after": sheets.native(value)} for col, value in ((5, "Applied"), (9, "My referrer"), (13, "=My literal note"))]
+        headers = snapshot.tables["Jobs"]["headers"]
+        manual_fields = {"Application Status": "Applied", "Referral Contact": "My referrer", "Notes": "=My literal note"}
+        changes = [{"tab": "Jobs", "row": 4, "column": headers[name], "after": sheets.native(value)}
+                   for name, value in manual_fields.items()]
         changes.append({"tab": "How to Use", "row": 20, "column": 1, "after": sheets.native("My unrelated cell")})
         exact_text = '2026-10-18T08:00:00.123456+00:00 "quoted"'
         changes.append({"tab": "How to Use", "row": 21, "column": 1, "after": sheets.native(exact_text)})
@@ -138,7 +141,7 @@ class LocalArtifactTests(unittest.TestCase):
         rows = final.state()["Jobs"]["rows"]
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["values"]["Seen Count"], 2)
-        for name, value in {"Application Status": "Applied", "Referral Contact": "My referrer", "Notes": "=My literal note"}.items():
+        for name, value in manual_fields.items():
             self.assertEqual(rows[0]["values"][name], value)
         self.assertEqual(final.all_cells["How to Use"]["20:1"]["userEnteredValue"], sheets.native("My unrelated cell"))
         self.assertEqual(final.all_cells["How to Use"]["21:1"]["userEnteredValue"], {"formulaValue": '="' + exact_text.replace('"', '""') + '"'})

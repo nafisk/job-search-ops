@@ -70,10 +70,10 @@ const guide = wb.worksheets.getItem("How to Use");
 guide.getRange("A:A").format.columnWidth = 27;
 guide.getRange("A5:B13").values = [
   ["Start", "Complete Application Discovery/ONBOARDING.md in the repository. This blank file contains no account identifiers or job history."],
-  ["Discovery", "Email alerts, referral portals, and the Blind company list feed the same Jobs tab through a private queue."],
+  ["Discovery", "Email alerts and Blind feed the Jobs tab. You can also run a targeted portal search."],
   ["Your edits", "Edit Application Status, Referral Contact, and Notes. The coordinator preserves them when a job is seen again."],
-  ["Managed fields", "Keep the header names and hidden Job Key column. Do not delete provenance rows or reuse job keys."],
-  ["Matching policies", "Main and Blind policies are recorded separately. A Blind stretch match remains labeled stretch in Job Sources."],
+  ["Managed fields", "Keep the header names and hidden Job Key column. Keep the Job Sources rows."],
+  ["Referrals", "The coordinator marks Available or On hold when it matches a job to your saved referral list."],
   ["Source completeness", "A finished run can still have source gaps. Check Rated Search Coverage and the daily brief for those gaps."],
   ["Saved means verified", "A job is saved only after readback of your chosen tracker confirms its values and working role link."],
   ["Reports", "Saved imports enter one later daily brief. A failed or uncertain delivery stays pending for reconciliation."],
@@ -95,7 +95,7 @@ console.log((await wb.inspect({kind: "region", sheetId: "Daily Summary", range: 
 if (previewDir) {
   await fs.mkdir(previewDir, {recursive: true});
   for (const tab of schema.tabs) {
-    const end = tab.headers.length === 2 ? "B" : "F";
+    const end = tab.name === "Jobs" ? "G" : tab.headers.length === 2 ? "B" : "F";
     const preview = await wb.render({sheetName: tab.name, range: `A1:${end}13`, scale: 1, format: "png"});
     await fs.writeFile(`${previewDir}/${tab.name.replaceAll(" ", "-")}.png`, new Uint8Array(await preview.arrayBuffer()));
   }

@@ -217,6 +217,72 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(queue.pending(self.root), [])
         self.assertEqual(sheets.verify_and_commit(self.root, journal["journal_id"], self.connector.snapshot()), receipt)
 
+    def test_referral_matching_updates_one_verified_row_across_sources(self):
+        path = self.root.resolve() / "referrals.json"
+        base = queue.storage(self.root)
+        approved = queue.read(base / "approved-policies.json")
+        queue.atomic(base / "approved-policies.json", dict(approved, referral_companies_path=str(path)))
+
+        def company(key, name, *aliases, hold=False):
+            return {"company_id": key, "company": name, "aliases": list(aliases),
+                    "referral_contact": "Private contact", "referral_hold": hold,
+                    "careers_url": "", "alert_method": "", "targeting_notes": "", "search_scope": "Example location"}
+
+        scope = {"schema_version": 1, "companies": [
+            company("example", "Example Company", "Example Inc."),
+            company("held", "Held Company", "Shared Name", hold=True),
+            company("another", "Another Company", "Shared Name"),
+        ]}
+        queue.atomic(path, scope)
+        email = packet("email", "email-batch")
+        for key, name in (("held", "Held Company"), ("ambiguous", "Shared Name"), ("unmatched", "Unmatched Company")):
+            job = packet("email", job_key=f"{key}:{key}-role", event=f"{key}-event")["jobs"][0]
+            email["jobs"].append(dict(job, company=name))
+        blind = packet("blind", "blind-batch")
+        blind["jobs"][0]["company"] = "Example Inc."
+        queue.enqueue(self.root, blind)
+        journal, receipt = self.save(email)
+        rows = {values["Job Key"]: values for _, values in sheets.Snapshot(self.connector.snapshot(), WORKBOOK).rows("Jobs")}
+        self.assertEqual({key: x["Referral"] for key, x in rows.items()},
+                         {"example:req-1": "Available", "held:held-role": "On hold", "ambiguous:ambiguous-role": "", "unmatched:unmatched-role": ""})
+        self.assertEqual(rows["example:req-1"]["Seen Count"], 2)
+        self.assertEqual(receipt["new_source_events"], 5)
+        self.assertEqual(receipt["referral_review"], [{"job_key": "ambiguous:ambiguous-role", "company": "Shared Name"}])
+        self.assertNotIn("Private contact", json.dumps(receipt))
+        self.assertEqual(queue.enqueue(self.root, email)["status"], "done")
+        self.assertEqual(queue.enqueue(self.root, blind)["status"], "done")
+        self.assertEqual(sheets.verify_and_commit(self.root, journal["journal_id"], self.connector.snapshot()), receipt)
+        self.assertEqual(self.prepare()["status"], "empty")
+        self.assertEqual(len(queue.prepare_brief(self.root, "one-brief")["receipts"]), 1)
+
+        row = next(row for row, x in sheets.Snapshot(self.connector.snapshot(), WORKBOOK).rows("Jobs") if x["Job Key"] == "held:held-role")
+        self.connector.set("Jobs", row, "Application Status", "Applied")
+        self.connector.set("Jobs", row, "Notes", "My note")
+        later = packet("email", "later", "held:held-role", event="later-sighting")
+        later["jobs"][0]["company"] = "Held Company"
+        plan = self.prepare(later)
+        scope["companies"][1]["referral_hold"] = False
+        queue.atomic(path, scope)
+        with self.assertRaisesRegex(queue.ProtocolError, "Referral list changed"):
+            sheets.authorize_write(self.root, plan["journal_id"], self.connector.snapshot())
+        sheets.cancel_unattempted(self.root, plan["journal_id"], "central")
+        self.save(later)
+        self.assertEqual(self.value(row, "Referral"), "On hold")
+        self.assertEqual(self.value(row, "Application Status"), "Applied")
+        self.assertEqual(self.value(row, "Notes"), "My note")
+
+    def test_legacy_jobs_header_remains_writable_without_referral_lookup(self):
+        jobs = self.connector.tab("Jobs")
+        jobs["data"][0]["rowData"][3]["values"].pop(sheets.SCHEMAS["Jobs"].index("Referral"))
+        jobs["properties"]["gridProperties"]["columnCount"] -= 1
+        self.connector.refresh_ranges()
+        _, receipt = self.save(packet())
+        self.assertEqual(receipt["status"], "saved")
+        [(row, values)] = sheets.Snapshot(self.connector.snapshot(), WORKBOOK).rows("Jobs")
+        self.assertEqual(row, 4)
+        self.assertEqual(values["Job Key"], "example:req-1")
+        self.assertNotIn("Referral", values)
+
     def test_cross_source_blind_stretch_and_manual_fields(self):
         self.save(packet())
         self.connector.set("Jobs", 4, "Application Status", "Applied")

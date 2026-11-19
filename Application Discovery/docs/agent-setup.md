@@ -50,7 +50,7 @@ Use the [producer handoff](handoffs.md#producer-handoff) to check private stagin
 
 ## 5. Pilot the selected path
 
-Run the [start check](operations.md#routine-operation) and use a small genuine scope for each selected branch. For referrals, [validate and save reusable portal searches](referrals.md#build-links-for-repeat-runs) from the confirmed scope. Verify actual save/readback, deduplication, manual-field preservation, and a real report. Record source gaps and scopes still pending, including `awaiting_first_alert` if applicable. Keep fixtures out of the live tracker.
+Run the [start check](operations.md#routine-operation) with a small genuine scope. For coordinated discovery, test the Gmail and Blind handoffs in one run. If referral matching is selected, verify the **Referral** value on saved jobs. For on-demand portals, [validate a saved portal search](referrals.md#build-links-for-repeat-runs) in a separate run. Check tracker readback, deduplication, manual edits and delivery. Record untested paths and any source waiting for its first alert. Keep fixtures in a disposable tracker.
 
 Use `first-pass-record` with actual [pilot evidence](native-evidence.md#first-pass-acceptance-and-delivery). The [preference guide](preferences.md) owns replacement pilots.
 

@@ -165,23 +165,29 @@ def _approved_policies(config, workbook_id=None):
             "allowed_tiers": ["core"] + (["senior_exception"] if experience["senior_low_experience_exception"] else []),
             "forbidden_title_patterns": [r"(?i)\b" + re.escape(x) + r"\b" for x in policy["excluded_levels"]]}
     sources = {}
-    selected = execution_plan(config)["discovery"]
+    plan = execution_plan(config)
+    selected = plan["discovery"]
     for source in ("email", "portal"):
         if source in selected:
             sources[source] = copy.deepcopy(main)
     if "blind" in selected:
         blind = config["blind_policy"]
-        terms = list(blind["excluded_title_terms"])
-        if blind["exclude_explicit_senior"] and "senior" not in terms:
-            terms.append("senior")
-        rated = {"id": "rated-companies", "version": blind["version"],
-                 "max_required_years": blind["stretch_required_years"], "base_required_years": blind["max_required_years"],
-                 "allow_unstated_years": experience["unknown_minimum"] == "include",
-                 "allowed_tiers": ["core", "stretch"], "min_rating": blind["min_rating"],
-                 "forbidden_title_patterns": [r"(?i)\b" + re.escape(x) + r"\b" for x in terms]}
+        if plan["coordinated"]:
+            rated = dict(main, id="rated-companies", version=blind["version"],
+                         min_rating=blind["min_rating"], base_required_years=main["max_required_years"])
+        else:
+            terms = list(blind["excluded_title_terms"])
+            if blind["exclude_explicit_senior"] and "senior" not in terms:
+                terms.append("senior")
+            rated = {"id": "rated-companies", "version": blind["version"],
+                     "max_required_years": blind["stretch_required_years"], "base_required_years": blind["max_required_years"],
+                     "allow_unstated_years": main["allow_unstated_years"],
+                     "allowed_tiers": ["core", "stretch"], "min_rating": blind["min_rating"],
+                     "forbidden_title_patterns": [r"(?i)\b" + re.escape(x) + r"\b" for x in terms]}
         sources["blind"] = rated
     return {"schema_version": 1, "workbook_id": workbook_id, "timezone": config["_profile"]["timezone"],
             "sources": sources,
+            **({"referral_companies_path": config["sources"]["referral_companies_path"]} if plan["referral_lookup"] else {}),
             **({"tracker_admission": copy.deepcopy(config["tracker_admission"])} if "tracker_admission" in config else {})}
 
 
@@ -205,7 +211,8 @@ def setup_plan(config):
         permissions.append({"operation": "create_schedules_after_pilot", "schedules": plan["schedules"]})
     return {"schema_version": 1, "installation_id": config["installation_id"],
             "private_directory": config["instance_root"], "tracker": plan["tracker"],
-            "discovery": plan["discovery"], "tracking": plan["tracking"], "chats": plan["chats"],
+            "discovery": plan["discovery"], "daily_discovery": plan["daily_discovery"],
+            "referral_lookup": plan["referral_lookup"], "tracking": plan["tracking"], "chats": plan["chats"],
             **({"tracker_admission": config["tracker_admission"]} if "tracker_admission" in config else {}),
             "schedules": {name: config["schedules"][name] for name in plan["schedules"]},
             "timezone": config["_profile"]["timezone"], "report": config["report"],
@@ -359,7 +366,7 @@ def record_resource(config, kind, key, receipt, verify, *, now=None):
         if kind == "schedule":
             value["next_run_at"] = receipt.evidence["next_run_at"]
         if kind == "tracker":
-            value["provider"] = "google_sheets"
+            value.update(provider="google_sheets", referral_column=True)
             path = root / "state" / "approved-policies.json"
             current = read_json(path)
             require(current in (_approved_policies(config), _approved_policies(config, receipt.resource_id)),
@@ -376,7 +383,8 @@ def _needed_bindings(config):
 
 def record_local_tracker(config, evidence):
     """Bind an existing setup intent only after inspecting the actual local XLSX."""
-    from .local_excel import verify_binding
+    from .local_excel import inspect_workbook, verify_binding
+    from .sheets import REFERRAL
     from .doctor import now_utc
     plan = execution_plan(config)
     require(plan["tracker"]["provider"] == "local_xlsx", "tracker", "local provider is not selected")
@@ -395,7 +403,8 @@ def record_local_tracker(config, evidence):
             return copy.deepcopy(value)
         value.update(status="verified", provider="local_xlsx", path=plan["tracker"]["path"],
                      resource_id=evidence["resource_id"], file_sha256=evidence["file_sha256"],
-                     checked_at=now_utc().isoformat(), receipt_digest=digest(evidence))
+                     checked_at=now_utc().isoformat(), receipt_digest=digest(evidence),
+                     referral_column=REFERRAL in inspect_workbook(plan["tracker"]["path"], evidence["resource_id"]).tables["Jobs"]["headers"])
         policy_path = root / "state/approved-policies.json"
         require(read_json(policy_path) in (_approved_policies(config), _approved_policies(config, value["resource_id"])), "policy", "approved policy changed; do not replace")
         _atomic_json(policy_path, _approved_policies(config, value["resource_id"]))
@@ -411,7 +420,7 @@ def _bound(manifest, key):
 
 
 def _runtime_profile(config, manifest):
-    from .sheets import JOBS, COMPANIES, SOURCES
+    from .sheets import JOBS, COMPANIES, SOURCES, SCHEMAS
     workbook = _bound(manifest, "tracker:tracker")
     result = copy.deepcopy(config["_profile"])
     if config["schema_version"] == 2:
@@ -423,8 +432,12 @@ def _runtime_profile(config, manifest):
             if not selected:
                 result["integrations"][name] = {"enabled": False, "required": False, "connection_ref": None, "expected_identity": None}
     jobs_keys = "first_seen last_seen company title job_link status source location level referral_contact target_fit fit_reason seen_count notes job_key".split()
+    jobs_headers = JOBS
+    if manifest["resources"]["tracker:tracker"].get("referral_column") or execution_plan(config)["referral_lookup"]:
+        jobs_keys.insert(6, "referral")
+        jobs_headers = SCHEMAS["Jobs"]
     destinations = {
-        "jobs": ("Jobs", jobs_keys, JOBS),
+        "jobs": ("Jobs", jobs_keys, jobs_headers),
         "rated_companies": ("Rated Companies", [x.lower().replace(" ", "_") for x in COMPANIES], COMPANIES),
         "job_sources": ("Job Sources", [x.lower().replace(" ", "_") for x in SOURCES], SOURCES),
     }
@@ -446,7 +459,7 @@ def runtime_profile(config):
 
 def record_first_pass(config, workflow, receipt, verify, *, now=None):
     require(workflow == "main" or (workflow == "blind" and config["modules"]["blind"]), "first pass", "workflow is disabled")
-    if config["schema_version"] == 2 and workflow == "main" and config["discovery"]["portals"]:
+    if config["schema_version"] == 2 and workflow == "main" and "portal" in execution_plan(config)["daily_discovery"]:
         from .referrals import require_seed
         require_seed(config)
     plan = execution_plan(config)
@@ -516,6 +529,7 @@ def render_prompts(config, manifest):
         "Use runtime-profile.json for toolkit operations and verified tracker bindings.\n"
         f"Use {root / 'execution-plan.json'} to determine scope. "
         f"Enabled discovery: {', '.join(plan['discovery']) or 'none'}. Enabled tracking: {', '.join(plan['tracking']) or 'none'}. "
+        f"Daily discovery: {', '.join(plan['daily_discovery']) or 'none'}. "
         "Run only selected steps. Skip queries, dispatch, readiness checks and gap reporting for disabled sources.\n" +
         tracker_instructions +
         f"Follow [operating rules](<{WORKFLOW_ROOT / 'docs/operations.md'}>) for evidence, permissions, source checks and checkpoints. "
@@ -572,8 +586,10 @@ def render_prompts(config, manifest):
             f"Source choices: {config['sources']['rated_companies_path']}. Staging: {root / 'staging' / 'blind'}.\n"
             f"Use [producer handoff](<{WORKFLOW_ROOT / 'docs/handoffs.md'}#producer-handoff>) under the recorded setup authorization. "
             "Verify staging access and retain evidence until central acknowledges archival and enqueue; only the coordinator writes the shared tracker. "
-            "Queued roles are pending until central save receipts arrive. Report new matches with their actual pending/saved state. "
-            "Notify only on meaningful changes, failures or required user action.\n"
+            + ("For a coordinator assignment, return results and gaps to the coordinator for its brief.\n"
+               if plan["coordinated"] else
+               "Queued roles are pending until central save receipts arrive. Report new matches with their actual pending/saved state. "
+               "Notify only on meaningful changes, failures or required user action.\n")
         )
     return prompts
 
@@ -619,7 +635,7 @@ def prepare_schedules(config, observations=(), verify=None, now=None, workflow=N
     require(not (set(selected) & set(existing.get("preferences_update", {}).get("pilot_required", []))), "schedules", "record a live pilot bound to the current preferences_update_id for changed scheduled scope")
     if not selected:
         return []
-    if config["schema_version"] == 2 and "main" in selected and config["discovery"]["portals"]:
+    if config["schema_version"] == 2 and "main" in selected and "portal" in execution_plan(config)["daily_discovery"]:
         from .referrals import require_seed
         require_seed(config)
     for name in selected:

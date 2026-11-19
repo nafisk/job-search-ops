@@ -119,10 +119,13 @@ def execution_plan(config):
     tracking = {"gmail": modules["main"]} if legacy else config["tracking"]
     tracker = {"provider": "google_sheets", "path": None} if legacy else config["tracker"]
     sources = [name for name, enabled in (("email", discovery["email"]), ("portal", discovery["portals"]), ("blind", modules["blind"])) if enabled]
+    coordinated = discovery.get("coordinated", False)
+    daily_sources = [source for source in sources if source != ("portal" if coordinated else "blind")]
+    referral_lookup = coordinated and bool(sources) and config["sources"]["referral_companies_path"] is not None
     tracked = [name for name, enabled in (("gmail", tracking["gmail"]), ("calendar", modules["calendar"]), ("messages", modules["messages"])) if enabled]
     chats = ["central"] + ["portals" if x == "portal" else x for x in sources]
     schedules = [name for name, entry in config["schedules"].items() if entry["enabled"]]
-    source_files = [name for name, enabled in (("referral_companies_path", discovery["portals"]), ("rated_companies_path", modules["blind"])) if enabled]
+    source_files = [name for name, enabled in (("referral_companies_path", discovery["portals"] or referral_lookup), ("rated_companies_path", modules["blind"])) if enabled]
     browser = config.get("_profile", {}).get("integrations", {}).get("browser", {})
     gmail = discovery["email"] or tracking["gmail"] or config["report"]["delivery"] == "email"
     selectors = {
@@ -137,7 +140,8 @@ def execution_plan(config):
         "email_delivery": config["report"]["delivery"] == "email", "scheduled": bool(schedules),
         "artifact_tool": tracker["provider"] == "local_xlsx" or config["adapters"]["spreadsheet_templates"] == "artifact_tool" or modules["excel_export"],
     }
-    return {"tracker": copy.deepcopy(tracker), "discovery": sources, "tracking": tracked,
+    return {"tracker": copy.deepcopy(tracker), "discovery": sources, "daily_discovery": daily_sources,
+            "coordinated": coordinated, "referral_lookup": referral_lookup, "tracking": tracked,
             "chats": chats, "schedules": schedules, "source_files": source_files,
             "staging": ["staging/" + x for x in chats if x != "central"],
             "selectors": selectors}
@@ -197,6 +201,8 @@ def load_config(path):
     else:
         require(value["modules"]["main"], "modules.main", "the central coordinator is required")
         for name, fields in (("discovery", "email portals"), ("tracking", "gmail")):
+            if name == "discovery" and "coordinated" in value[name]:
+                fields += " coordinated"
             keys(value[name], fields, name)
             require(all(type(x) is bool for x in value[name].values()), name, "expected booleans")
         keys(value["tracker"], "provider path", "tracker")
@@ -208,7 +214,7 @@ def load_config(path):
             value["tracker"]["path"] = str(target)
         else:
             require(value["tracker"]["path"] is None, "tracker.path", "Google tracker uses its verified native ID, not a local path")
-        require(any(value["discovery"].values()) or value["modules"]["blind"] or value["tracking"]["gmail"] or value["modules"]["calendar"] or value["modules"]["messages"], "modules", "select discovery or at least one tracking source")
+        require(value["discovery"]["email"] or value["discovery"]["portals"] or value["modules"]["blind"] or value["tracking"]["gmail"] or value["modules"]["calendar"] or value["modules"]["messages"], "modules", "select discovery or at least one tracking source")
     # Validate the choices used by execution_plan before deriving any selectors.
     keys(value["report"], "delivery send_opt_in", "report")
     keys(value["adapters"], "html_parser simplify_decoder spreadsheet_templates", "adapters")
@@ -216,7 +222,11 @@ def load_config(path):
     for name, schedule in value["schedules"].items():
         keys(schedule, "enabled local_time notifications", f"schedules.{name}")
         require(type(schedule["enabled"]) is bool, "schedules", "expected boolean")
+    if not legacy and value["discovery"].get("coordinated"):
+        require(not value["schedules"]["blind"]["enabled"], "schedules.blind", "coordinated discovery uses the main schedule")
     plan = execution_plan({**value, "_profile": profile})
+    if plan["coordinated"] and value["schedules"]["main"]["enabled"]:
+        require(plan["daily_discovery"] or plan["tracking"], "schedules.main", "select a daily discovery or tracking source")
     if plan["discovery"]:
         require(bool(profile["role_policy"]["families"] and profile["role_policy"]["preferred_levels"]), "role_policy", "selected discovery needs role families and levels")
         require(bool(profile["locations"]["onsite_regions"] or profile["locations"]["remote_countries"]), "locations", "selected discovery needs geographic scope")

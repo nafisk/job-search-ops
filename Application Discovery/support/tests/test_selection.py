@@ -84,6 +84,29 @@ class SelectionTests(unittest.TestCase):
         required = next(x for x in doctor.required_capabilities(self.load()) if x["id"] == "gmail_read")
         self.assertIn("sent_readback", required["verification_operations"])
 
+    def test_coordinated_discovery_uses_one_timer_and_keeps_portals_manual(self):
+        self.h.settings["discovery"].update(email=True, portals=True, coordinated=True)
+        self.h.settings["modules"]["blind"] = True
+        self.h.settings["blind_policy"] = json.loads((config.SUPPORT_ROOT / "config/legacy/installation.json").read_text())["blind_policy"]
+        self.h.settings["sources"].update(gmail_queries=["from:alerts.example.invalid"],
+                                          referral_companies_path=str(self.h.root / "referrals.json"),
+                                          rated_companies_path=str(self.h.root / "rated.json"))
+        cfg = self.load()
+        plan = config.execution_plan(cfg)
+        self.assertEqual(plan["discovery"], ["email", "portal", "blind"])
+        self.assertEqual(plan["daily_discovery"], ["email", "blind"])
+        self.assertEqual(doctor.workflow_scope(cfg, "main")["source_files"],
+                         ["referral_companies_path", "rated_companies_path"])
+        policy = setup._approved_policies(cfg)
+        self.assertEqual(policy["referral_companies_path"], cfg["sources"]["referral_companies_path"])
+        for key in ("max_required_years", "forbidden_title_patterns", "allowed_tiers"):
+            self.assertEqual(policy["sources"]["email"][key], policy["sources"]["blind"][key])
+        self.h.settings["discovery"]["portals"] = False
+        self.assertTrue(config.execution_plan(self.load())["referral_lookup"])
+        self.h.settings["schedules"]["blind"].update(enabled=True, local_time="04:00")
+        with self.assertRaisesRegex(config.ConfigError, "coordinated discovery uses the main schedule"):
+            self.load()
+
     def test_local_public_only_needs_no_google_identity_and_ignores_unused_evidence(self):
         self.local()
         self.h.settings["discovery"]["portals"] = True

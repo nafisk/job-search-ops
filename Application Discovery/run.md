@@ -2,9 +2,7 @@
 
 Complete [onboarding](ONBOARDING.md) and load the private settings. Follow the saved source, tracker, timing and delivery choices.
 
-The central chat coordinates the run and owns tracker writes. Dispatch only selected email and referral helpers. [Blind research](<Blind Company Research/run.md>) runs separately and queues findings. Only central and Blind have their own optional schedules.
-
-Run selected discovery, verify and save the results, reconcile selected tracking sources, then report. Tracking-only and Blind-only setups can skip email and referral discovery.
+The coordinator owns tracker writes and the brief. Use `daily_discovery` in the private execution plan. In coordinated mode, Gmail alerts and [Blind research](<Blind Company Research/run.md>) share a search profile and run together. Run [referral portal searches](helpers/referral-portals.md) when the user asks for named companies. Existing installations that use a separate Blind schedule follow their saved plan until cutover.
 
 ## Every run
 
@@ -18,11 +16,13 @@ If held for a preference pilot, stop ordinary work and follow [the manual pilot 
 
 1. **Read the saved choices and unfinished work.** Load the private config, generated runtime profile, resource bindings and journals. Use the read-only setup plan as the branch map; never enable a source because its tools happen to be installed. Verify only the identities, paths and permissions needed for this run. Resolve uncertain writes/sends before repeating them. Keep one writer and preserve existing history. Freeze selected source windows, using their own checkpoints and overlap; display dates in the configured timezone.
 
-2. **Dispatch selected discovery.** If email discovery is enabled, assign [Email Discovery](helpers/email-discovery.md). If portals are enabled, assign [Referral Portal Search](helpers/referral-portals.md). Start independent branches together when available, using saved explicit dispatch authorization, real chat IDs, run ID, scope, policy version and absolute paths. Account for ready Blind packets when Blind is enabled. Use an [authorized fallback](docs/handoffs.md#producer-handoff) for an unavailable helper or record the gap.
+2. **Dispatch discovery.** Start the sources in `daily_discovery`, or the selected source the user named for a manual run. Give each producer the run ID, scope, cutoff, policy version and absolute paths. Start [Email Discovery](helpers/email-discovery.md) and Blind together when selected. Check the Blind gate before it starts. At the run's collection deadline, note any missing results and prepare the save from the ready queue. Packets queued after preparation go to the next run. Use the saved [fallback](docs/handoffs.md#producer-handoff) if a helper is unavailable. For installations with separate Blind runs, drain their ready packets.
 
 3. **Review and save accepted results.** Use [screening](support/toolkit/SCREENING.md) with the full posting and any configured applicant facts and search requirements. Apply [tracker admission](docs/handoffs.md#tracker-admission) when configured. Preserve each source's policy, rating provenance and referral holds. Deduplicate by employer/requisition or verified URLs and aliases, never title similarity. Use the [producer handoff](docs/handoffs.md#producer-handoff): helpers seal local evidence when they cannot write the shared queue; central verifies, archives and enqueues it, then acknowledges archival before staging is removed.
 
    Choose exactly one writer path: [local Excel](docs/local-excel.md) for `local_xlsx`, or the [Google Sheets protocol](docs/sheets-protocol.md) and [native evidence guide](docs/native-evidence.md) for `google_sheets`. Prepare the change, check current state, preserve manual fields, save once, and reread the actual result before accepting a receipt. Do not send local-file operations to Google or treat an XLSX export as a second master. New discovery matches start **New**. Queued or attempted work is not a verified save. A Blind stretch remains labeled under its own policy.
+
+   If referral matching is enabled, the writer checks qualified jobs against the private list after deduplication. It marks **Available** or **On hold** in Jobs. Check `referral_review` in the save result for ambiguous employers and report any that need a decision in the existing exceptions section. Treat an unreadable list as a save gap and keep the queue for recovery.
 
    Read the saved destination using [discovery export](docs/discovery-export.md) after the tracker save. Publish the accepted postings if a destination is selected. For an export-only request, go directly to that guide and export previously accepted postings. Report any export failure with its verified tracker outcome.
 
@@ -36,7 +36,7 @@ Processing may finish with exceptions while source coverage remains partial. Rec
 
 After an uncertain write or send, retain its journal, ownership and queue. Reconcile the existing effect under the selected backend's protocol; do not infer that an absent result is safe to retry. Preserve manual changes and unrelated tabs, chats and schedules.
 
-Blind results reach the tracker only through central acceptance. In manual mode, tell the user that a central run is needed to save pending results. Scheduling Blind alone does not schedule the central writer. Never add an unrequested timer to close that gap.
+Blind results reach the tracker through central acceptance. If a standalone/manual Blind run queues results, tell the user how to trigger central to save them. Only create schedules the user selected.
 
 Daily or manual completion does not authorize filling/submitting applications, uploading resumes, contacting recruiters/referrers, or booking/RSVPing. These remain separate explicit requests.
 

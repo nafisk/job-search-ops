@@ -9,6 +9,7 @@ import unittest
 from job_search_ops import bootstrap, host_evidence, snapshots
 from job_search_ops.doctor import HostReceipt
 from job_search_ops.config import ConfigError
+from job_search_ops.sheets import SCHEMAS, STATUSES
 from test_pipeline import NativeConnector, WORKBOOK, packet
 
 
@@ -28,14 +29,13 @@ def check(operation, tool, response, assertions, request=None):
 
 
 def bootstrap_response():
-    from job_search_ops.sheets import SCHEMAS, STATUSES
     native = NativeConnector()
     for name, headers in SCHEMAS.items():
         tab = native.tab(name)
         tab["properties"]["gridProperties"]["frozenRowCount"] = 4
         if name not in ("Daily Summary", "How to Use"):
             tab["basicFilter"] = {"range": {"sheetId": tab["properties"]["sheetId"], "startRowIndex": 3, "endColumnIndex": len(headers)}}
-    native.tab("Jobs")["data"][0]["columnMetadata"] = [{} for _ in range(14)] + [{"hiddenByUser": True}]
+    native.tab("Jobs")["data"][0]["columnMetadata"] = [{} for _ in range(SCHEMAS["Jobs"].index("Job Key"))] + [{"hiddenByUser": True}]
     for field in ("First Seen", "Last Seen"):
         native.cell("Jobs", 4, field)["userEnteredFormat"] = {"numberFormat": {"type": "DATE", "pattern": "yyyy-mm-dd"}}
     native.cell("Jobs", 4, "Application Status")["dataValidation"] = {"strict": True, "condition": {"type": "ONE_OF_LIST", "values": [{"userEnteredValue": s} for s in STATUSES]}}
@@ -97,7 +97,8 @@ class NativeBridgeTests(unittest.TestCase):
         forged["snapshot"]["properties"]["timeZone"] = "Europe/London"
         self.assertFalse(host_evidence.verify(replace(receipt, evidence=forged)))
         wrong_structure = copy.deepcopy(receipt.evidence)
-        wrong_structure["native_checks"][-1]["response"]["updatedSpreadsheet"]["sheets"][0]["data"][0]["columnMetadata"][14]["hiddenByUser"] = False
+        columns = wrong_structure["native_checks"][-1]["response"]["updatedSpreadsheet"]["sheets"][0]["data"][0]["columnMetadata"]
+        columns[SCHEMAS["Jobs"].index("Job Key")]["hiddenByUser"] = False
         self.assertFalse(host_evidence.verify(replace(receipt, evidence=wrong_structure)))
 
     def test_error_results_unchecked_flags_and_wrong_provider_are_not_evidence(self):

@@ -90,11 +90,12 @@ def workflow_scope(config, workflow=None):
                              for name in plan["selectors"]}
         plan["source_files"] = ["rated_companies_path"]
         plan["staging"] = ["staging/blind"]
-    elif workflow == "main":
+    elif workflow == "main" and not plan["coordinated"]:
         plan["source_files"] = [name for name in plan["source_files"] if name != "rated_companies_path"]
         plan["staging"] = [name for name in plan["staging"] if name != "staging/blind"]
-        plan["selectors"]["scheduled"] = config["schedules"]["main"]["enabled"]
         plan["selectors"]["public_research"] = any(name in plan["discovery"] for name in ("email", "portal"))
+    if workflow == "main":
+        plan["selectors"]["scheduled"] = config["schedules"]["main"]["enabled"]
     return plan
 
 

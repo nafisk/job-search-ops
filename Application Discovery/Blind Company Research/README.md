@@ -10,7 +10,7 @@ You can run Blind on its own with Local Excel or Google Sheets. Review the [tool
 
 ## Run
 
-Ask your Blind chat to follow the [research runbook](run.md). It checks enabled companies and queues verified postings and coverage gaps. The next central run imports the findings and verifies the saves. Configure Blind and central timing separately.
+For a coordinated run, the coordinator starts Blind and saves verified findings to the tracker. To run Blind on its own, follow the [research runbook](run.md) and have the coordinator import the queued results.
 
 Once the jobs are saved, you can request [Application Batches](<../../Application Batches/README.md>).
 

@@ -14,17 +14,23 @@ from zoneinfo import ZoneInfo
 from . import queue as q
 
 JOBS = ["First Seen", "Last Seen", "Company", "Title", "Job Link", "Application Status", "Source", "Location", "Level", "Referral Contact", "Target Fit", "Fit Reason", "Seen Count", "Notes", "Job Key"]
+REFERRAL = "Referral"
 SOURCES = ["Source Event Key", "Job Key", "Provider", "Source Job ID", "Policy ID", "Policy Version", "Qualification Tier", "Rating", "Rating As Of", "Observed At", "Checked At", "Job Link", "Disposition", "Evidence Link"]
 COMPANIES = ["Company Key", "Company", "Rating", "Rating As Of", "Careers URL", "Enabled", "Notes", "Checked At"]
 COVERAGE = ["Coverage Key", "Company Key", "Company", "Run ID", "Scope", "Status", "Checked At", "Observed Jobs", "Qualified Jobs", "Notes"]
 STATUSES = ["New", "Saved", "Asked for referral", "Referred", "Applied", "Interviewing", "Rejected", "Closed", "Skip"]
-SCHEMAS = {"Jobs": JOBS, "Daily Summary": ["Metric", "Value"], "Referral Watchlist": ["Company", "Referral Contact", "Official Careers Search", "Alert Method", "Targeting Notes"], "How to Use": ["Topic", "Instructions"], "Rated Companies": COMPANIES, "Rated Search Coverage": COVERAGE, "Job Sources": SOURCES}
+SCHEMAS = {"Jobs": [*JOBS[:6], REFERRAL, *JOBS[6:]], "Daily Summary": ["Metric", "Value"], "Referral Watchlist": ["Company", "Referral Contact", "Official Careers Search", "Alert Method", "Targeting Notes"], "How to Use": ["Topic", "Instructions"], "Rated Companies": COMPANIES, "Rated Search Coverage": COVERAGE, "Job Sources": SOURCES}
 MANAGED = {"Jobs": JOBS, "Job Sources": SOURCES, "Rated Companies": COMPANIES, "Rated Search Coverage": COVERAGE}
 CELL_FIELDS = "userEnteredValue,effectiveValue,hyperlink,userEnteredFormat(textFormat),effectiveFormat(textFormat),textFormatRuns"
 
 
 def workbook_schema():
     return {"schema_version": 1, "header_row": 4, "first_data_row": 5, "tabs": [{"name": name, "headers": headers, "frozen_rows": 4, "hidden_columns": ["Job Key"] if name == "Jobs" else []} for name, headers in SCHEMAS.items()], "job_statuses": STATUSES, "job_providers": ["Official ATS", "LinkedIn", "Simplify"], "cell_fields": CELL_FIELDS}
+
+
+def has_required_headers(name, headers):
+    required = JOBS if name == "Jobs" else SCHEMAS[name]
+    return set(required) <= headers.keys()
 
 
 def colnum(name):
@@ -164,7 +170,7 @@ class Snapshot:
                     if label in headers:
                         raise q.ProtocolError("Duplicate managed header")
                     headers[label] = ci
-            if set(headers) != set(expected_headers):
+            if not has_required_headers(name, headers):
                 raise q.ProtocolError(f"Missing/changed {name} headers; setup or explicit migration required")
             self._coverage(name, headers.values(), 12 if name == "Daily Summary" else grid["rowCount"], raw.get("_read_ranges", []))
             table = {"name": name, "id": props["sheetId"], "rows": grid["rowCount"], "columns": grid.get("columnCount", 0), "headers": headers, "cells": cells}
@@ -379,8 +385,10 @@ def role_state(root, workbook_id):
         return {"workbook_id": workbook_id, "aliases": aliases, "alias_urls": urls, "referral_restrictions": [restrictions[key] for key in sorted(restrictions)]}
 
 
-def _pending_roles(entries, jobs, aliases, alias_urls):
+def _pending_roles(entries, jobs, aliases, alias_urls, referral_companies):
     """Resolve the whole validated batch before assigning any new row identity."""
+    from .referrals import company_name
+
     parents = {}
 
     def find(node):
@@ -424,8 +432,11 @@ def _pending_roles(entries, jobs, aliases, alias_urls):
         if saved and canonical not in jobs:
             raise q.ProtocolError("Accepted canonical role is missing from the tracker")
         company = jobs[canonical][1]["Company"] if saved else representative["company"]
+        company = company_name(company)
+        matches = referral_companies.get(company, [])
         for _, job in proposals:
-            if job["company"].strip().casefold() != company.strip().casefold():
+            proposed = company_name(job["company"])
+            if proposed != company and not (len(matches) == 1 and matches == referral_companies.get(proposed)):
                 raise q.ProtocolError("Company conflicts with saved stable job identity")
             canonical_keys[job["job_key"]] = canonical
         representatives[canonical] = (entry["packet"], representative)
@@ -433,6 +444,8 @@ def _pending_roles(entries, jobs, aliases, alias_urls):
 
 
 def prepare(root, workbook_id, snapshot, owner):
+    from .referrals import company_index, company_name
+
     with q.locked(root) as base:
         from .setup import require_execution
         require_execution(root, "main")
@@ -458,6 +471,10 @@ def prepare(root, workbook_id, snapshot, owner):
         next_rows = {name: max((r for r, _ in snap.rows(name)), default=3) + 1 for name in MANAGED}
         insertion_starts = dict(next_rows)
         approved_policy = q.read(base / "approved-policies.json")
+        referral_path = approved_policy.get("referral_companies_path")
+        if referral_path and REFERRAL not in snap.tables["Jobs"]["headers"]:
+            raise q.ProtocolError("Add the Referral column to the Jobs tracker before enabling referral matching")
+        referral_companies = company_index(referral_path) if referral_path else {}
         timezone = approved_policy.get("timezone")
         if not isinstance(timezone, str):
             raise q.ProtocolError("Approved installation policy must declare its IANA timezone")
@@ -482,7 +499,8 @@ def prepare(root, workbook_id, snapshot, owner):
             q.validate_policy(base, packet)
             if entry["packet_sha256"] != q.digest(packet):
                 raise q.ProtocolError("Queued packet bytes changed")
-        canonical_keys, representatives = _pending_roles(entries, jobs, aliases, alias_urls)
+        canonical_keys, representatives = _pending_roles(entries, jobs, aliases, alias_urls, referral_companies)
+        referral_review = []
         def put(tab, row, field, value, formula=False):
             table = snap.summary if tab == "Daily Summary" else snap.tables[tab]
             col = table["headers"][field]
@@ -517,17 +535,22 @@ def prepare(root, workbook_id, snapshot, owner):
                         alias_urls[alias["url"]] = canonical_key
                     if prior_key is None or (alias.get("url") and prior_url is None):
                         role_aliases.append(dict(alias, canonical_key=canonical_key, verified_at=job["qualification"]["checked_at"]))
-                if job.get("referral_hold") or job.get("referral_contact"):
+                matches = referral_companies.get(company_name(job["company"]), [])
+                list_hold = len(matches) == 1 and matches[0]["referral_hold"]
+                if job.get("referral_hold") or job.get("referral_contact") or list_hold:
                     canonical = jobs[canonical_key][1] if canonical_key in jobs else {"Company": representative["company"], "Title": representative["title"]}
                     identity = {"job_key": canonical_key, "company": canonical["Company"], "title": canonical["Title"], "url": accepted_links.get(canonical_key, representative["url"])}
                     restriction = restrictions.setdefault(canonical_key, dict(identity, referral_hold=False, contacts=[], evidence=[]))
-                    new_hold = job.get("referral_hold", False) and not restriction["referral_hold"]
+                    new_hold = (job.get("referral_hold", False) or list_hold) and not restriction["referral_hold"]
                     new_contact = bool(job.get("referral_contact")) and job["referral_contact"] not in restriction["contacts"]
                     restriction["referral_hold"] = restriction["referral_hold"] or new_hold
                     if new_contact:
                         restriction["contacts"].append(job["referral_contact"])
                     if new_hold or new_contact:
-                        restriction["evidence"].append({"source": packet["source"], "packet_key": entry["packet_key"], "checked_at": job["qualification"]["checked_at"], "identity": evidence})
+                        fact = {"source": packet["source"], "packet_key": entry["packet_key"], "checked_at": job["qualification"]["checked_at"], "identity": evidence}
+                        if list_hold:
+                            fact["referral_company_id"] = matches[0]["company_id"]
+                        restriction["evidence"].append(fact)
                         referral_updates.append(dict(identity, referral_hold_added=new_hold, referral_contact_added=new_contact))
                     touched_restrictions.add(canonical_key)
                     for saved in new_jobs:
@@ -594,6 +617,16 @@ def prepare(root, workbook_id, snapshot, owner):
                 fields = dict(zip(COVERAGE, [key, item["company_key"], item["company"], packet["packet_id"], item["scope"], item["status"], item["checked_at"], item.get("observed_jobs"), item.get("qualified_jobs"), item.get("notes", "")]))
                 row = append("Rated Search Coverage", fields)
                 coverage[key] = (row, fields)
+        if REFERRAL in snap.tables["Jobs"]["headers"]:
+            for key, (_, job) in representatives.items():
+                row, _ = jobs[key]
+                matches = referral_companies.get(company_name(job["company"]), [])
+                if len(matches) > 1:
+                    referral_review.append({"job_key": key, "company": job["company"]})
+                held = restrictions.get(key, {}).get("referral_hold", False)
+                if held or referral_path:
+                    status = "On hold" if held else "Available" if len(matches) == 1 else ""
+                    put("Jobs", row, REFERRAL, status)
         requests = []
         insertions = {}
         for tab, end in next_rows.items():
@@ -632,6 +665,10 @@ def prepare(root, workbook_id, snapshot, owner):
         journal_id = q.digest([workbook_id, [e["packet_key"] for e in entries], q.digest(before)])
         journal = {"schema_version": 1, "journal_id": journal_id, "workbook_id": workbook_id, "owner": owner, "status": "prepared", "prepared_at": q.now(), "policy_sha256": q.digest(q.read(base / "approved-policies.json")), "packet_keys": [e["packet_key"] for e in entries], "packet_hashes": {e["packet_key"]: e["packet_sha256"] for e in entries}, "before_state": before, "changes": changes, "insertions": insertions, "requests": requests, "new_jobs": new_jobs, "source_events": source_events, "expected_links": {key: {"url": url} for url, key in existing_urls.items()}, "attempts": 0}
         journal.update(role_aliases=role_aliases, referral_restrictions=[restrictions[key] for key in sorted(touched_restrictions)], referral_updates=referral_updates)
+        if referral_path:
+            journal["referral_list_sha256"] = q.digest(referral_companies)
+        if referral_review:
+            journal["referral_review"] = referral_review
         journal["provider"] = snap.provider
         if snap.provider == "local_xlsx":
             journal.update(requests=[], insertions={})
@@ -657,8 +694,14 @@ def authorize_write(root, journal_id, fresh_snapshot):
             raise q.ProtocolError("Write already attempted; use reconciliation")
         if journal.get("provider", "google_sheets") == "google_sheets" and journal["status"] == "retryable" and not _settled(journal, journal.get("settlement_evidence")):
             raise q.ProtocolError("Retry requires settlement for the current write attempt")
-        if q.digest(q.read(base / "approved-policies.json")) != journal["policy_sha256"]:
+        policy = q.read(base / "approved-policies.json")
+        if q.digest(policy) != journal["policy_sha256"]:
             raise q.ProtocolError("Approved policy changed after planning")
+        if "referral_list_sha256" in journal:
+            from .referrals import company_index
+
+            if q.digest(company_index(policy["referral_companies_path"])) != journal["referral_list_sha256"]:
+                raise q.ProtocolError("Referral list changed since planning; cancel the unattempted plan and re-plan")
         for key in journal["packet_keys"]:
             entry = q.read(base / "queue/pending" / f"{key}.json")
             if q.digest(entry["packet"]) != journal["packet_hashes"][key]:
@@ -729,6 +772,8 @@ def _commit(base, journal, snapshot):
         receipt = {"schema_version": 1, "receipt_id": receipt_id, "workbook_id": journal["workbook_id"], "verified_at": q.now(), "packet_keys": journal["packet_keys"], "new_jobs": journal["new_jobs"], "new_source_events": len(journal["source_events"]), "readback_sha256": q.digest(snapshot.raw), "status": "saved"}
         if journal.get("operation") != "tracking":
             receipt.update({key: journal.get(key, []) for key in ("role_aliases", "referral_restrictions", "referral_updates")})
+            if journal.get("referral_review"):
+                receipt["referral_review"] = journal["referral_review"]
         if journal.get("operation") == "tracking":
             receipt.update(operation="tracking", provider="google_sheets", updates=journal["tracking_plan"]["updates"], new_records=journal["tracking_plan"].get("new_records", []), tracking_changes=journal["tracking_changes"], verification="native_cell_readback")
         if snapshot.provider == "local_xlsx":

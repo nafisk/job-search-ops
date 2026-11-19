@@ -185,7 +185,10 @@ class LocalRoleMergeTests(unittest.TestCase):
             queue.enqueue(root, initial)
             local_excel.merge(root, workbook, path, NODE, MODULES)
             manual = root / "manual.xlsx"
-            edits = [{"tab": "Jobs", "row": 4, "column": col, "after": sheets.native(value)} for col, value in ((5, "Saved"), (9, "My referrer"), (13, "Personal note"))]
+            headers = local_excel.inspect_workbook(path, workbook).tables["Jobs"]["headers"]
+            manual_fields = {"Application Status": "Saved", "Referral Contact": "My referrer", "Notes": "Personal note"}
+            edits = [{"tab": "Jobs", "row": 4, "column": headers[name], "after": sheets.native(value)}
+                     for name, value in manual_fields.items()]
             local_excel._artifact(path, manual, edits, NODE, MODULES)
             os.replace(manual, path)
             later = packet("portal", "later", "alternate:req-9", "portal-event")
@@ -198,6 +201,7 @@ class LocalRoleMergeTests(unittest.TestCase):
             rows = local_excel.inspect_workbook(path, workbook).rows("Jobs")
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0][1]["Seen Count"], 2)
+            self.assertEqual(rows[0][1]["Referral"], "On hold")
             self.assertEqual(rows[0][1]["Notes"], "Personal note")
             self.assertEqual(rows[0][1]["Referral Contact"], "My referrer")
             self.assertEqual(rows[0][1]["Application Status"], "Saved")
