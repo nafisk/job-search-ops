@@ -64,7 +64,7 @@ Read the merged accepted state before opening application pages:
 python3 -m job_search_ops role-state --root /absolute/private --workbook VERIFIED_WORKBOOK_ID
 ```
 
-Here `--root` is the installation directory, and `--workbook` is the installed tracker ID (including its `local:` prefix for Excel). The output is private. Use `aliases` and `alias_urls` to resolve the canonical role. The legacy `referral_restrictions` field preserves contact evidence and any old referral holds as history. Application batches use the normal eligibility and status checks. [Reports](report.md) can note a newly discovered contact without publishing the name.
+Here `--root` is the installation directory, and `--workbook` is the installed tracker ID (including its `local:` prefix for Excel). The output is private. Use `aliases` and `alias_urls` to resolve the canonical role. The legacy `referral_restrictions` field preserves contact evidence and any old referral holds as history. [Reports](report.md) can note a newly discovered contact without publishing the name.
 
 ## Preserve edits and recover
 

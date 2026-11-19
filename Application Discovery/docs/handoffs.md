@@ -111,7 +111,7 @@ Stable keys are employer/requisition identities or stable provider IDs. Explicit
 
 Source event IDs must remain stable across replay. An unchanged packet ID must have unchanged bytes. New evidence gets a new packet ID while preserving original sighting IDs; replay does not increment counts or create another new-job report.
 
-A portal proposal can include an optional `referral_contact` for an existing or new role. Verified saves keep contact evidence private and separate from the user's Notes and Referral Contact cells. New contact evidence produces a notice in the [report](report.md). Use [accepted job aliases](referrals.md#check-before-an-application-handoff) for application handoffs.
+A portal proposal can include an optional `referral_contact` for an existing or new role. Verified saves keep contact evidence private and separate from the user's Notes and Referral Contact cells. New contact evidence produces a notice in the [report](report.md). Use [accepted job aliases](referrals.md#check-before-an-application-handoff) to verify a role's identity.
 
 ## Save and report
 

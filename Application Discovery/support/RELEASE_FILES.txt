@@ -1,9 +1,5 @@
 .gitignore
 AGENTS.md
-Application Batches/ONBOARDING.md
-Application Batches/README.md
-Application Batches/batch-state.example.json
-Application Batches/run.md
 Application Discovery/AGENTS.md
 Application Discovery/Blind Company Research/ONBOARDING.md
 Application Discovery/Blind Company Research/README.md
@@ -19,7 +15,6 @@ Application Discovery/docs/local-excel.md
 Application Discovery/docs/messages.md
 Application Discovery/docs/native-evidence.md
 Application Discovery/docs/operations.md
-Application Discovery/docs/optional/manual-actions.md
 Application Discovery/docs/optional/outlook-alerts.md
 Application Discovery/docs/preferences.md
 Application Discovery/docs/referrals.md
@@ -122,10 +117,5 @@ LinkedIn/README.md
 LinkedIn/linkedin-profile-optimization.md
 ONBOARDING.md
 README.md
-Recruiter Outreach/ONBOARDING.md
-Recruiter Outreach/README.md
-Recruiter Outreach/research.md
-Recruiter Outreach/run.md
-Recruiter Outreach/tracker.md
 Resume/README.md
 Resume/resume-content-optimization.md

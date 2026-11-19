@@ -45,8 +45,6 @@ Save the [private setup summary](../../ONBOARDING.md#your-setup-summary) with th
 
 Ask the research chat to follow the [Blind runbook](run.md). After a standalone run, ask central to [import ready packets](../run.md) with the paths from the setup summary.
 
-After the shared pilot passes, [Application Batches](<../../Application Batches/ONBOARDING.md>) can open eligible applications on request. You fill and submit them.
-
 ## Change preferences
 
 Follow [preference updates](../docs/preferences.md) for company, policy and timing changes. Preserve private list and history paths. Update the setup summary after verification.

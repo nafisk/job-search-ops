@@ -7,12 +7,10 @@ Choose the workflows you need. Ask the agent to reuse confirmed answers and foll
 | Review a resume | [Resume](Resume/README.md) |
 | Audit or edit a LinkedIn profile | [LinkedIn](LinkedIn/README.md) |
 | Find jobs from alerts, referral portals or Blind company research | [Application Discovery](<Application Discovery/ONBOARDING.md>) |
-| Open application pages | [Application Batches](<Application Batches/ONBOARDING.md>) |
-| Find recruiters and prepare drafts | [Recruiter Outreach](<Recruiter Outreach/ONBOARDING.md>) |
 
 Use supplied files for resume and LinkedIn content reviews. For operational workflows, keep the complete repo or reviewed release ZIP contents in a permanent folder the agent can access.
 
-Alerts, referral portals and Blind research share one tracker and central writer. Choose the sources you need. Batches requires the shared setup and a verified pilot. Outreach uses a separate tracker.
+Alerts, referral portals and Blind research share one tracker and central writer. Choose the sources you need.
 
 ## Ask your agent to guide setup
 
@@ -23,8 +21,7 @@ setup and confirmed answers. Explain the tools and permissions I need.
 I authorize the documented setup for my choices, including the required
 trackers, selected chats and delegation. Ask before installing software,
 adding connections or expanding access. Preserve unrelated workflows.
-Wait for separate requests for Batches and Outreach pilots. Never send
-recruiter messages or submit applications.
+Keep discovery and tracking within the selected scope.
 Save my private setup summary with any blockers and the exact next request.
 ```
 
@@ -33,20 +30,20 @@ Save my private setup summary with any blockers and the exact next request.
 | Tool | When to use it |
 | --- | --- |
 | Local files and [Python 3.10+](https://www.python.org/downloads/) | Operational workflows. The shared runtime requires POSIX file locking through `fcntl` and IANA timezone data. |
-| Public search and page reads | Job and recruiter research. |
-| Browser controls | Live LinkedIn work, application pages and interactive career sites. Sign in yourself. The agent verifies the selected session and preserves existing tabs and edits. |
+| Public search and page reads | Job research. |
+| Browser controls | Live LinkedIn work and interactive career sites. Sign in yourself. The agent verifies the selected session and preserves existing tabs and edits. |
 | Google Drive and Sheets connector | A Google tracker or Sheets discovery export. Verify the account, workbook and permitted operations. |
-| [Excel runtime](<Application Discovery/docs/local-excel.md>) | Local Excel writes require Node and `@oai/artifact-tool`. The local outreach tracker uses Python and JSON. |
+| [Excel runtime](<Application Discovery/docs/local-excel.md>) | Local Excel writes require Node and `@oai/artifact-tool`. |
 | Gmail or Calendar connectors | Gmail for selected discovery, tracking or report email. Calendar for selected interview tracking. |
 | [Mac Messages MCP](https://github.com/carterlasalle/mac_messages_mcp) | Selected Messages tracking. Follow the [Messages setup guide](<Application Discovery/docs/messages.md>). |
 
-Use the selected guide's access checks and report any missing access that affects the requested work. See [Application Discovery tools](<Application Discovery/docs/tools.md>) and [Outreach tracker checks](<Recruiter Outreach/tracker.md>).
+Use the selected guide's access checks and report any missing access that affects the requested work. See [Application Discovery tools](<Application Discovery/docs/tools.md>).
 
 ## Reuse an existing setup
 
 Provide the private configuration or ledger path. Read its choices and verification records before asking for missing information. Preserve active settings, trackers and history.
 
-Keep private data outside the repo and shared exports. Check resolved paths, including symlinks and case aliases, and follow the guide's permissions. Keep one authoritative configuration per workflow. Batches uses [one active chat per ledger](<Application Batches/ONBOARDING.md#4-give-the-chat-a-durable-starting-point>), including submission checks.
+Keep private data outside the repo and shared exports. Check resolved paths, including symlinks and case aliases, and follow the guide's permissions. Keep one authoritative configuration per workflow.
 
 ## Your setup summary
 

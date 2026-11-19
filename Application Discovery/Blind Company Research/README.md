@@ -6,4 +6,4 @@ Search selected employers using historical Blind ratings as a filter. Use the [1
 - [Run company research](run.md) manually or through your saved schedule. In coordinated mode, the coordinator starts Blind alongside the other selected sources.
 - [Import queued findings](../run.md) through the coordinator after a standalone run.
 
-Once the jobs are saved, you can request [Application Batches](<../../Application Batches/README.md>). Use [preferences](ONBOARDING.md#change-preferences) to change the company list, criteria or schedule.
+Use [preferences](ONBOARDING.md#change-preferences) to change the company list, criteria or schedule.
