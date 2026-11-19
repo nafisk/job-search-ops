@@ -12,6 +12,7 @@ import re
 from zoneinfo import ZoneInfo
 
 from . import queue as q
+from .config import ConfigError
 
 JOBS = ["First Seen", "Last Seen", "Company", "Title", "Job Link", "Application Status", "Source", "Location", "Level", "Referral Contact", "Target Fit", "Fit Reason", "Seen Count", "Notes", "Job Key"]
 REFERRAL = "Referral"
@@ -302,7 +303,7 @@ def _role_history(base, workbook_id, accepted_links):
     """Restore source-owned identity/restriction facts from verified saves.
 
     These facts deliberately do not occupy the user's Notes or Referral Contact
-    cells. A hold is sticky; a new discovery cannot silently release it.
+    cells. Older hold values are kept for historical readback.
     """
     aliases = {key: key for key in accepted_links}
     urls = {url: key for key, url in accepted_links.items()}
@@ -472,9 +473,15 @@ def prepare(root, workbook_id, snapshot, owner):
         insertion_starts = dict(next_rows)
         approved_policy = q.read(base / "approved-policies.json")
         referral_path = approved_policy.get("referral_companies_path")
-        if referral_path and REFERRAL not in snap.tables["Jobs"]["headers"]:
-            raise q.ProtocolError("Add the Referral column to the Jobs tracker before enabling referral matching")
-        referral_companies = company_index(referral_path) if referral_path else {}
+        referral_companies = {}
+        referral_gap = None
+        if referral_path:
+            try:
+                referral_companies = company_index(referral_path)
+            except (ConfigError, q.ProtocolError):
+                referral_gap = "Could not read the private referral list. Jobs were saved without updating referral matches."
+            if referral_gap is None and REFERRAL not in snap.tables["Jobs"]["headers"]:
+                referral_gap = "The tracker has no Referral column. Jobs were saved without referral labels."
         timezone = approved_policy.get("timezone")
         if not isinstance(timezone, str):
             raise q.ProtocolError("Approved installation policy must declare its IANA timezone")
@@ -535,27 +542,16 @@ def prepare(root, workbook_id, snapshot, owner):
                         alias_urls[alias["url"]] = canonical_key
                     if prior_key is None or (alias.get("url") and prior_url is None):
                         role_aliases.append(dict(alias, canonical_key=canonical_key, verified_at=job["qualification"]["checked_at"]))
-                matches = referral_companies.get(company_name(job["company"]), [])
-                list_hold = len(matches) == 1 and matches[0]["referral_hold"]
-                if job.get("referral_hold") or job.get("referral_contact") or list_hold:
+                contact = job.get("referral_contact")
+                if contact:
                     canonical = jobs[canonical_key][1] if canonical_key in jobs else {"Company": representative["company"], "Title": representative["title"]}
                     identity = {"job_key": canonical_key, "company": canonical["Company"], "title": canonical["Title"], "url": accepted_links.get(canonical_key, representative["url"])}
-                    restriction = restrictions.setdefault(canonical_key, dict(identity, referral_hold=False, contacts=[], evidence=[]))
-                    new_hold = (job.get("referral_hold", False) or list_hold) and not restriction["referral_hold"]
-                    new_contact = bool(job.get("referral_contact")) and job["referral_contact"] not in restriction["contacts"]
-                    restriction["referral_hold"] = restriction["referral_hold"] or new_hold
-                    if new_contact:
-                        restriction["contacts"].append(job["referral_contact"])
-                    if new_hold or new_contact:
-                        fact = {"source": packet["source"], "packet_key": entry["packet_key"], "checked_at": job["qualification"]["checked_at"], "identity": evidence}
-                        if list_hold:
-                            fact["referral_company_id"] = matches[0]["company_id"]
-                        restriction["evidence"].append(fact)
-                        referral_updates.append(dict(identity, referral_hold_added=new_hold, referral_contact_added=new_contact))
-                    touched_restrictions.add(canonical_key)
-                    for saved in new_jobs:
-                        if saved["job_key"] == canonical_key:
-                            saved["referral_hold"] = restriction["referral_hold"]
+                    restriction = restrictions.setdefault(canonical_key, dict(identity, contacts=[], evidence=[]))
+                    if contact not in restriction["contacts"]:
+                        restriction["contacts"].append(contact)
+                        restriction["evidence"].append({"source": packet["source"], "packet_key": entry["packet_key"], "checked_at": job["qualification"]["checked_at"], "identity": evidence})
+                        referral_updates.append(dict(identity, referral_contact_added=True))
+                        touched_restrictions.add(canonical_key)
                 events = []
                 for event in job["sightings"]:
                     eid = event_key(packet["source"], event["id"])
@@ -596,7 +592,7 @@ def prepare(root, workbook_id, snapshot, owner):
                     fields["Job Link"] = values[4]["formulaValue"]
                     jobs[canonical_key] = (row, fields)
                     existing_urls[representative["url"]] = canonical_key
-                    new_jobs.append({"job_key": canonical_key, "company": representative["company"], "title": representative["title"], "url": representative["url"], "source": representative_packet["source"], "policy": representative_packet["policy"], "tier": representative["qualification"]["tier"], "referral_hold": restrictions.get(canonical_key, {}).get("referral_hold", False)})
+                    new_jobs.append({"job_key": canonical_key, "company": representative["company"], "title": representative["title"], "url": representative["url"], "source": representative_packet["source"], "policy": representative_packet["policy"], "tier": representative["qualification"]["tier"]})
             for company in packet.get("companies", []):
                 key = company["company_key"]
                 fields = dict(zip(COMPANIES, [key, company["company"], company["rating"], company["rating_as_of"], company["careers_url"], True, "User-supplied rating list", company["checked_at"]]))
@@ -617,16 +613,13 @@ def prepare(root, workbook_id, snapshot, owner):
                 fields = dict(zip(COVERAGE, [key, item["company_key"], item["company"], packet["packet_id"], item["scope"], item["status"], item["checked_at"], item.get("observed_jobs"), item.get("qualified_jobs"), item.get("notes", "")]))
                 row = append("Rated Search Coverage", fields)
                 coverage[key] = (row, fields)
-        if REFERRAL in snap.tables["Jobs"]["headers"]:
+        if referral_companies and REFERRAL in snap.tables["Jobs"]["headers"]:
             for key, (_, job) in representatives.items():
                 row, _ = jobs[key]
                 matches = referral_companies.get(company_name(job["company"]), [])
                 if len(matches) > 1:
                     referral_review.append({"job_key": key, "company": job["company"]})
-                held = restrictions.get(key, {}).get("referral_hold", False)
-                if held or referral_path:
-                    status = "On hold" if held else "Available" if len(matches) == 1 else ""
-                    put("Jobs", row, REFERRAL, status)
+                put("Jobs", row, REFERRAL, "Available" if len(matches) == 1 else "")
         requests = []
         insertions = {}
         for tab, end in next_rows.items():
@@ -665,8 +658,10 @@ def prepare(root, workbook_id, snapshot, owner):
         journal_id = q.digest([workbook_id, [e["packet_key"] for e in entries], q.digest(before)])
         journal = {"schema_version": 1, "journal_id": journal_id, "workbook_id": workbook_id, "owner": owner, "status": "prepared", "prepared_at": q.now(), "policy_sha256": q.digest(q.read(base / "approved-policies.json")), "packet_keys": [e["packet_key"] for e in entries], "packet_hashes": {e["packet_key"]: e["packet_sha256"] for e in entries}, "before_state": before, "changes": changes, "insertions": insertions, "requests": requests, "new_jobs": new_jobs, "source_events": source_events, "expected_links": {key: {"url": url} for url, key in existing_urls.items()}, "attempts": 0}
         journal.update(role_aliases=role_aliases, referral_restrictions=[restrictions[key] for key in sorted(touched_restrictions)], referral_updates=referral_updates)
-        if referral_path:
+        if referral_companies:
             journal["referral_list_sha256"] = q.digest(referral_companies)
+        if referral_gap:
+            journal["referral_gap"] = referral_gap
         if referral_review:
             journal["referral_review"] = referral_review
         journal["provider"] = snap.provider
@@ -772,8 +767,9 @@ def _commit(base, journal, snapshot):
         receipt = {"schema_version": 1, "receipt_id": receipt_id, "workbook_id": journal["workbook_id"], "verified_at": q.now(), "packet_keys": journal["packet_keys"], "new_jobs": journal["new_jobs"], "new_source_events": len(journal["source_events"]), "readback_sha256": q.digest(snapshot.raw), "status": "saved"}
         if journal.get("operation") != "tracking":
             receipt.update({key: journal.get(key, []) for key in ("role_aliases", "referral_restrictions", "referral_updates")})
-            if journal.get("referral_review"):
-                receipt["referral_review"] = journal["referral_review"]
+            for key in ("referral_gap", "referral_review"):
+                if journal.get(key):
+                    receipt[key] = journal[key]
         if journal.get("operation") == "tracking":
             receipt.update(operation="tracking", provider="google_sheets", updates=journal["tracking_plan"]["updates"], new_records=journal["tracking_plan"].get("new_records", []), tracking_changes=journal["tracking_changes"], verification="native_cell_readback")
         if snapshot.provider == "local_xlsx":

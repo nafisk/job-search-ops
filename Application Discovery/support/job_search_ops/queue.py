@@ -417,24 +417,15 @@ def tracking_summary(receipts, accepted_receipts=None):
 
 
 def referral_summary(receipts):
-    """Report newly learned restrictions without copying private contacts."""
+    """Report newly found contacts without exposing their names."""
     roles = {}
     for receipt in receipts:
         for update in receipt.get("referral_updates", []):
-            key = (receipt["workbook_id"], update["job_key"])
-            item = roles.setdefault(key, {field: update[field] for field in ("company", "title", "url")} | {"hold": False, "contact": False})
-            item["hold"] = item["hold"] or update["referral_hold_added"]
-            item["contact"] = item["contact"] or update["referral_contact_added"]
-    result = []
-    for item in roles.values():
-        labels = []
-        if item.pop("hold"):
-            labels.append("Referral hold: obtain an approved route before applying")
-        if item.pop("contact"):
-            labels.append("Referral contact discovered; review private referral restrictions")
-        if labels:
-            result.append(dict(item, change=". ".join(labels)))
-    return result
+            if update.get("referral_contact_added"):
+                key = (receipt["workbook_id"], update["job_key"])
+                identity = {field: update[field] for field in ("company", "title", "url")}
+                roles.setdefault(key, dict(identity, change="Referral contact discovered"))
+    return list(roles.values())
 
 
 def prepare_brief(root, brief_id):
@@ -525,7 +516,7 @@ def mark_brief_sending(root, brief_id, delivery):
                 raise ProtocolError("Public snapshot referral_updates must match the frozen referral_summary")
             for item in referrals:
                 if any(item[field] not in visible for field in ("company", "title", "url", "change")):
-                    raise ProtocolError("Rendered brief omits a saved referral restriction or its role identity")
+                    raise ProtocolError("Rendered brief omits a saved referral update or its role identity")
         frozen = dict(delivery, channel=channel, snapshot_sha256=snapshot_hash, bodies=bodies)
         if addresses:
             frozen["recipient"] = addresses[0]

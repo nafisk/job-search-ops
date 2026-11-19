@@ -241,12 +241,15 @@ def run_doctor(config, observations=(), verify=None, now=None, check_staging=Fal
         ready = state in STAGES and STAGES[state] >= STAGES[capability["required_stage"]]
         checks.append({"capability": name, "state": state, "required_stage": capability["required_stage"],
                        "ready": ready, "blocking": name in blocking, "reason": reason})
-    for source in workflow_scope(config, workflow)["source_files"]:
+    scope = workflow_scope(config, workflow)
+    for source in scope["source_files"]:
         path = config["sources"][source]
         available = path is not None and Path(path).is_file() and not Path(path).is_symlink()
+        blocking_source = source != "referral_companies_path" or "portal" in scope["daily_discovery"]
         checks.append({"capability": source, "state": "configured" if available else "missing",
-                       "required_stage": "configured", "ready": bool(available), "blocking": True,
-                       "reason": "Source choices must exist; source content is validated by its workflow."})
+                       "required_stage": "configured", "ready": bool(available), "blocking": blocking_source,
+                       "reason": ("Source choices must exist; source content is validated by its workflow." if blocking_source
+                                  else "The private list is used for referral labels or a targeted portal search.")})
     messages_check = next((x for x in checks if x["capability"] == "messages"), None)
     messages_status = "disabled" if messages_check is None else "available" if messages_check["ready"] else "partial"
     report = {"schema_version": 1, "installation_id": config["installation_id"],

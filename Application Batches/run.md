@@ -18,11 +18,11 @@ Continue only the request's saved scope. Treat “continue” as authorization o
 python3 -m job_search_ops role-state --root '/absolute/private/installation' --workbook 'VERIFIED_TRACKER_ID'
 ```
 
-Use actual shell-quoted bindings, including the Excel `local:` prefix. Review the returned `aliases`, `alias_urls` and `referral_restrictions` alongside the current company watchlist and user instructions; the stricter restriction wins. Follow [role restrictions](<../Application Discovery/docs/referrals.md#check-before-an-application-handoff>) for any ambiguity. This request does not release a referral hold.
+Use actual shell-quoted bindings, including the Excel `local:` prefix. Use `aliases` and `alias_urls` to resolve each job's identity. Use the tracker's Application Status and Notes to account for the user's recorded progress.
 
 ## 2. Verify and open
 
-Verify current full role requirements against the saved criteria and known factual qualifications. Read **Job Sources** for the accepted policy ID, version and qualification tier. Apply the current source policy and any configured [tracker admission](<../Application Discovery/docs/handoffs.md#tracker-admission>) to new handoffs. Preserve tier labels, qualifications, location and referral checks. Skip applied/terminal jobs, duplicates, hard mismatches and unresolved referral routes. Unread or ambiguous eligibility stays held. Reevaluate old exclusions from fresh evidence and preserve their history. Page opening needs no personal form answers.
+Verify current full role requirements against the saved criteria and known factual qualifications. Read **Job Sources** for the accepted policy ID, version and qualification tier. Apply the current source policy and any configured [tracker admission](<../Application Discovery/docs/handoffs.md#tracker-admission>) to new handoffs. Preserve tier labels, qualifications and location checks. Skip applied or terminal jobs, duplicates and hard mismatches. Unread or ambiguous eligibility stays held. Reevaluate old exclusions from fresh evidence and preserve their history. Page opening needs no personal form answers.
 
 For each reserved role:
 
@@ -64,7 +64,7 @@ python3 -m job_search_ops run-check --config '/absolute/private/config.json' --w
 
 This checks the installed configuration and pending preference-pilot holds. It does not verify current tools or the initial onboarding pilot; completed Application Discovery onboarding remains required. If it is held, follow [preference recovery](<../Application Discovery/docs/preferences.md>) before starting connected work. Setup cannot waive a pending pilot or fill in missing account access. Apply the authoritative [application criteria preflight](ONBOARDING.md#check-application-criteria) before declaring readiness or reserving/opening roles.
 
-Read the selected tracker and [accepted role state](<../Application Discovery/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases, company-wide referral holds and existing application history are required inputs.
+Read the selected tracker and [accepted role state](<../Application Discovery/docs/referrals.md#check-before-an-application-handoff>). Confirm the actual installation directory and tracker identifier, including `local:` for Excel. Job aliases and existing application history are required inputs.
 
 Copy [batch-state.example.json](batch-state.example.json) to a new private location, such as `<installation>/application-batches/state.json`. The directory must be outside the repository and release folder. Check its actual filesystem location, including symlinks and alternate capitalization. Give this dedicated directory owner-only access (`0700`) and its ledger, temporary files and backups owner-only access (`0600`). Never overwrite an existing ledger; recover it instead.
 

@@ -8,7 +8,7 @@ Complete the shared [Application Discovery setup and pilot](<../Application Disc
 
 ## Run
 
-Ask the batch chat to follow the [runbook](run.md) and open your first batch. It recovers earlier tabs, checks capacity, rechecks saved jobs and referral holds, and opens eligible employer or ATS pages.
+Ask the batch chat to follow the [runbook](run.md) and open your first batch. It recovers earlier tabs, checks capacity, rechecks saved jobs, and opens eligible employer or ATS pages.
 
 Say **“Next five”** in the same chat to open more pages within your limit. Say **“Check all submissions”** to reconcile registered applications using the selected [tracking sources](<../Application Discovery/docs/tracking.md>). Only submission evidence can establish that you applied.
 

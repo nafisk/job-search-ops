@@ -25,7 +25,7 @@ def policies():
 def packet(source="portal", packet_id="run-1", job_key="example:req-1", event="event-1", observed_at=STAMP):
     link = "https://careers.example.com/jobs/" + job_key.split(":")[-1]
     evidence = {name: {"url": link, "quote": quote} for name, quote in {"identity": "Example Company, Software Engineer, Req 1", "requirements": "Bachelor's degree and 2 years of professional experience", "location": "New York City office", "availability": "Applications are open; Apply now"}.items()}
-    job = {"job_key": job_key, "company": "Example Company", "title": "Software Engineer", "url": link, "source_job_id": job_key, "provider": "Official ATS", "location": "New York City", "experience": "2+ years", "level": "Mid", "target_fit": "Good", "fit_reason": "Verified backend role in selected location", "referral_hold": False, "qualification": {"decision": "QUALIFY", "tier": "core", "required_years": 2, "checked_at": STAMP, "evidence": evidence}, "sightings": [{"id": event, "observed_at": observed_at}]}
+    job = {"job_key": job_key, "company": "Example Company", "title": "Software Engineer", "url": link, "source_job_id": job_key, "provider": "Official ATS", "location": "New York City", "experience": "2+ years", "level": "Mid", "target_fit": "Good", "fit_reason": "Verified backend role in selected location", "qualification": {"decision": "QUALIFY", "tier": "core", "required_years": 2, "checked_at": STAMP, "evidence": evidence}, "sightings": [{"id": event, "observed_at": observed_at}]}
     if source == "blind":
         job.update(rating=4.0, rating_as_of="2026-10-01", rating_origin="user_supplied")
         job["qualification"].update(required_years=3, tier="stretch")
@@ -185,7 +185,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(len(tabs["LinkedIn Alerts"]["rows"]), 1)
         self.assertEqual(tabs["LinkedIn Alerts"]["rows"][0][0], sheets.serial(STAMP, "America/New_York"))
         self.assertEqual(tabs["Blind Research"]["rows"][0][-3:], ["Stretch", 4.0, "Not applied"])
-        self.assertEqual(tabs["Referral Portals"]["rows"][0][-2:], ["Yes", "Not applied"])
+        self.assertEqual(tabs["Referral Portals"]["headers"][-2:], ["Fit", "Application status"])
+        self.assertEqual(tabs["Referral Portals"]["rows"][0][-2:], ["Core", "Not applied"])
         current = {title: [] for title in tabs}
         email_rows = tabs["LinkedIn Alerts"]["rows"]
         legacy_url = "https://careers.example.com/jobs/old-link"
@@ -244,7 +245,7 @@ class PipelineTests(unittest.TestCase):
         journal, receipt = self.save(email)
         rows = {values["Job Key"]: values for _, values in sheets.Snapshot(self.connector.snapshot(), WORKBOOK).rows("Jobs")}
         self.assertEqual({key: x["Referral"] for key, x in rows.items()},
-                         {"example:req-1": "Available", "held:held-role": "On hold", "ambiguous:ambiguous-role": "", "unmatched:unmatched-role": ""})
+                         {"example:req-1": "Available", "held:held-role": "Available", "ambiguous:ambiguous-role": "", "unmatched:unmatched-role": ""})
         self.assertEqual(rows["example:req-1"]["Seen Count"], 2)
         self.assertEqual(receipt["new_source_events"], 5)
         self.assertEqual(receipt["referral_review"], [{"job_key": "ambiguous:ambiguous-role", "company": "Shared Name"}])
@@ -258,18 +259,30 @@ class PipelineTests(unittest.TestCase):
         row = next(row for row, x in sheets.Snapshot(self.connector.snapshot(), WORKBOOK).rows("Jobs") if x["Job Key"] == "held:held-role")
         self.connector.set("Jobs", row, "Application Status", "Applied")
         self.connector.set("Jobs", row, "Notes", "My note")
+        self.connector.set("Jobs", row, "Referral", "On hold")
         later = packet("email", "later", "held:held-role", event="later-sighting")
         later["jobs"][0]["company"] = "Held Company"
         plan = self.prepare(later)
-        scope["companies"][1]["referral_hold"] = False
+        scope["companies"][1]["aliases"].append("Confirmed alias")
         queue.atomic(path, scope)
         with self.assertRaisesRegex(queue.ProtocolError, "Referral list changed"):
             sheets.authorize_write(self.root, plan["journal_id"], self.connector.snapshot())
         sheets.cancel_unattempted(self.root, plan["journal_id"], "central")
         self.save(later)
-        self.assertEqual(self.value(row, "Referral"), "On hold")
+        self.assertEqual(self.value(row, "Referral"), "Available")
         self.assertEqual(self.value(row, "Application Status"), "Applied")
         self.assertEqual(self.value(row, "Notes"), "My note")
+
+    def test_unreadable_referral_list_does_not_block_a_qualified_job(self):
+        base = queue.storage(self.root)
+        path = base / "referrals.json"
+        path.write_text("not JSON")
+        approved = queue.read(base / "approved-policies.json")
+        queue.atomic(base / "approved-policies.json", dict(approved, referral_companies_path=str(path)))
+        _, receipt = self.save(packet())
+        self.assertEqual(receipt["status"], "saved")
+        self.assertIn("Could not read the private referral list", receipt["referral_gap"])
+        self.assertEqual(self.value(4, "Referral"), "")
 
     def test_legacy_jobs_header_remains_writable_without_referral_lookup(self):
         jobs = self.connector.tab("Jobs")

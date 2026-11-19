@@ -24,7 +24,7 @@ def parser():
             p.add_argument("--" + field, required=True)
         return p
     command("run-check", "Check whether the selected workflow may run before accessing sources", ("config", "workflow"))
-    command("role-state", "Read accepted aliases and private referral restrictions before manual actions", ("root", "workbook"))
+    command("role-state", "Read accepted job aliases and private referral history", ("root", "workbook"))
     command("preferences-plan", "Review a same-installation settings change", ("config", "candidate"))
     command("preferences-apply", "Apply or resume the exact reviewed local settings change", ("config", "plan", "expected-digest"))
     command("preferences-schedule-record", "Record native readback of an existing schedule update", ("config", "update", "workflow", "evidence", "observation"))

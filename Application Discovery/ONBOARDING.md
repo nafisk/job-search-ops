@@ -25,7 +25,7 @@ Set `discovery.coordinated` to `true` to run the selected Gmail and Blind source
 ## Prepare selected sources
 
 - [LinkedIn alerts](docs/linkedin-alerts.md) for saved searches and verified Gmail delivery.
-- [Referral matching](docs/referrals.md) for companies and holds. Review a matched and unmatched job in the tracker pilot. Test a reusable portal search if selected.
+- [Referral matching](docs/referrals.md) for employer matches. Review a matched and unmatched job in the tracker pilot. Test a reusable portal search if selected.
 - [Blind companies](<Blind Company Research/ONBOARDING.md>) for the target list and rating policy. Blind-only setups can skip email and referrals.
 
 ## Connect only what you need
@@ -38,7 +38,7 @@ Read the [operating rules](docs/operations.md). Check [tool access](docs/tools.m
 Read Application Discovery/ONBOARDING.md and guide me through the choices.
 Reuse my private setup and ask only for missing information. For discovery,
 start with my resume and confirm my experience and search preferences before
-building filters. For referrals, ask for my companies and any holds.
+building filters. For referrals, ask which companies are on my list.
 Set up targeted portal searches only if I select them.
 I authorize setup and a small pilot for the features I select, including their tracker,
 chats, and documented handoffs. If I choose LinkedIn alerts, I authorize

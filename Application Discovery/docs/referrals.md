@@ -4,11 +4,11 @@ Point `sources.referral_companies_path` at your private company list. In coordin
 
 ## Choose companies
 
-Reuse the user's companies and holds. Ask for missing decisions. A contact name is optional. Confirm which names may go in the selected tracker and keep any others in private notes.
+Reuse the user's referral companies. Ask for missing decisions. A contact name is optional. Confirm which names may go in the selected tracker and keep any others in private notes.
 
-Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Confirm each employer, its stable `company_id` and `referral_hold` with the user. Add an optional `aliases` array of confirmed employer names. Include a subsidiary only when the user confirms that their referral covers it. Leave unknown contacts and careers links blank.
+Copy the [fictional example](../support/config/examples/referral-companies.json) outside the repository. Confirm each employer and its stable `company_id` with the user. Add an optional `aliases` array of confirmed employer names. Include a subsidiary only when the user confirms that their referral covers it. Leave unknown contacts and careers links blank.
 
-The Jobs **Referral** column shows **Available** for an employer match or **On hold** when the list or the job's saved history calls for a hold. It stays blank for unmatched jobs. If a name points to more than one company, review it before adding an alias. A match means the employer is on your list. Check with your contact about the specific opening before acting on it.
+The Jobs **Referral** column shows **Available** for a unique employer match and is blank otherwise. A match means the employer is on your list. If a name points to more than one company, review it before adding an alias. Use **Application Status** or **Notes** to track your next step.
 
 ## Populate the selected tracker
 
@@ -36,7 +36,7 @@ Send the returned exact `requests` once through native `batch_update_spreadsheet
 python3 -m job_search_ops referrals-commit --config /absolute/private/config.json --snapshot /absolute/private/watchlist-after.json
 ```
 
-Only verified rows publish the private registry. Confirm each company’s contact/hold, careers URL, scope and observed watchlist row before the helper runs. No empty watchlist is accepted as successful setup for a nonempty selected list.
+Only verified rows publish the private registry. Confirm each company’s contact, careers URL, scope and observed watchlist row before the helper runs. No empty watchlist is accepted as successful setup for a nonempty selected list.
 
 ## Build links for repeat runs
 
@@ -44,7 +44,7 @@ During the first [portal pilot](agent-setup.md#5-pilot-the-selected-path), open 
 
 For each search, confirm the employer, selected filters and complete pagination. Reopen the exact first-page URL in a clean tab. Save it as a reusable link only if it restores the intended filters. If filters do not survive reopening, save the board URL and the ordered controls to apply. Record unavailable routes and untested scopes as pending. Follow the [portal validation checks](../support/toolkit/PORTALS.md#live-recipe-acceptance).
 
-Save checked searches to the existing private `portal-registry.json`. Keep company IDs, holds, scope and prior evidence. Record each search's scope, checked date and evidence references. Use these fields to identify the entry point:
+Save checked searches to the existing private `portal-registry.json`. Keep company IDs, scope and prior evidence. Record each search's scope, checked date and evidence references. Use these fields to identify the entry point:
 
 | Route | Registry entry |
 | --- | --- |
@@ -58,7 +58,7 @@ List each company and scope in the private setup summary with its clickable link
 
 ## Check before an application handoff
 
-Portal proposals can add a restriction to a role already found through email or rated-company research. Both tracker writers save these source facts in private accepted receipts, separately from manual Notes and Referral Contact cells. Accepted aliases map alternate job IDs and verified URLs to that same role across runs.
+Accepted aliases map alternate job IDs and verified URLs to the same role across runs. The writer keeps any contacts found during portal research in private receipts, separately from your Notes and Referral Contact cells.
 
 Read the merged accepted state before opening application pages:
 
@@ -66,13 +66,11 @@ Read the merged accepted state before opening application pages:
 python3 -m job_search_ops role-state --root /absolute/private --workbook VERIFIED_WORKBOOK_ID
 ```
 
-Here `--root` is the installation directory, and `--workbook` is the installed tracker ID (including its `local:` prefix for Excel). The output is private: `aliases` and `alias_urls` resolve the canonical role, and `referral_restrictions` contains holds, discovered contacts and evidence. Check it alongside the current company watchlist and user instructions; the stricter restriction wins.
-
-A later sighting, edited note or blank contact does not release a hold. There is no automatic release command. Resolve the approved route with the user for the named role before proceeding; never delete accepted receipts to bypass a restriction. [Reports](report.md) show new hold/contact-discovered notices without publishing private contacts.
+Here `--root` is the installation directory, and `--workbook` is the installed tracker ID (including its `local:` prefix for Excel). The output is private. Use `aliases` and `alias_urls` to resolve the canonical role. The legacy `referral_restrictions` field preserves contact evidence and any old referral holds as history. Application batches use the normal eligibility and status checks. [Reports](report.md) can note a newly discovered contact without publishing the name.
 
 ## Preserve edits and recover
 
-Existing matching rows are reused; conflicting contacts, holds, notes or companies stop setup without replacement. A completed identical seed is idempotent. After setup, the helper reads the private scope and checks live manual holds; a stricter hold always wins. Adding/removing companies or reconciling manual edits with the frozen seed is a separate reviewed migration. Do not overwrite the list or delete its journal to force reseeding.
+Existing matching rows are reused; conflicting contacts, notes or companies stop setup without replacement. A completed identical seed is idempotent. After setup, the helper reads the private scope and accepted search routes. Adding/removing companies or reconciling manual edits with the frozen seed is a separate reviewed migration. Do not overwrite the list or delete its journal to force reseeding.
 
 Before an attempt, `python3 -m job_search_ops referrals-cancel --config /absolute/private/config.json` archives a prepared plan and releases its claim so a corrected source can be planned. It refuses attempted writes. After a Google timeout, retain the claim and read back; `referrals-commit` can accept an exact saved result without repeating inserts. Any mismatch remains unresolved for inspection. For Excel, rerun `referrals-local`: the file hashes distinguish a saved result from an unchanged original; unexpected edits stop recovery.
 

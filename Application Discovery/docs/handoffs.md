@@ -76,7 +76,6 @@ Call `queue.enqueue(root, packet_or_path)`. Required packet shape:
     "experience": "3+ years",
     "target_fit": "Stretch",
     "fit_reason": "Verified target duties and location; three-year source-policy stretch",
-    "referral_hold": false,
     "rating": 4.0,
     "rating_as_of": "2026-10-01",
     "rating_origin": "user_supplied",
@@ -109,13 +108,13 @@ Call `queue.enqueue(root, packet_or_path)`. Required packet shape:
 
 Examples are fictional; do not use them as live evidence. Email/portal packets omit rating fields. `provider` is one of `Official ATS`, `LinkedIn`, `Simplify`; Blind is a discovery source, not a new provider value. `tier` is `core`, `stretch` or `senior_exception`, subject to the installed source policy.
 
-`jobs` contains qualified proposals only. Keep unverified or qualification-held/excluded candidates in the producer's private evidence packet; never promote them to Jobs to satisfy a count. A qualified role with a referral hold may be saved, but remains blocked for application handoff. A zero-qualified packet can still persist truthful coverage. Optional `companies` entries contain `company_key`, `company`, `rating`, `rating_as_of`, `rating_origin: user_supplied`, `careers_url`, and timezone-qualified `checked_at`.
+`jobs` contains qualified proposals only. Keep unverified or qualification-held/excluded candidates in the producer's private evidence packet; never promote them to Jobs to satisfy a count. A zero-qualified packet can still persist truthful coverage. Optional `companies` entries contain `company_key`, `company`, `rating`, `rating_as_of`, `rating_origin: user_supplied`, `careers_url`, and timezone-qualified `checked_at`.
 
 Stable keys are employer/requisition identities or stable provider IDs. Explicit aliases require `{job_key,evidence_url,quote}` proving the shared identity; include optional `url` only when that alternate role URL is also verified. Exact identical URLs can identify the same saved role; title similarity never merges jobs. The writer restores accepted aliases before each merge and checks both the proposal URL and every verified alias URL, so new IDs can reuse the original row on a later run. It resolves all validated pending aliases before allocating new rows, so connecting evidence may arrive anywhere in the batch. Evidence joining two already-saved rows still requires explicit reconciliation. Conflicting or unevidenced mappings stop the import. Preserve accepted receipts and completed source packets; they carry this history.
 
 Source event IDs must remain stable across replay. An unchanged packet ID must have unchanged bytes. New evidence gets a new packet ID while preserving original sighting IDs; replay does not increment counts or create another new-job report.
 
-Send discovered `referral_hold` and optional `referral_contact` in the proposal, even when another source already saved that role. After a verified save, private `referral_restrictions` retain the stricter hold, discovered contacts and source evidence separately from the user's Notes and Referral Contact cells. A weaker later sighting cannot release a hold. Newly learned restrictions produce `referral_updates` for the [report](report.md), including when no job row is new. Use the accepted [role-state check](referrals.md#check-before-an-application-handoff) before an application handoff; pending proposals are not accepted history.
+A portal proposal can include an optional `referral_contact` for an existing or new role. Verified saves keep contact evidence private and separate from the user's Notes and Referral Contact cells. New contact evidence produces a notice in the [report](report.md). Use [accepted job aliases](referrals.md#check-before-an-application-handoff) for application handoffs.
 
 Queued is not saved. The enqueue receipt contains a packet key, not a Sheets write receipt. Producers do not send a connector write or advance their saved checkpoint.
 

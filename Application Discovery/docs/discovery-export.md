@@ -36,7 +36,7 @@ python3 -m job_search_ops discovery-export-plan --config /absolute/private/confi
 
 Use the central run’s `--pilot-update-id` for an authorized replacement pilot. Skip `off`. Otherwise, write the plan’s `tabs`. Found on uses the first accepted date per source in the installation timezone, stored as a spreadsheet date serial.
 
-1. Read the bound file, or verify the Google account and IDs and read the bound Sheet. Find posting tables by their headers. Match generated fields to the last verified export by posting URL so sorting is safe. On first use, expect blank rows or an exact match to the plan. Reconcile unexpected changes. Save current posting rows as a JSON object keyed by the three tab names, with each value an array of rows in column order. Include the status column and use null for empty cells.
+1. Read the bound file, or verify the Google account and IDs and read the bound Sheet. Find posting tables by their headers. Match generated fields to the last verified export by posting URL so sorting is safe. On first use, expect blank rows or an exact match to the plan. Reconcile unexpected changes. Save current posting rows as a JSON object keyed by the three tab names, with each value an array of rows in column order. Include the status column and use null for empty cells. If an older Referral Portals tab has a Referral hold column, leave its existing cells alone and omit that column from the rows supplied to the merge.
 2. Preserve statuses before writing. The merge keeps a status with its verified posting URL or accepted alias. New rows use Not applied.
 
 ```sh
@@ -46,5 +46,5 @@ python3 -m job_search_ops discovery-export-merge-status \
   --output /absolute/private/discovery-export-write.json
 ```
 
-3. Save the merged plan as the write intent. Recheck current rows just before writing. Update only posting tables and extend dates and dropdowns as needed. For Excel, verify a sibling copy before replacing the unchanged original. For Google, batch typed `updateCells` writes and use `updateTable` to extend bounds. Keep the workbook idle during the write.
+3. Save the merged plan as the write intent. Recheck current rows just before writing. Update the posting fields by header and extend dates and dropdowns as needed. For Excel, verify a sibling copy before replacing the unchanged original. For Google, batch typed `updateCells` writes and use `updateTable` to extend bounds. Keep the workbook idle during the write.
 4. Match saved headers and rows to the merged plan. Record the verified result privately and return its path or URL. Reconcile uncertain writes before retrying. Report failures and coverage gaps.

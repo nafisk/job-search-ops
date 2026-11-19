@@ -68,7 +68,7 @@ class PortalTests(unittest.TestCase):
         self.assertIsNone(result["entry_url"])
         self.assertTrue(result["reasons"])
         self.assertIs(result["discovery_complete"], False)
-        self.assertIs(result["referral_hold"], True)
+        self.assertNotIn("referral_hold", result)
 
     def test_employer_and_search_identities_must_be_unique(self):
         for identity in ("company_id", "employer_name"):
@@ -86,7 +86,7 @@ class PortalTests(unittest.TestCase):
         with self.assertRaisesRegex(ContractError, "search IDs.*duplicates"):
             validate_registry(data)
 
-    def test_explicit_holds_evidence_fields_and_version_are_required(self):
+    def test_evidence_fields_and_version_are_required(self):
         changes = (
             ("root", "schema_version", 2), ("root", "schema_version", True),
             ("root", "scope_evidence", []), ("root", "invented", "value"),
@@ -106,7 +106,7 @@ class PortalTests(unittest.TestCase):
         data["companies"][0]["official_urls"][0]["evidence_ref"] = ""
         with self.assertRaises(ContractError):
             validate_registry(data)
-        for field in ("company_id", "employer_name", "referral_hold"):
+        for field in ("company_id", "employer_name"):
             data = registry()
             del data["companies"][0][field]
             with self.subTest(missing_company_field=field), self.assertRaises(ContractError):
@@ -181,12 +181,12 @@ class PortalTests(unittest.TestCase):
                 with self.subTest(field=field, value=value), self.assertRaises(ContractError):
                     self.prepare(self.receipt(**{field: value}))
 
-    def test_exact_current_observed_entry_accepted_with_hold_and_no_discovery_claim(self):
+    def test_exact_current_observed_entry_accepted_without_a_discovery_claim(self):
         proof = self.receipt()
         result = self.prepare(proof)
         self.assertEqual(result, {"status": "ready", "company_id": "fictional-north",
                                  "search_id": "fictional-city-software", "entry_url": ENTRY,
-                                 "reasons": [], "referral_hold": True, "discovery_complete": False})
+                                 "reasons": [], "discovery_complete": False})
         self.assertEqual(self.search["observed_urls"], [TERMINAL])
         for url in ("http://careers.example.invalid/", "https://user:password@careers.example.invalid/"):
             with self.subTest(url=url), self.assertRaises(ContractError):

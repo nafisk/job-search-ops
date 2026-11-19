@@ -40,12 +40,12 @@ class ReferralTests(unittest.TestCase):
         journal = self.write_and_commit()
         self.assertEqual(journal["status"], "committed")
         values = self.native.cell("Referral Watchlist", 4, "Targeting Notes")["userEnteredValue"]["stringValue"]
-        self.assertTrue(values.startswith("Referral hold: yes"))
+        self.assertEqual(values, self.source["companies"][0]["targeting_notes"])
         registry = json.loads((self.h.root / "portal-registry.json").read_text())
         company = registry["companies"][0]
         self.assertEqual(company["watchlist_rows"], [5])
         self.assertEqual(company["company_id"], self.source["companies"][0]["company_id"])
-        self.assertTrue(company["referral_hold"])
+        self.assertNotIn("referral_hold", company)
         self.assertEqual(company["official_urls"], [])
         self.assertEqual(company["searches"][0]["observed_urls"], [])
         sys.path.insert(0, str(config.SUPPORT_ROOT / "toolkit"))
@@ -68,9 +68,9 @@ class ReferralTests(unittest.TestCase):
         self.assertEqual(referrals.require_seed(self.cfg)["company_count"], 1)
         registry_path = self.h.root / "portal-registry.json"
         registry = json.loads(registry_path.read_text())
-        registry["companies"][0]["referral_hold"] = False
+        registry["companies"][0]["employer_name"] = "Renamed company"
         registry_path.write_text(json.dumps(registry))
-        with self.assertRaisesRegex(ValueError, "hold changed"):
+        with self.assertRaisesRegex(ValueError, "employer identity changed"):
             referrals.require_seed(self.cfg)
 
     def test_new_v2_pilot_gate_uses_the_completed_native_seed(self):
@@ -102,7 +102,7 @@ class ReferralTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaisesRegex(ValueError, "duplicate"):
                 referrals.validate_source(source)
 
-    def test_manual_contacts_holds_and_unlisted_companies_are_never_overwritten(self):
+    def test_manual_contacts_and_unlisted_companies_are_never_overwritten(self):
         self.native.set("Referral Watchlist", 4, "Company", self.source["companies"][0]["company"])
         self.native.set("Referral Watchlist", 4, "Referral Contact", "Someone manually entered")
         original = self.native.snapshot()
@@ -150,12 +150,12 @@ class ReferralTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "unattempted"):
             referrals.cancel_unattempted(self.cfg)
 
-    def test_replay_never_clears_manual_edits_or_changed_source_holds(self):
+    def test_replay_never_clears_manual_edits_or_reseeds_changed_sources(self):
         self.write_and_commit()
         self.native.set("Referral Watchlist", 4, "Referral Contact", "Edited contact")
         with self.assertRaisesRegex(ValueError, "manual watchlist edit"):
             self.prepare()
-        self.source["companies"][0]["referral_hold"] = False
+        self.source["companies"][0]["targeting_notes"] = "Changed note"
         self.source_path.write_text(json.dumps(self.source))
         with self.assertRaisesRegex(ValueError, "source changed"):
             self.prepare()

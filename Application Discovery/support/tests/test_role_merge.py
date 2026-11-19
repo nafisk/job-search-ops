@@ -1,4 +1,4 @@
-"""Cross-run identity and source-owned referral restrictions, on both trackers."""
+"""Cross-run identity and private referral history, on both trackers."""
 import copy
 import json
 import os
@@ -35,7 +35,7 @@ class RoleMergeTests(unittest.TestCase):
         receipt = sheets.verify_and_commit(self.root, journal["journal_id"], self.native.snapshot())
         return journal, receipt
 
-    def test_later_portal_hold_and_contact_survive_manual_fields_and_weaker_sightings(self):
+    def test_portal_contact_survives_without_creating_a_hold(self):
         self.save(packet("email"))
         for field, value in {"Notes": "Keep personal note", "Referral Contact": "My chosen contact", "Application Status": "Saved"}.items():
             self.native.set("Jobs", 4, field, value)
@@ -48,17 +48,17 @@ class RoleMergeTests(unittest.TestCase):
         self.assertEqual(row["Referral Contact"], "My chosen contact")
         self.assertEqual(row["Application Status"], "Saved")
         restriction = receipt["referral_restrictions"][0]
-        self.assertTrue(restriction["referral_hold"])
+        self.assertNotIn("referral_hold", restriction)
         self.assertEqual(restriction["contacts"], ["Private portal referrer"])
         self.assertEqual(sheets.verify_and_commit(self.root, journal["journal_id"], self.native.snapshot()), receipt)
         replay = copy.deepcopy(portal)
         replay["packet_id"] = "same-source-replay"
         self.assertEqual(self.save(replay)[1]["referral_updates"], [])
         self.save(packet("email", "weaker", event="weaker-event"))
-        self.assertTrue(sheets.role_state(self.root, WORKBOOK)["referral_restrictions"][0]["referral_hold"])
+        self.assertEqual(sheets.role_state(self.root, WORKBOOK)["referral_restrictions"][0]["contacts"], ["Private portal referrer"])
         brief = queue.prepare_brief(self.root, "holds-brief")
         self.assertEqual(len(brief["referral_summary"]), 1)
-        self.assertIn("Referral hold:", brief["referral_summary"][0]["change"])
+        self.assertEqual(brief["referral_summary"][0]["change"], "Referral contact discovered")
         self.assertNotIn("Private portal referrer", json.dumps(brief["referral_summary"]))
         public = self.root / "public.json"
         body = self.root / "report.md"
@@ -68,7 +68,7 @@ class RoleMergeTests(unittest.TestCase):
         with self.assertRaisesRegex(queue.ProtocolError, "referral_updates"):
             queue.mark_brief_sending(self.root, "holds-brief", delivery)
         queue.atomic(public, {"referral_updates": brief["referral_summary"]})
-        with self.assertRaisesRegex(queue.ProtocolError, "referral restriction"):
+        with self.assertRaisesRegex(queue.ProtocolError, "referral update"):
             queue.mark_brief_sending(self.root, "holds-brief", delivery)
         body.write_text(body.read_text() + "\n" + brief["referral_summary"][0]["change"])
         self.assertEqual(queue.mark_brief_sending(self.root, "holds-brief", delivery)["status"], "sending")
@@ -76,15 +76,15 @@ class RoleMergeTests(unittest.TestCase):
         queue.confirm_brief_delivery(self.root, "holds-brief", {"native_chat_readback": raw, "verified_at": queue.now()})
         self.assertEqual(queue.prepare_brief(self.root, "next-brief")["referral_summary"], [])
 
-    def test_same_batch_overlap_retains_stricter_hold_in_new_role_receipt(self):
+    def test_same_batch_overlap_saves_one_role_and_ignores_legacy_hold(self):
         email = packet("email", "email-first")
         portal = packet("portal", "portal-second", event="portal-event")
         portal["jobs"][0].update(referral_hold=True, referral_contact="Private contact")
         queue.enqueue(self.root, email)
         _, receipt = self.save(portal)
         self.assertEqual(len(receipt["new_jobs"]), 1)
-        self.assertTrue(receipt["new_jobs"][0]["referral_hold"])
-        self.assertTrue(receipt["referral_restrictions"][0]["referral_hold"])
+        self.assertNotIn("referral_hold", receipt["new_jobs"][0])
+        self.assertNotIn("referral_hold", receipt["referral_restrictions"][0])
         self.assertEqual(len(sheets.Snapshot(self.native.snapshot(), WORKBOOK).rows("Jobs")), 1)
 
     def test_alias_id_and_url_persist_across_independent_runs_without_new_role(self):
@@ -115,13 +115,13 @@ class RoleMergeTests(unittest.TestCase):
         later["jobs"][0]["url"] = "https://alternate.example/jobs/9"
         self.assertEqual(self.save(later)[1]["new_jobs"], [])
 
-    def test_uncommitted_alias_and_hold_are_not_accepted_history(self):
+    def test_uncommitted_alias_and_contact_are_not_accepted_history(self):
         self.save(packet("email"))
         proposed = packet("portal", "not-saved", event="not-saved-event")
-        proposed["jobs"][0].update(aliases=[alias()], referral_hold=True)
+        proposed["jobs"][0].update(aliases=[alias()], referral_contact="Uncommitted contact")
         queue.enqueue(self.root, proposed)
         journal = sheets.prepare(self.root, WORKBOOK, self.native.snapshot(), "central")
-        self.assertTrue(journal["referral_restrictions"][0]["referral_hold"])
+        self.assertEqual(journal["referral_restrictions"][0]["contacts"], ["Uncommitted contact"])
         state = sheets.role_state(self.root, WORKBOOK)
         self.assertNotIn("alternate:req-9", state["aliases"])
         self.assertEqual(state["referral_restrictions"], [])
@@ -169,7 +169,7 @@ class RoleMergeTests(unittest.TestCase):
 
 @unittest.skipUnless(RUNTIME, "Bundled XLSX runtime unavailable")
 class LocalRoleMergeTests(unittest.TestCase):
-    def test_actual_excel_alias_merge_keeps_manual_cells_and_records_portal_hold(self):
+    def test_actual_excel_alias_merge_keeps_manual_cells_and_ignores_legacy_hold(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory).resolve()
             path = root / "tracker.xlsx"
@@ -197,13 +197,13 @@ class LocalRoleMergeTests(unittest.TestCase):
             queue.enqueue(root, later)
             receipt = local_excel.merge(root, workbook, path, NODE, MODULES)
             self.assertEqual(receipt["new_jobs"], [])
-            self.assertTrue(receipt["referral_restrictions"][0]["referral_hold"])
+            self.assertEqual(receipt["referral_restrictions"][0]["contacts"], ["Private portal referrer"])
             rows = local_excel.inspect_workbook(path, workbook).rows("Jobs")
             self.assertEqual(len(rows), 1)
             self.assertEqual(rows[0][1]["Seen Count"], 2)
-            self.assertEqual(rows[0][1]["Referral"], "On hold")
+            self.assertEqual(rows[0][1]["Referral"], "")
             self.assertEqual(rows[0][1]["Notes"], "Personal note")
             self.assertEqual(rows[0][1]["Referral Contact"], "My referrer")
             self.assertEqual(rows[0][1]["Application Status"], "Saved")
-            self.assertTrue(sheets.role_state(root, workbook)["referral_restrictions"][0]["referral_hold"])
+            self.assertFalse(sheets.role_state(root, workbook)["referral_restrictions"][0]["referral_hold"])
             self.assertEqual(len(queue.prepare_brief(root, "local-brief")["referral_summary"]), 1)

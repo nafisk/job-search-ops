@@ -8,7 +8,7 @@ from .config import REPO_ROOT, filesystem_contains, local_path, no_symlink, read
 
 TABS = {"email": "LinkedIn Alerts", "blind": "Blind Research", "portal": "Referral Portals"}
 HEADERS = ["Found on", "Company", "Job title", "Location", "Official posting URL", "Min. years", "Fit"]
-EXTRA = {"blind": "Blind rating", "portal": "Referral hold"}
+EXTRA = {"blind": "Blind rating"}
 FIT = {"core": "Core", "stretch": "Stretch", "senior_exception": "Senior exception"}
 
 
@@ -93,7 +93,7 @@ def _accepted_packets(base, workbook_id):
 
 
 def _posting_tabs(base, workbook_id, timezone):
-    aliases, urls, restrictions = sheets._role_history(base, workbook_id, sheets._accepted_links(base, workbook_id))
+    aliases, urls, _ = sheets._role_history(base, workbook_id, sheets._accepted_links(base, workbook_id))
     findings = {source: {} for source in TABS}
     for packet in _accepted_packets(base, workbook_id):
         source = packet["source"]
@@ -107,8 +107,6 @@ def _posting_tabs(base, workbook_id, timezone):
                       qualification["required_years"], FIT[qualification["tier"]]]
             if source == "blind":
                 fields.append(job["rating"])
-            elif source == "portal":
-                fields.append("Yes" if restrictions.get(key, {}).get("referral_hold") else "No")
             prior = findings[source].get(key)
             if prior:
                 first = min(first, prior[0])

@@ -1,7 +1,7 @@
 """Read the private referral list and seed optional portal searches.
 
 The company file is authoritative. This setup-only bridge never replaces a
-nonblank watchlist row, clears a hold, or invents observed portal evidence.
+nonblank watchlist row or invents observed portal evidence.
 """
 from __future__ import annotations
 
@@ -22,14 +22,14 @@ def validate_source(value):
             "referrals", "expected schema_version 1 and companies")
     require(type(value["companies"]) is list and bool(value["companies"]), "referrals", "select at least one referral company")
     seen_ids, seen_names = set(), set()
-    fields = {"company_id", "company", "referral_contact", "referral_hold", "careers_url", "alert_method", "targeting_notes", "search_scope"}
+    fields = {"company_id", "company", "referral_contact", "careers_url", "alert_method", "targeting_notes", "search_scope"}
     for company in value["companies"]:
-        require(type(company) is dict and set(company) - {"aliases"} == fields, "referrals", "use the supplied company example fields")
+        require(type(company) is dict and set(company) - {"aliases", "referral_hold"} == fields, "referrals", "use the supplied company example fields")
         q.identifier(company["company_id"], "company_id")
-        for field in fields - {"referral_hold"}:
+        for field in fields:
             q.text(company[field], field, empty=field in {"referral_contact", "careers_url", "alert_method", "targeting_notes"})
         require(company["company"] == company["company"].strip(), "referrals", "company name must not have surrounding whitespace")
-        require(type(company["referral_hold"]) is bool, "referrals", "referral_hold must be explicit")
+        require(type(company.get("referral_hold", False)) is bool, "referrals", "legacy referral_hold must be boolean")
         if company["careers_url"]:
             q.url(company["careers_url"])
         aliases = company.get("aliases", [])
@@ -106,9 +106,8 @@ def watchlist(snapshot, workbook_id):
 
 
 def _project(company):
-    hold = "Referral hold: " + ("yes" if company["referral_hold"] else "no")
-    notes = hold + ("\n" + company["targeting_notes"] if company["targeting_notes"] else "")
-    return [company["company"], company["referral_contact"], company["careers_url"], company["alert_method"], notes]
+    return [company["company"], company["referral_contact"], company["careers_url"],
+            company["alert_method"], company["targeting_notes"]]
 
 
 def _files(base):
@@ -156,14 +155,18 @@ def prepare(config, snapshot=None):
                 values = _project(company)
                 row = known.get(company["company"].casefold())
                 if row:
-                    require(row["values"] == values, "referrals", "existing contact, hold or notes conflict; reconcile the private list and watchlist explicitly")
+                    notes = values[-1]
+                    suffix = "\n" + notes if notes else ""
+                    accepted_notes = {notes, "Referral hold: yes" + suffix, "Referral hold: no" + suffix}
+                    require(row["values"][:-1] == values[:-1] and row["values"][-1] in accepted_notes,
+                            "referrals", "existing contact or notes conflict; reconcile the private list and watchlist explicitly")
                 else:
                     row = {"row": max((item["row"] for item in rows), default=3) + 1, "values": values}
                     rows.append(row)
                     for col, value in enumerate(values):
                         changes.append({"tab": TAB, "row": row["row"], "column": col, "before": {}, "after": sheets.native(value)})
                 ref = str(source_path) + "#/companies/" + str(index)
-                registry_companies.append({"company_id": company["company_id"], "employer_name": company["company"], "referral_hold": company["referral_hold"], "scope_refs": [ref], "watchlist_rows": [row["row"] + 1], "official_urls": [], "historical_evidence": {"source": "user_supplied_unverified", "careers_url": company["careers_url"] or None}, "searches": [{"search_id": "configured-scope", "label": company["search_scope"], "observed_urls": [], "evidence_refs": [ref], "details": {"status": "needs_validation", "scope": company["search_scope"]}}]})
+                registry_companies.append({"company_id": company["company_id"], "employer_name": company["company"], "scope_refs": [ref], "watchlist_rows": [row["row"] + 1], "official_urls": [], "historical_evidence": {"source": "user_supplied_unverified", "careers_url": company["careers_url"] or None}, "searches": [{"search_id": "configured-scope", "label": company["search_scope"], "observed_urls": [], "evidence_refs": [ref], "details": {"status": "needs_validation", "scope": company["search_scope"]}}]})
             requests = []
             if before["sheet_id"] is not None:
                 if changes:
@@ -304,7 +307,7 @@ def require_seed(config):
     require(len(companies) == len(registry["companies"]) == len(source["companies"]) and set(companies) == {c["company_id"] for c in source["companies"]}, "referrals", "private portal registry scope differs")
     for company in source["companies"]:
         saved = companies[company["company_id"]]
-        require(saved.get("employer_name") == company["company"] and type(saved.get("referral_hold")) is bool and (not company["referral_hold"] or saved["referral_hold"]), "referrals", "registry employer identity or referral hold changed")
+        require(saved.get("employer_name") == company["company"], "referrals", "registry employer identity changed")
     return {"status": "verified", "company_count": len(companies), "registry_path": str(registry_path)}
 
 

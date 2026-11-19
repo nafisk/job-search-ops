@@ -27,11 +27,11 @@ def validate_registry(registry):
     check(bool(registry["scope_evidence"]), "scope evidence", "required")
     check(type(registry["companies"]) is list and bool(registry["companies"]), "companies", "explicit nonempty scope required")
     for company in registry["companies"]:
-        check(type(company) is dict and set(company) == {"company_id", "employer_name", "referral_hold", "scope_refs", "watchlist_rows",
+        check(type(company) is dict and set(company) - {"referral_hold"} == {"company_id", "employer_name", "scope_refs", "watchlist_rows",
                               "official_urls", "historical_evidence", "searches"}, "company", "unsupported fields")
         text(company["company_id"], "company ID")
         text(company["employer_name"], "employer name")
-        check(type(company["referral_hold"]) is bool, "referral hold", "explicit state required")
+        check(type(company.get("referral_hold", False)) is bool, "legacy referral hold", "boolean required")
         texts(company["scope_refs"], "company scope evidence")
         check(bool(company["scope_refs"]), "company scope evidence", "required")
         check(type(company["watchlist_rows"]) is list and all(type(r) is int and r > 0 for r in company["watchlist_rows"]),
@@ -103,4 +103,4 @@ def prepare_search(profile, registry, company_id, search_id, *, as_of, max_age_d
             reasons.append("Portal validation is stale or future-dated")
     return {"status": "needs_validation" if reasons else "ready", "company_id": company_id, "search_id": search_id,
             "entry_url": None if reasons else proof.entry_url, "reasons": reasons,
-            "referral_hold": company["referral_hold"], "discovery_complete": False}
+            "discovery_complete": False}

@@ -13,7 +13,7 @@ schema_version: 1
 profile_id: matching private profile ID
 scope_evidence: [private evidence references]
 companies: [
-  company_id, employer_name, referral_hold,
+  company_id, employer_name,
   scope_refs: [private row/history evidence references],
   watchlist_rows: [observed one-based row numbers],
   official_urls: [{url, evidence_ref}],
@@ -38,7 +38,7 @@ For each declared search, establish the official employer/board and minimal work
 
 After independently checking that evidence, the host may provide typed `SearchValidation(profile_digest=digest(profile), company_digest=digest(company), search_id, entry_url, checked_at, first_page_verified, filters_verified, pagination_verified, evidence_ref)` to `prepare_search(profile, registry, company_id, search_id, as_of=..., max_age_days=..., proof=...)`. All three booleans require observed evidence, not worker claims. The proof's entry URL must be observed during that current validation; the function checks binding/freshness but cannot authenticate the semantic evidence. Trusted provenance stays at the host boundary.
 
-No proof, dictionary-shaped proof, changed profile/company data, false verification flags or stale/future evidence returns a usable URL. The result is explicit `needs_validation`, never no-match/complete. Valid proof returns `ready` with its exact validated entry URL and unchanged referral hold. `discovery_complete` is always false: an entry point's readiness does not establish today's inventory, detail screening or verified sheet sync. Disjoint company evidence work may run in parallel, while shared browser/Sheets/state controls remain exclusive.
+No proof, dictionary-shaped proof, changed profile/company data, false verification flags or stale/future evidence returns a usable URL. The result is explicit `needs_validation`, never no-match/complete. Valid proof returns `ready` with its exact validated entry URL. `discovery_complete` is always false: an entry point's readiness does not establish today's inventory, detail screening or verified sheet sync. Disjoint company evidence work may run in parallel, while shared browser/Sheets/state controls remain exclusive.
 
 The [portal runbook](../../helpers/referral-portals.md) owns actual retrieval, browser fallback, retries and terminal scope acceptance. Reuse the configured background-first/built-in-browser fallback and shared three-attempt budget when those adapters are connected. Do not activate a new route from this registry alone.
 

@@ -73,7 +73,7 @@ guide.getRange("A5:B13").values = [
   ["Discovery", "Email alerts and Blind feed the Jobs tab. You can also run a targeted portal search."],
   ["Your edits", "Edit Application Status, Referral Contact, and Notes. The coordinator preserves them when a job is seen again."],
   ["Managed fields", "Keep the header names and hidden Job Key column. Keep the Job Sources rows."],
-  ["Referrals", "The coordinator marks Available or On hold when it matches a job to your saved referral list."],
+  ["Referrals", "Available means the employer is on your saved referral list. Track application steps in Application Status or Notes."],
   ["Source completeness", "A finished run can still have source gaps. Check Rated Search Coverage and the daily brief for those gaps."],
   ["Saved means verified", "A job is saved only after readback of your chosen tracker confirms its values and working role link."],
   ["Reports", "Saved imports enter one later daily brief. A failed or uncertain delivery stays pending for reconciliation."],
