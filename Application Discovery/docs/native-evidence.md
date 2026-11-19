@@ -180,7 +180,7 @@ retain its actual local workbook and configured chat binding instead.
 For a replacement pilot, include the current `preferences_update_id` in both
 the accepted manifest captured by the tool and the normalized receipt evidence.
 Adding an update ID only to an older receipt cannot certify the new settings.
-Include `delivery_readback` from the actual destination. Source gaps may remain
+For one channel, include `delivery_readback` from the actual destination. For chat and self-email, use `delivery: "both_verified"` and retain `chat_delivery_readback` and `sent_delivery_readback` from the two destinations. Source gaps may remain
 explicit `complete_with_exceptions`; unsaved writes cannot pass acceptance.
 
 For delivery evidence and the separate saved-vs-delivered frontier, follow the

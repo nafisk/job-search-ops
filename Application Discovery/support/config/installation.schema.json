@@ -279,7 +279,8 @@
         "delivery": {
           "enum": [
             "chat",
-            "email"
+            "email",
+            "both"
           ]
         },
         "send_opt_in": {

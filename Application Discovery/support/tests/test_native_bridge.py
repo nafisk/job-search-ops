@@ -123,6 +123,26 @@ class NativeBridgeTests(unittest.TestCase):
         checks[0]["response"]["output"] = "unrelated output"
         self.assertFalse(host_evidence.verify(receipt))
 
+    def test_dual_first_pass_requires_both_destination_readbacks(self):
+        manifest = {"workflow": "main", "run_id": "example-run", "status": "complete",
+                    "unsynced_count": 0, "workbook_id": WORKBOOK, "delivery": "both_verified"}
+        digest = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        checks = [
+            check("accepted_manifest_readback", "exec_command", {"exit_code": 0, "output": json.dumps(manifest)},
+                  [{"path": "/exit_code", "equals": 0}]),
+            check("chat_delivery_readback", "mcp__codex_app__read_thread", {"threadId": "example-chat", "text": "saved"},
+                  [{"path": "/text", "equals": "saved"}]),
+            check("sent_delivery_readback", "mcp__codex_apps__gmail_read_email", {"id": "sent-1", "label_ids": ["SENT"]},
+                  [{"path": "/label_ids", "contains": "SENT"}]),
+        ]
+        for selected in (checks, checks[:2], [checks[0], checks[2]]):
+            with self.subTest(operations=[c["operation"] for c in selected]):
+                evidence = {**manifest, "accepted_manifest": manifest, "accepted_manifest_sha256": digest,
+                            "operations": [c["operation"] for c in selected], "native_checks": selected}
+                receipt = HostReceipt("first_live_pass", "operation_verified", "fictional-run",
+                                      "2026-10-18T12:00:00Z", None, "example-run", "run-readback", evidence)
+                self.assertEqual(host_evidence.verify(receipt), selected == checks)
+
     def test_local_first_pass_hash_is_bound_to_the_captured_manifest(self):
         manifest = {"workflow": "main", "run_id": "local-run", "status": "complete", "unsynced_count": 0,
                     "workbook_id": "local:fictional", "delivery": "chat_verified", "tracker_file_sha256": "a" * 64}

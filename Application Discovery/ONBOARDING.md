@@ -11,7 +11,7 @@ Reuse saved answers and ask one choice at a time. Select at least one discovery 
 | Discovery | Gmail job alerts, Blind companies, or both. A referral list adds employer labels and can support searches for named companies. |
 | Tracker | A local Excel path or the Google account and workbook destination. |
 | Tracking | Gmail, Calendar, Apple Messages, or off. Confirm scope and the initial window for selected sources. |
-| Timing and reports | Timezone, manual or scheduled runs, and chat or self-email. Confirm schedule details and send permission when selected. |
+| Timing and reports | Timezone, manual or scheduled runs, and chat, self-email or both. Confirm schedule details and send permission when selected. |
 | Export | Off, local Excel or Google Sheets. The [three-tab export](docs/discovery-export.md) uses a separate workbook. |
 | Tracker admission | An optional [save rule](docs/handoffs.md#tracker-admission) for stricter experience or level limits than the research scope. |
 

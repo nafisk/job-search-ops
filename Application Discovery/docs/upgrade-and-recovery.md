@@ -57,7 +57,7 @@ A saved file and an accepted queue receipt are separate steps. Keep recovery fil
 
 ## Uncertain brief delivery
 
-Keep the frozen receipts, body, snapshot and intent. Follow the [delivery readback steps](report.md) for the configured chat or Sent mail before marking delivered. Keep the brief pending until the exact delivery is confirmed and carry late receipts into the next brief.
+Keep the frozen receipts, body, snapshot and intent. Follow the [delivery readback steps](report.md) for every configured channel before marking delivered. Use the stored per-channel receipts to resume pending confirmations. Keep the brief pending until the exact delivery is confirmed and carry late receipts into the next brief.
 
 ## Change ordinary preferences
 

@@ -265,6 +265,9 @@ def enqueue(root, packet):
                 if prior["packet_sha256"] != entry["packet_sha256"]:
                     raise ProtocolError("Packet ID reused with different bytes")
                 return {"status": status, "packet_key": key, "receipt_id": prior.get("receipt_id")}
+        for job in p["jobs"]:
+            if urlsplit(job["url"]).hostname.rstrip(".") in {"api.ashbyhq.com", "api.lever.co", "boards-api.greenhouse.io"}:
+                raise ProtocolError("Choose the public job page as the canonical posting URL and retain the API link as evidence")
         atomic(base / "queue/pending" / f"{key}.json", entry)
     return {"status": "pending", "packet_key": key}
 
@@ -474,46 +477,60 @@ def mark_brief_sending(root, brief_id, delivery):
         if brief["status"] != "prepared":
             raise ProtocolError("Brief already attempted; reconcile delivery before retry")
         channel = delivery.get("channel", "email")
-        if channel not in {"email", "chat"}:
-            raise ProtocolError("Delivery channel must be email or chat")
+        if channel not in {"email", "chat", "both"}:
+            raise ProtocolError("Delivery channel must be email, chat, or both")
         text(delivery.get("snapshot_path"), "snapshot_path")
         addresses = []
-        if channel == "email":
+        if channel in {"email", "both"}:
             for key in ("recipient", "subject"):
                 text(delivery.get(key), key)
             addresses = [address for _, address in getaddresses([delivery["recipient"]])]
             if len(addresses) != 1 or "@" not in addresses[0] or "\n" in delivery["recipient"] or "\r" in delivery["recipient"]:
                 raise ProtocolError("A single authorized recipient is required")
-        else:
+        if channel in {"chat", "both"}:
             identifier(delivery.get("thread_id"), "thread_id")
+        config_path = base.parent / "config.json"
+        if (base.parent / "installation.json").exists() and (
+                channel == "both" or (config_path.exists() and read(config_path).get("report", {}).get("delivery") == "both")):
+            from .config import load_config
+            from .setup import load_instance
+            config = load_config(config_path)
+            manifest = load_instance(config)
+            recipient = config["_profile"]["identity"]["report_recipient"]
+            if channel != "both" or config["report"]["delivery"] != "both" or addresses[0].casefold() != recipient.casefold():
+                raise ProtocolError("Both channels and this email recipient must be opted in through saved settings")
+            central = manifest["resources"].get("chat:central", {})
+            if central.get("status") == "verified" and delivery["thread_id"] != central["resource_id"]:
+                raise ProtocolError("Delivery chat differs from the installed coordinator chat")
         snapshot_bytes = Path(delivery["snapshot_path"]).read_bytes()
         public_snapshot = json.loads(snapshot_bytes)
         snapshot_hash = hashlib.sha256(snapshot_bytes).hexdigest()
         if delivery.get("snapshot_sha256", snapshot_hash) != snapshot_hash:
             raise ProtocolError("Public snapshot digest mismatch")
-        bodies = {}
-        body_fields = (("text/plain", "plain_body_path"), ("text/html", "html_body_path")) if channel == "email" else (("text/markdown", "chat_body_path"),)
-        for mime, field in body_fields:
-            if delivery.get(field):
-                bodies[mime] = Path(delivery[field]).read_text().replace("\r\n", "\n")
-        if not bodies:
-            raise ProtocolError("Freeze at least one actual rendered body before sending")
-        visible = html.unescape("\n".join(bodies.values()))
-        for receipt in brief["receipts"]:
-            for job in receipt.get("new_jobs", []):
-                if any(job[field] not in visible for field in ("company", "title", "url")):
-                    raise ProtocolError("Rendered brief omits a newly saved role or its exact URL")
+        email_fields = (("text/plain", "plain_body_path"), ("text/html", "html_body_path"))
+        chat_fields = (("text/markdown", "chat_body_path"),)
+        body_fields = {"email": email_fields, "chat": chat_fields, "both": chat_fields + email_fields}[channel]
+        bodies = {mime: Path(delivery[field]).read_text().replace("\r\n", "\n")
+                  for mime, field in body_fields if delivery.get(field)}
+        if not bodies or (channel == "both" and (
+                not bodies.get("text/markdown", "").strip()
+                or not any(bodies.get(mime, "").strip() for mime, _ in email_fields))):
+            raise ProtocolError("Freeze at least one rendered body for each selected channel")
         tracked = brief["tracking_summary"] if "tracking_summary" in brief else tracking_summary(brief["receipts"])
-        if tracked:
-            if not isinstance(public_snapshot, dict) or public_snapshot.get("tracking_updates") != tracked:
-                raise ProtocolError("Public snapshot tracking_updates must match the frozen tracking_summary")
+        referrals = brief.get("referral_summary", referral_summary(brief["receipts"]))
+        for name, items in (("tracking_updates", tracked), ("referral_updates", referrals)):
+            if items and (not isinstance(public_snapshot, dict) or public_snapshot.get(name) != items):
+                raise ProtocolError(f"Public snapshot {name} must match the frozen summary")
+        variants = bodies.values() if channel == "both" else ["\n".join(bodies.values())]
+        for body in variants:
+            visible = html.unescape(body)
+            for receipt in brief["receipts"]:
+                for job in receipt.get("new_jobs", []):
+                    if any(job[field] not in visible for field in ("company", "title", "url")):
+                        raise ProtocolError("Rendered brief omits a newly saved role or its exact URL")
             for item in tracked:
                 if any(item[field] not in visible for field in ("company", "title", "url", "change")):
                     raise ProtocolError("Rendered brief omits a saved tracking change or its role identity")
-        referrals = brief.get("referral_summary", referral_summary(brief["receipts"]))
-        if referrals:
-            if not isinstance(public_snapshot, dict) or public_snapshot.get("referral_updates") != referrals:
-                raise ProtocolError("Public snapshot referral_updates must match the frozen referral_summary")
             for item in referrals:
                 if any(item[field] not in visible for field in ("company", "title", "url", "change")):
                     raise ProtocolError("Rendered brief omits a saved referral update or its role identity")
@@ -526,6 +543,7 @@ def mark_brief_sending(root, brief_id, delivery):
 
 
 def confirm_brief_delivery(root, brief_id, delivery_evidence):
+    """Acknowledge a channel once. A dual-channel brief waits for both readbacks."""
     with locked(root) as base:
         path = base / "delivery" / f"{digest(identifier(brief_id))}.json"
         brief = read(path)
@@ -536,83 +554,112 @@ def confirm_brief_delivery(root, brief_id, delivery_evidence):
         verified_at = timestamp(delivery_evidence.get("verified_at"))
         intent = brief["delivery_intent"]
         attempted_seconds = int(timestamp(brief["attempted_at"]).timestamp())
-        used = {b["delivery_evidence"]["message_id"] for p in (base / "delivery").glob("*.json") if (b := read(p)).get("status") == "delivered"}
+
         def fresh(seconds):
             number(seconds, "native delivery time", high=1e12)
             # Native chat and Gmail timestamps can have second-level precision.
             if seconds < attempted_seconds or seconds > verified_at.timestamp() + 1:
                 raise ProtocolError("Native delivery predates this attempt or is after its verification")
-        if intent.get("channel") == "chat":
-            native = _native_delivery(delivery_evidence.get("native_chat_readback"))
-            if native.get("thread", {}).get("id") != intent["thread_id"]:
-                raise ProtocolError("Native chat readback belongs to another chat")
-            expected_text = intent["bodies"]["text/markdown"].removesuffix("\n")
-            matches = []
-            def scan(value):
-                if isinstance(value, dict):
-                    if value.get("type") == "agentMessage" and value.get("phase") in {"final_answer", "final"} and value.get("text", "").replace("\r\n", "\n").removesuffix("\n") == expected_text:
-                        if value.get("id"):
-                            matches.append(value["id"])
-                    for child in value.values():
-                        scan(child)
-                elif isinstance(value, list):
-                    for child in value:
-                        scan(child)
-            for turn in native.get("turns", []):
-                if turn.get("status") != "completed" or turn.get("error"):
-                    continue
-                completed_at = turn.get("completedAt")
-                if not isinstance(completed_at, (int, float)) or completed_at < attempted_seconds:
-                    continue
-                fresh(completed_at)
-                scan(turn.get("items"))
-            if len(set(matches)) != 1:
-                raise ProtocolError("Expected one exact completed assistant report in native chat readback")
-            if matches[0] in used:
+
+        used = set()
+        for record in (base / "delivery").glob("*.json"):
+            saved = read(record)
+            proof = saved.get("delivery_evidence", {})
+            if "message_id" in proof:
+                used.add(proof["message_id"])
+            used.update(proof["message_id"] for proof in saved.get("delivery_receipts", {}).values())
+        channel = intent.get("channel", "email")
+        selected = ("chat", "email") if channel == "both" else (channel,)
+        receipts = dict(brief.get("delivery_receipts", {}))
+        checks = {"chat": ("native_chat_readback", _verify_chat_delivery),
+                  "email": ("native_sent_readback", _verify_sent_delivery)}
+        if not any(checks[name][0] in delivery_evidence for name in selected):
+            raise ProtocolError("Provide native readback for a selected report channel")
+        for name in selected:
+            key, verify = checks[name]
+            if name in receipts or key not in delivery_evidence:
+                continue
+            native, proof = verify(delivery_evidence[key], intent, fresh, attempted_seconds)
+            if proof["message_id"] in used:
                 raise ProtocolError("Native message already acknowledged another brief")
-            verified = {"channel": "chat", "thread_id": intent["thread_id"], "message_id": matches[0], "native_readback_sha256": digest(native), "snapshot_sha256": intent["snapshot_sha256"], "verified_at": delivery_evidence["verified_at"]}
-            brief.update(status="delivered", delivery_evidence=verified, delivered_at=now())
-            atomic(path, brief)
-            return brief
-        native = _native_delivery(delivery_evidence.get("native_sent_readback"))
-        if not isinstance(native, dict) or "SENT" not in native.get("label_ids", native.get("labelIds", [])) or not native.get("id"):
-            raise ProtocolError("Native message is not a verified Sent message")
-        internal_date = native.get("internal_date", native.get("internalDate"))
-        if not isinstance(internal_date, (str, int)) or not re.fullmatch(r"\d+", str(internal_date)):
-            raise ProtocolError("Native Gmail internal timestamp is required")
-        fresh(int(internal_date) / 1000)
-        if native["id"] in used:
-            raise ProtocolError("Native message already acknowledged another brief")
-        payload = native.get("payload", {})
-        headers = {}
-        for header in payload.get("headers", []):
-            headers.setdefault(header["name"].lower(), []).append(str(make_header(decode_header(header["value"]))))
-        recipients = [address.casefold() for _, address in getaddresses(headers.get("to", []))]
-        if recipients != [intent["recipient"].casefold()] or headers.get("subject") != [intent["subject"]] or headers.get("cc") or headers.get("bcc"):
-            raise ProtocolError("Native recipient/subject does not match the frozen delivery intent")
-        bodies = {}
-        def collect(part):
-            mime = part.get("mime_type", part.get("mimeType"))
-            body = part.get("body") or {}
-            if mime in {"text/plain", "text/html"} and not part.get("filename"):
-                content = body.get("content")
-                if content is None:
-                    encoded = body.get("base64_url_content", body.get("data"))
-                    if encoded is not None:
-                        content = base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4)).decode("utf-8")
-                if isinstance(content, str):
-                    if mime in bodies:
-                        raise ProtocolError("Ambiguous duplicate report body")
-                    bodies[mime] = content.replace("\r\n", "\n")
-            for child in part.get("parts") or []:
-                collect(child)
-        collect(payload)
-        if bodies != intent["bodies"]:
-            raise ProtocolError("Actual Sent bodies differ from the frozen rendered report")
-        verified = {"message_id": native["id"], "native_readback_sha256": digest(native), "snapshot_sha256": intent["snapshot_sha256"], "verified_at": delivery_evidence["verified_at"]}
-        brief.update(status="delivered", delivery_evidence=verified, delivered_at=now())
+            used.add(proof["message_id"])
+            receipts[name] = dict(proof, native_readback_sha256=digest(native),
+                                  snapshot_sha256=intent["snapshot_sha256"],
+                                  verified_at=delivery_evidence["verified_at"])
+        if channel == "both":
+            brief["delivery_receipts"] = receipts
+        if all(name in receipts for name in selected):
+            brief.update(status="delivered", delivered_at=now())
+            if channel != "both":
+                brief["delivery_evidence"] = receipts[channel]
         atomic(path, brief)
         return brief
+
+
+def _verify_chat_delivery(readback, intent, fresh, attempted_seconds):
+    native = _native_delivery(readback)
+    if native.get("thread", {}).get("id") != intent["thread_id"]:
+        raise ProtocolError("Native chat readback belongs to another chat")
+    expected_text = intent["bodies"]["text/markdown"].removesuffix("\n")
+    matches = []
+    def scan(value):
+        if isinstance(value, dict):
+            if value.get("type") == "agentMessage" and value.get("phase") in {"final_answer", "final"} and value.get("text", "").replace("\r\n", "\n").removesuffix("\n") == expected_text:
+                if value.get("id"):
+                    matches.append(value["id"])
+            for child in value.values():
+                scan(child)
+        elif isinstance(value, list):
+            for child in value:
+                scan(child)
+    for turn in native.get("turns", []):
+        if turn.get("status") != "completed" or turn.get("error"):
+            continue
+        completed_at = turn.get("completedAt")
+        if not isinstance(completed_at, (int, float)) or completed_at < attempted_seconds:
+            continue
+        fresh(completed_at)
+        scan(turn.get("items"))
+    if len(set(matches)) != 1:
+        raise ProtocolError("Expected one exact completed assistant report in native chat readback")
+    return native, {"channel": "chat", "thread_id": intent["thread_id"], "message_id": matches[0]}
+
+
+def _verify_sent_delivery(readback, intent, fresh, _attempted_seconds):
+    native = _native_delivery(readback)
+    if not isinstance(native, dict) or "SENT" not in native.get("label_ids", native.get("labelIds", [])) or not native.get("id"):
+        raise ProtocolError("Native message is not a verified Sent message")
+    internal_date = native.get("internal_date", native.get("internalDate"))
+    if not isinstance(internal_date, (str, int)) or not re.fullmatch(r"\d+", str(internal_date)):
+        raise ProtocolError("Native Gmail internal timestamp is required")
+    fresh(int(internal_date) / 1000)
+    payload = native.get("payload", {})
+    headers = {}
+    for header in payload.get("headers", []):
+        headers.setdefault(header["name"].lower(), []).append(str(make_header(decode_header(header["value"]))))
+    recipients = [address.casefold() for _, address in getaddresses(headers.get("to", []))]
+    if recipients != [intent["recipient"].casefold()] or headers.get("subject") != [intent["subject"]] or headers.get("cc") or headers.get("bcc"):
+        raise ProtocolError("Native recipient/subject does not match the frozen delivery intent")
+    bodies = {}
+    def collect(part):
+        mime = part.get("mime_type", part.get("mimeType"))
+        body = part.get("body") or {}
+        if mime in {"text/plain", "text/html"} and not part.get("filename"):
+            content = body.get("content")
+            if content is None:
+                encoded = body.get("base64_url_content", body.get("data"))
+                if encoded is not None:
+                    content = base64.urlsafe_b64decode(encoded + "=" * (-len(encoded) % 4)).decode("utf-8")
+            if isinstance(content, str):
+                if mime in bodies:
+                    raise ProtocolError("Ambiguous duplicate report body")
+                bodies[mime] = content.replace("\r\n", "\n")
+        for child in part.get("parts") or []:
+            collect(child)
+    collect(payload)
+    if bodies != {mime: body for mime, body in intent["bodies"].items() if mime != "text/markdown"}:
+        raise ProtocolError("Actual Sent bodies differ from the frozen rendered report")
+    return native, {"message_id": native["id"]}
 
 
 def _native_delivery(value):

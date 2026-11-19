@@ -527,6 +527,55 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(queue.ProtocolError):
             sheets.authorize_write(self.root, j["journal_id"], self.connector.snapshot())
 
+    def test_discovery_packet_uses_public_job_url_and_keeps_api_evidence(self):
+        proposal = packet()
+        job = proposal["jobs"][0]
+        canonical = job["url"]
+        api = "https://boards-api.greenhouse.io/v1/boards/example/jobs/42"
+        job["qualification"]["evidence"]["requirements"]["url"] = api
+        job["url"] = api
+        with self.assertRaisesRegex(queue.ProtocolError, "public job page"):
+            queue.enqueue(self.root, proposal)
+        job["url"] = canonical
+        self.assertEqual(queue.enqueue(self.root, proposal)["status"], "pending")
+
+    def test_dual_brief_advances_only_after_both_exact_readbacks(self):
+        _, receipt = self.save(packet())
+        queue.prepare_brief(self.root, "both-daily")
+        snapshot = self.root / "public.json"
+        snapshot.write_text(json.dumps({"roles": receipt["new_jobs"]}))
+        chat, plain = self.root / "body.md", self.root / "body.txt"
+        job = receipt["new_jobs"][0]
+        markdown = f'- {job["company"]} · [{job["title"]}]({job["url"]})'
+        email = f'- {job["company"]} · {job["title"]} · {job["url"]}'
+        chat.write_text(markdown)
+        plain.write_text("Incomplete body")
+        intent = {"channel": "both", "thread_id": "central", "recipient": "person@example.com",
+                  "subject": "Daily report", "snapshot_path": str(snapshot),
+                  "chat_body_path": str(chat), "plain_body_path": str(plain)}
+        with self.assertRaisesRegex(queue.ProtocolError, "omits a newly saved role"):
+            queue.mark_brief_sending(self.root, "both-daily", intent)
+        plain.write_text(email)
+        queue.mark_brief_sending(self.root, "both-daily", intent)
+        sent = {"id": "sent-1", "internal_date": str(int(time.time() * 1000)), "label_ids": ["SENT"],
+                "payload": {"headers": [{"name": "To", "value": "person@example.com"},
+                                        {"name": "Subject", "value": "Daily report"}],
+                            "mime_type": "text/plain", "body": {"content": email}}}
+        evidence = {"native_sent_readback": sent, "verified_at": queue.now()}
+        partial = queue.confirm_brief_delivery(self.root, "both-daily", evidence)
+        self.assertEqual(partial["status"], "sending")
+        self.assertEqual(partial["delivery_receipts"]["email"]["message_id"], "sent-1")
+        self.assertEqual(queue.confirm_brief_delivery(self.root, "both-daily", evidence), partial)
+        with self.assertRaisesRegex(queue.ProtocolError, "reconcile delivery"):
+            queue.prepare_brief(self.root, "next-brief")
+        final = {"thread": {"id": "central"}, "turns": [{"status": "completed", "completedAt": int(time.time()),
+                 "items": [{"type": "agentMessage", "phase": "final_answer", "id": "final-1", "text": markdown}]}]}
+        delivered = queue.confirm_brief_delivery(self.root, "both-daily",
+                                                 {"native_chat_readback": final, "verified_at": queue.now()})
+        self.assertEqual(delivered["status"], "delivered")
+        self.assertEqual(set(delivered["delivery_receipts"]), {"chat", "email"})
+        self.assertEqual(queue.prepare_brief(self.root, "next-brief")["receipt_ids"], [])
+
     def test_chat_only_brief_uses_exact_native_final_response(self):
         _, receipt = self.save(packet())
         queue.prepare_brief(self.root, "chat-daily")

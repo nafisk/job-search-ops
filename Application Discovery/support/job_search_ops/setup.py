@@ -205,7 +205,7 @@ def setup_plan(config):
         permissions.append({"operation": "read_alerts", "source": "gmail"})
     if plan["discovery"]:
         permissions.append({"operation": "public_research", "sources": plan["discovery"]})
-    if config["report"]["delivery"] == "email":
+    if plan["selectors"]["email_delivery"]:
         permissions.append({"operation": "send_brief", "recipient": config["_profile"]["identity"]["report_recipient"], "opt_in": config["report"]["send_opt_in"]})
     if plan["schedules"]:
         permissions.append({"operation": "create_schedules_after_pilot", "schedules": plan["schedules"]})
@@ -474,7 +474,8 @@ def record_first_pass(config, workflow, receipt, verify, *, now=None):
     require(type(evidence.get("unsynced_count")) is int and evidence["unsynced_count"] == 0, "first pass", "unsaved or uncertain writes remain")
     value = evidence.get("accepted_manifest_sha256")
     require(type(value) is str and len(value) == 64 and all(c in "0123456789abcdef" for c in value), "first pass", "missing accepted run manifest digest")
-    expected_delivery = "sent_verified" if config["report"]["delivery"] == "email" and workflow == "main" else "chat_verified"
+    channel = config["report"]["delivery"] if workflow == "main" else "chat"
+    expected_delivery = {"chat": "chat_verified", "email": "sent_verified", "both": "both_verified"}[channel]
     require(evidence.get("delivery") == expected_delivery, "first pass", "selected output readback is not verified")
     with _locked(config) as root:
         manifest = _manifest(root, config)
@@ -567,8 +568,8 @@ def render_prompts(config, manifest):
             f"Delivery: {config['report']['delivery']}. " +
             (f"Explicit setup opt-in permits only this scheduled brief to {config['_profile']['identity']['report_recipient']}. "
             "Do not retry an uncertain send without exact Sent readback.\n"
-             if config["report"]["delivery"] == "email" else "No email send is authorized. Return the brief in this chat.\n") +
-            f"Follow [report delivery](<{WORKFLOW_ROOT / 'docs/report.md'}>); distinguish accepted jobs from pending prospects and report exceptions truthfully. "
+             if plan["selectors"]["email_delivery"] else "No email send is authorized. Return the brief in this chat.\n") +
+            f"Follow [report delivery](<{WORKFLOW_ROOT / 'docs/report.md'}>). Use compact filters and public posting links. Record coverage privately and surface actionable failures. "
             "Notify on meaningful changes, completion, failure or required user action.\n"
         )}
     for name, runbook in (("email", "email-discovery.md"), ("portals", "referral-portals.md")):

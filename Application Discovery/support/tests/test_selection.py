@@ -268,6 +268,32 @@ class SelectionTests(unittest.TestCase):
                         queue.enqueue(self.h.root, proposal)
         self.assertEqual(len(queue.pending(self.h.root)), 3)
 
+    def test_both_report_channels_require_opt_in_and_bound_recipient(self):
+        self.h.settings["report"].update(delivery="both", send_opt_in=False)
+        with self.assertRaisesRegex(config.ConfigError, "opt-in"):
+            self.load()
+        self.h.settings["report"]["send_opt_in"] = True
+        cfg = self.load()
+        self.assertTrue(config.execution_plan(cfg)["selectors"]["email_delivery"])
+        self.assertIn("gmail_send", {item["id"] for item in doctor.required_capabilities(cfg)})
+        self.bind_selected(cfg)
+        brief = queue.prepare_brief(self.h.root, "both")
+        snapshot = self.h.root / "snapshot.json"
+        snapshot.write_text("{}")
+        chat, plain = self.h.root / "chat.md", self.h.root / "email.txt"
+        chat.write_text("Fictional brief")
+        plain.write_text("Fictional brief")
+        binding = setup.load_instance(cfg)["resources"]["chat:central"]["resource_id"]
+        intent = {"channel": "both", "thread_id": binding, "recipient": "different@example.invalid",
+                  "subject": "Daily report", "snapshot_path": str(snapshot),
+                  "chat_body_path": str(chat), "plain_body_path": str(plain)}
+        with self.assertRaisesRegex(queue.ProtocolError, "opted in"):
+            queue.mark_brief_sending(self.h.root, brief["brief_id"], intent)
+        with self.assertRaisesRegex(queue.ProtocolError, "opted in"):
+            queue.mark_brief_sending(self.h.root, brief["brief_id"], dict(intent, channel="chat"))
+        intent["recipient"] = cfg["_profile"]["identity"]["report_recipient"]
+        self.assertEqual(queue.mark_brief_sending(self.h.root, brief["brief_id"], intent)["status"], "sending")
+
     def test_selected_accounts_recipients_and_schedule_times_cannot_be_missing(self):
         self.h.profile["identity"].update(account_identity=None, report_recipient=None)
         with self.assertRaisesRegex(config.ConfigError, "account_identity"):

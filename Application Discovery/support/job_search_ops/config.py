@@ -136,7 +136,8 @@ def execution_plan(config):
     schedules = [name for name, entry in config["schedules"].items() if entry["enabled"]]
     source_files = [name for name, enabled in (("referral_companies_path", discovery["portals"] or referral_lookup), ("rated_companies_path", modules["blind"])) if enabled]
     browser = config.get("_profile", {}).get("integrations", {}).get("browser", {})
-    gmail = discovery["email"] or tracking["gmail"] or config["report"]["delivery"] == "email"
+    email_delivery = config["report"]["delivery"] in ("email", "both")
+    gmail = discovery["email"] or tracking["gmail"] or email_delivery
     selectors = {
         "always": True, "main": modules["main"], "blind": modules["blind"],
         "email_discovery": discovery["email"], "portal_discovery": discovery["portals"],
@@ -146,7 +147,7 @@ def execution_plan(config):
         "calendar": modules["calendar"], "messages": modules["messages"],
         "manual_outreach": modules["manual_outreach"],
         "authenticated_browser": modules["manual_outreach"] or browser.get("required", False),
-        "email_delivery": config["report"]["delivery"] == "email", "scheduled": bool(schedules),
+        "email_delivery": email_delivery, "scheduled": bool(schedules),
         "artifact_tool": tracker["provider"] == "local_xlsx" or config["adapters"]["spreadsheet_templates"] == "artifact_tool" or modules["excel_export"],
     }
     return {"tracker": copy.deepcopy(tracker), "discovery": sources, "daily_discovery": daily_sources,
@@ -258,7 +259,7 @@ def load_config(path):
             require(not (entry and entry["required"]) or needed, "integrations", "required source cannot be disabled by installation")
     if plan["selectors"]["google_tracker"] or plan["selectors"]["gmail_read"] or value["modules"]["calendar"]:
         require(profile["identity"]["account_identity"] is not None, "identity.account_identity", "selected Google access needs its account identity")
-    if value["report"]["delivery"] == "email":
+    if plan["selectors"]["email_delivery"]:
         require(profile["identity"]["report_recipient"] is not None, "identity.report_recipient", "email delivery needs a named recipient")
 
     keys(value["candidate"], "actual_experience_years resume_path", "candidate")
@@ -305,11 +306,12 @@ def load_config(path):
                 (type(schedule["local_time"]) is str and re.fullmatch(r"(?:[01][0-9]|2[0-3]):[0-5][0-9]", schedule["local_time"])), "schedules.local_time", "use HH:MM for an enabled schedule")
         require(schedule["notifications"] in ("meaningful_changes", "failed_runs_only"), "schedules.notifications", "unsupported preference")
     keys(value["report"], "delivery send_opt_in", "report")
-    require(value["report"]["delivery"] in ("chat", "email"), "report.delivery", "choose chat or email")
+    require(value["report"]["delivery"] in ("chat", "email", "both"), "report.delivery", "choose chat, email, or both")
     require(type(value["report"]["send_opt_in"]) is bool, "report.send_opt_in", "expected boolean")
-    require(value["report"]["delivery"] != "email" or value["report"]["send_opt_in"], "report", "email requires explicit send opt-in")
-    require(value["report"]["delivery"] != "email" or value["modules"]["main"], "report", "email brief requires main workflow")
-    require(value["report"]["delivery"] == "email" or not value["report"]["send_opt_in"], "report", "chat delivery must not authorize email")
+    email_delivery = plan["selectors"]["email_delivery"]
+    require(not email_delivery or value["report"]["send_opt_in"], "report", "email requires explicit send opt-in")
+    require(not email_delivery or value["modules"]["main"], "report", "email brief requires main workflow")
+    require(email_delivery or not value["report"]["send_opt_in"], "report", "chat delivery must not authorize email")
     keys(value["adapters"], "html_parser simplify_decoder spreadsheet_templates", "adapters")
     require(value["adapters"]["html_parser"] == "stdlib", "adapters", "only the maintained stdlib HTML path is shipped")
     require(value["adapters"]["simplify_decoder"] == "python", "adapters", "only the maintained Python decoder is shipped")

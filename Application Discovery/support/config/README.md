@@ -21,7 +21,7 @@ Version two makes each branch explicit:
 | `tracker_admission` | Optional [tracker save rule](../../docs/handoffs.md#tracker-admission). Applies the same stated-years and level gate to all selected discovery sources. |
 | `modules.main` | True: the central coordinator owns the selected tracker and report. |
 | `schedules.main`, `schedules.blind` | Enable only the schedules requested. Disabled times may be null. |
-| `report` | Chat by default; self-email requires a named recipient and explicit send opt-in. |
+| `report` | Chat by default. Use `email` for self-email or `both` for chat and self-email. Either email choice requires a named recipient and explicit send opt-in. |
 
 At least one discovery or tracking source is selected. A tracking-only setup has
 one central chat and no discovery helpers. Other setups create only their

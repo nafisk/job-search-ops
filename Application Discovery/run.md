@@ -22,7 +22,7 @@ If a preference change holds the workflow, follow the [manual pilot procedure](d
 
    After the save, [export accepted jobs](docs/discovery-export.md) if a destination is configured. For an export-only request, use that guide directly. Report export failures alongside the tracker outcome.
 4. **Track applications if selected.** Use the [tracking runbook](docs/tracking.md) for the selected Gmail, Calendar or Apple Messages sources. Match the exact employer and process, keep evidence dates and preserve stronger manual facts.
-5. **Report verified results.** Follow the [brief and delivery steps](docs/report.md). Include saved jobs, selected tracking updates and actionable gaps. The saved notification preference controls quiet scheduled runs. Report actionable failures and decisions even when there are no new jobs. Confirm delivery against the frozen brief before advancing the baseline.
+5. **Report verified results.** Follow the [brief and delivery steps](docs/report.md). Use compact filters and public links for saved jobs. Include selected tracking updates and surface actionable gaps separately. The saved notification preference controls quiet scheduled runs. Report actionable failures and decisions even when there are no new jobs. Confirm delivery against the frozen brief before advancing the baseline.
 
 ## Continue safely after gaps
 

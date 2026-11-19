@@ -288,7 +288,11 @@ def verify(receipt):
                     return False
             if "preferences_update_id" in evidence and manifest.get("preferences_update_id") != evidence["preferences_update_id"]:
                 return False
-            if manifest.get("run_id") != receipt.resource_id or not {"accepted_manifest_readback", "delivery_readback"} <= observed:
+            delivery_checks = (
+                {"chat_delivery_readback", "sent_delivery_readback"}
+                if manifest.get("delivery") == "both_verified" else {"delivery_readback"}
+            )
+            if manifest.get("run_id") != receipt.resource_id or not (delivery_checks | {"accepted_manifest_readback"}) <= observed:
                 return False
         return True
     except (KeyError, TypeError, ValueError, IndexError, AttributeError, OSError):
