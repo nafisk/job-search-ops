@@ -4,9 +4,7 @@ Follow [onboarding](../ONBOARDING.md) for the user's choices and [operating rule
 
 ## 1. Establish the selected workflow
 
-Read existing private settings, permissions and resource receipts first. Use the [installation and profile examples](../support/config/README.md) for structure.
-
-For a new setup, create a durable private installation under an existing parent outside the repo. Use owner-only directories (`0700`) and files (`0600`). Check actual paths and ownership. Write `draft-config.json` and `draft-profile.json`; reserve `config.json` and `profile.json` for the snapshots created by `init`.
+Read the existing settings and resource receipts or start from the [fictional examples](../support/config/README.md). For a new setup, use an existing parent outside the repo. Verify paths and ownership, using `0700` for directories and `0600` for files. Write `draft-config.json` and `draft-profile.json`. `init` creates the canonical files.
 
 For discovery, complete the [search profile conversation](../ONBOARDING.md#confirm-the-search-profile) before configuring the sources:
 
@@ -56,6 +54,6 @@ Use `first-pass-record` with actual [pilot evidence](native-evidence.md#first-pa
 
 ## 6. Finish manually or enable chosen schedules
 
-In manual mode, provide the main chat and first-run request. For requested schedules, use `schedule-plan` only after the relevant checks and pilot pass. Scope it with `--workflow main` or `--workflow blind` when needed. Use the selected scheduler and verify the chat, prompt, timezone, notifications, activation, and full daily recurrence. Follow [schedule boundaries](operations.md#routine-operation).
+For manual mode, give the user the main chat and first-run request. After checks and a pilot, use `schedule-plan` for requested schedules. Scope it with `--workflow main` or `--workflow blind` as needed. Read back the saved chat, prompt, timezone, notifications, activation and full daily recurrence.
 
 Save the [private setup summary](../../ONBOARDING.md#your-setup-summary) with canonical paths, tracker and any export, chat bindings, actual check results, schedule details, and the first-run request.

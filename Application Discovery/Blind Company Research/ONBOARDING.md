@@ -1,63 +1,52 @@
 # Set up Blind company research
 
-Reuse the shared Application Discovery installation and choose Local Excel or Google Sheets. Follow its [operating rules](../docs/operations.md) and [tool requirements](../../ONBOARDING.md#tools-for-your-choices). Use public search and page reads, with browser controls for interactive pages. The user handles sign-in. Supplied ratings require no Blind account.
+Use the shared Application Discovery installation with local Excel or Google Sheets. Follow the [operating rules](../docs/operations.md) and [tool requirements](../../ONBOARDING.md#tools-for-your-choices). Supplied ratings require no Blind account.
 
 ```text
-Set up Blind company research with me using this guide. Ask one choice at a time.
-Reuse my existing private Application Discovery installation if I have one.
-I authorize the selected tracker/chats, their documented delegation and the scoped
-setup pilot. Create only schedules I choose after successful checks and a pilot.
-Do not enable email alerts, referrals or tracking sources unless I choose them.
-Do not install tools, broaden permissions or change existing live workflows
-without the required selected authorization. Return and save my setup summary.
+Set up Blind company research using this guide. Reuse my private installation
+if I have one and ask one choice at a time. I authorize the tracker, chats,
+documented delegation and small pilot for the features I select. Create only
+schedules I request after the pilot. Save my setup summary and run requests.
 ```
 
 ## 1. Choose or reuse the shared installation
 
-- **Starting fresh:** choose a permanent private folder and either local Excel or Google Sheets. The agent follows the [shared agent setup procedure](../docs/agent-setup.md) directly, using your choices here. Blind alone is a valid discovery selection: enable `modules.blind`, keep central enabled, and leave unselected discovery/tracking sources disabled. Manual runs and chat reports are the defaults.
-- **Already using Application Discovery:** supply the canonical private configuration path. Preserve your tracker, company copy, history, account bindings, chats and schedules. Use [preference updates](../docs/preferences.md) for supported changes and their required replacement pilot. A new unbound research chat or changed storage/account needs the separately reviewed migration described there; do not edit initialized configuration or create a second installation to bypass it.
+For a new setup, choose a durable private folder and tracker. Follow [agent setup](../docs/agent-setup.md) with `modules.blind` enabled and central available to save results. Email, referrals and tracking are optional. Manual runs and chat reports are the defaults.
 
-Central owns the shared tracker. Connect email, referrals, Calendar or Messages only if selected.
+For an existing setup, use the canonical config and keep its tracker, bindings and history. Use [preferences](../docs/preferences.md) for changes. Review a migration for an unbound chat or new storage/account.
 
 ## 2. Choose companies and job criteria
 
-Choose the [103-company starter](blind-companies.json) or your own list. **Its ratings are historical, user-supplied and not freshly verified; original dates are unknown.** The agent copies your chosen list outside the repository, reviews enabled companies and binds the private copy. Never replace an existing personal list automatically or add private notes to the repo.
+Use the [103-company starter](blind-companies.json) or bring a list. The starter ratings are historical and their original dates are unknown. Copy the reviewed targets to a private file and keep personal notes there. Reuse any existing private list.
 
-Use the [shared search profile](../ONBOARDING.md#confirm-the-search-profile) to confirm résumé facts, target roles and requirements. Set the rating threshold. Confirm separate base and stretch limits only for standalone Blind research. See the [runbook](run.md#setup) for the company list format.
-
-If you have verified portal links or search steps, bring the private [source CSV](run.md#reuse-saved-portal-routes). Confirm which research matches belong in chat and which may enter the shared tracker under [tracker admission](../docs/handoffs.md#tracker-admission).
+Confirm the [search profile](../ONBOARDING.md#confirm-the-search-profile) and rating threshold. Confirm separate base and stretch limits for standalone research. The [runbook](run.md#setup) describes the list format and [saved portal routes](run.md#reuse-saved-portal-routes). Use [tracker admission](../docs/handoffs.md#tracker-admission) when some research matches belong only in chat.
 
 ## 3. Verify the selected tools and handoff
 
-The agent completes the existing [setup sequence](../docs/agent-setup.md) and [tool checks](../docs/tools.md) for these selections:
-
-| Required for this choice | What is checked |
+| Selection | Check |
 | --- | --- |
-| All Blind research | Public search/page access, supported browser, Python and private working files |
-| Local Excel tracker | The [Excel writer runtime](../docs/local-excel.md) and actual file save/readback |
-| Google Sheets tracker | The central chat's selected Drive/Sheets connection, workbook identity and actual save/readback |
-| Separate research chat | Its private workspace and verified [producer handoff](../docs/handoffs.md#producer-handoff) to central |
-| Scheduling, if chosen | Only the requested workflow's schedule, after its tool checks and pilot |
+| Blind research | Public page reads, browser controls, Python and private files |
+| Local Excel | [Writer runtime](../docs/local-excel.md) and actual save/readback |
+| Google Sheets | Central's Drive/Sheets connection, workbook identity and save/readback |
+| Separate research chat | Its workspace and [handoff](../docs/handoffs.md#producer-handoff) to central |
+| Scheduled runs | The requested schedule, after tool checks and the pilot |
 
-Use the shared source key `blind`; runtime helpers stay in `Application Discovery/support/`. Check Blind readiness independently with `doctor --workflow blind` and the required configuration/evidence arguments. Its research does not require central's unrelated email access. Central must still pass its own relevant checks before saving results.
-
-Before any source access, follow the [runbook's mandatory start check](run.md). Tool readiness never overrides a pending pilot gate. New software, connections and expanded permissions need their own selected authorization.
+Use `doctor --workflow blind` with the saved config and evidence. Central checks its own selected capabilities before saving. Run the [mandatory start check](run.md) before source access.
 
 ## 4. Pilot research, then save through central
 
-1. Research a declared small scope with actual sources. Preserve gaps and do not insert fixture jobs when none qualify.
-2. Verify the packet is durably handed off or queued, then have central save/read back accepted results and report them. Record the existing setup acceptance evidence; a queued packet alone does not prove the tracker works.
-3. Complete the required scoped pilot checks for the selected installation. For an existing preference update, follow its exact replacement-pilot process; never put the pilot override in a schedule.
-4. Choose manual mode or schedule the coordinator in coordinated mode. If you keep a separate Blind timer, plan the central run that saves its packets.
+1. Run a small real search and record gaps.
+2. Verify the packet reached central. Have central save any accepted jobs and read them back. Record the actual [pilot evidence](../docs/agent-setup.md#5-pilot-the-selected-path).
+3. For an existing preference change, follow the [replacement-pilot steps](../docs/preferences.md). Use the coordinator schedule if running in coordinated mode. A separate Blind timer needs a central run to import its packets.
 
-Save and return your [private setup summary](../../ONBOARDING.md#your-setup-summary): canonical configuration/list paths, tracker, research and central chats, verified or pending checks, selected timing and exact next run requests using actual permanent paths. Keep pending checks visible; do not call the path ready until required evidence is accepted.
+Save the [private setup summary](../../ONBOARDING.md#your-setup-summary) with the actual config, list, tracker and chat bindings, verified or pending checks, timing and exact run requests.
 
 ## 5. Use the results
 
-Ask the configured research chat to read this folder's [runbook](run.md) and use your saved installation. Then ask central to read [Application Discovery/run.md](../run.md) and import ready packets into your shared tracker. Both messages use the actual paths from your setup summary.
+Ask the research chat to follow the [Blind runbook](run.md). After a standalone run, ask central to [import ready packets](../run.md) with the paths from the setup summary.
 
-After the shared installation and initial pilot are complete, follow [Application Batches onboarding](<../../Application Batches/ONBOARDING.md>) to open eligible applications from that tracker. Batches remains a separately requested manual workflow; you fill and submit.
+After the shared pilot passes, [Application Batches](<../../Application Batches/ONBOARDING.md>) can open eligible applications on request. You fill and submit them.
 
 ## Change preferences
 
-Use the shared [preference-update procedure](../docs/preferences.md) for supported company-policy, source and timing changes, including required policy versions and replacement pilots. Preserve private target/history locations and existing bindings. A new folder in this repository does not authorize moving private data, regenerating saved prompts or changing live schedules. Refresh your setup summary only after the requested change is verified.
+Follow [preference updates](../docs/preferences.md) for company, policy and timing changes. Preserve private list and history paths. Update the setup summary after verification.

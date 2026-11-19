@@ -1,6 +1,6 @@
 # Discovery export
 
-The [export template](../sheets/discovery-export.xlsx) lists saved jobs in three tabs for LinkedIn Alerts, Blind Research and Referral Portals. Each starts with Targets. Set **Application status** by hand to **Not applied**, **Applied** or **On hold**. The main tracker records application and interview evidence.
+The [export template](../sheets/discovery-export.xlsx) lists saved jobs under LinkedIn Alerts, Blind Research and Referral Portals, with Targets at the top of each tab. Set **Application status** by hand to **Not applied**, **Applied** or **On hold**.
 
 ## Set up a destination
 
@@ -23,7 +23,7 @@ python3 -m job_search_ops discovery-export-select --config /absolute/private/con
 
 ## Switch the next export
 
-Say **“Set my next discovery export to Google Sheets”** or **“Set my next discovery export to Local Excel.”** Recheck the destination and Targets. Omit the binding arguments to reuse a saved path or ID. Exports start off. Use `--destination off` to pause. Manual statuses belong to the selected workbook and source tab.
+Ask to switch your next export to Google Sheets or local Excel. Verify the destination and Targets. Omit binding arguments to reuse a saved path or ID. Use `--destination off` to pause. Manual statuses stay with each workbook and source tab.
 
 ## Export saved postings
 

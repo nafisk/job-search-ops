@@ -1,8 +1,6 @@
 # Google Sheets write protocol
 
-Central writes to the bound Google tracker through the native Drive and Sheets tools.
-
-Follow [operating rules](operations.md) and the backend-independent [queue and handoff contract](handoffs.md). Commands run from `Application Discovery/support/`; `--root` is the installation directory, never its `state/` child.
+Central writes the bound tracker through native Drive and Sheets tools. Run commands from `Application Discovery/support/` with the [installation directory](operations.md#ownership-and-source-boundaries) as `--root`. See [queue and handoff rules](handoffs.md) for job and packet identity.
 
 Treat hidden columns and a recent-jobs filter view as presentation choices. Read the complete schema and occupied rows for deduplication, link verification and manual-field preservation. Treat older tracker layouts as a [reviewed migration](upgrade-and-recovery.md#adopt-existing-scheduled-work) before binding them.
 
@@ -39,7 +37,7 @@ Every distinct source observation contributes once. Older observations never reg
 
 Verification checks all managed values, preserved manual fields and every occupied Job Link: formula target, effective clickable destination, explicit formatting links and rich-text links must agree. Existing URLs must also match prior private accepted receipts. Explicit adoption of an existing workbook requires `state/writer/baseline-links.json` with `workbook_id` and `rows: [{job_key,url,evidence_url,verified_at}]` from independently verified per-job sources. Do not build it from the potentially damaged live link column. A changed role URL needs a separately reviewed repair, not an implicit overwrite.
 
-Only successful readback installs a private saved receipt and moves packets from pending to done. Receipt-first installation is recoverable if a process exits during queue moves. Snapshot ingestion and report delivery frontiers are separate. A packet written to disk, a successful tool response or an attempted request never proves a saved row.
+After verified readback, commit the private save receipt before moving packets from pending to done. That order lets recovery finish interrupted moves. Use the separate [delivery checkpoint](report.md) for reports.
 
 ## 3. Reconcile uncertain outcomes
 

@@ -39,13 +39,13 @@ Supply that same flag to the pilot's `enqueue`, `prepare`, `tracking-prepare`, `
 
 7. Record actual new acceptance through `first-pass-record`. Both the captured accepted run manifest and its native evidence must contain the current `preferences_update_id`; adding the ID to an old receipt does not qualify. Verified acceptance clears that workflow's hold and records its `pilot_passes`, preserving the original first-pass history. Ordinary source work, queue submissions, new writes and report sends stay held until then. Existing uncertain effects can still be read back and reconciled.
 
-Timing-only changes can reuse unaffected pilot evidence. A requested pause can be reconciled immediately; it does not require the replacement pilot to run first.
+Reuse unaffected pilot evidence for timing-only changes. Reconcile a requested pause immediately.
 
 ## Schedules
 
 Local apply does **not** activate, pause, recreate or delete any automation. An existing timer may remain active, but the durable execution gate stops affected work before source access. Every scheduled invocation must run the [start check](operations.md#routine-operation).
 
-- **No schedule bound:** a requested time produces `create_after_doctor_and_pilot`. Follow [agent setup](agent-setup.md#6-finish-manually-or-enable-chosen-schedules), then use `schedule-plan` and supported the selected scheduler.
+- **No schedule bound:** a requested time produces `create_after_doctor_and_pilot`. Follow [agent setup](agent-setup.md#6-finish-manually-or-enable-chosen-schedules), then use `schedule-plan` and the selected scheduler.
 - **Existing schedule:** the plan names its exact resource ID and before/after request. Read that automation through the scheduler, reconcile any drift, and update only reviewed fields. Retain its ID, chat, timing, activation and notification settings unless that field was requested to change. Disabling a scheduled workflow produces a requested pause, not deletion.
 - Record actual saved readback with `preferences-schedule-record --config /absolute/private/config.json --update UPDATE_ID --workflow main --evidence /absolute/private/schedule-evidence.json --observation OBSERVATION_ID`. Use `blind` for the rated target company source. The [native evidence](native-evidence.md) must bind the installation and `preferences_update_id`, exact automation ID and saved prompt/timing/status. Verify the full saved recurrence: every day at the chosen local time, without alternate intervals, weekday limits or an end condition. Matching only the clock time is insufficient. Pending reconciliation stays visible and prevents another preferences update or new schedule plan.
 

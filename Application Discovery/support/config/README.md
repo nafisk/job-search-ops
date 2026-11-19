@@ -14,7 +14,8 @@ Version two makes each branch explicit:
 | --- | --- |
 | `tracker.provider` | `google_sheets` or `local_xlsx`. |
 | `tracker.path` | Null for Google; an absolute `.xlsx` path inside the private instance for local Excel. |
-| `discovery.email`, `discovery.portals` | Independently choose alert and referral-portal research. |
+| `discovery.email`, `discovery.portals` | Select email alerts and referral portal research independently. |
+| `discovery.coordinated` | Use one search profile for selected Gmail alerts and Blind research. Run selected referral portals on request. |
 | `modules.blind` | Choose rated-company discovery separately. |
 | `tracking.gmail`, `modules.calendar`, `modules.messages` | Independently choose tracking sources. None is inferred from discovery. |
 | `tracker_admission` | Optional [tracker save rule](../../docs/handoffs.md#tracker-admission). Applies the same stated-years and level gate to all selected discovery sources. |
@@ -79,7 +80,7 @@ that the user granted them.
 
 ## Rated-company list
 
-[Blind Company Research/blind-companies.json](<../../Blind Company Research/blind-companies.json>) is the optional 103-company starter, stripped of personal notes. Ratings are historical and user-supplied, **not freshly verified**, and original rating dates are unknown. [rated-companies.json](examples/rated-companies.json) remains a fictional format example. During onboarding the user chooses the starter or their own list; the agent creates a reviewed private copy and records its absolute path in `sources.rated_companies_path`. The validator rejects paths inside the repo. Preserve existing private lists unless the user requests replacement. Use company, numeric rating, official careers URL, enabled choice and rating source/as-of information; preserve an unknown rating date as `"unknown"`. This is an agent-readable array, not a runtime-enforced schema. The agent validates each entry before research, maps `url` to packet `careers_url`, retains `rating_origin: "user_supplied"`, and carries the rating date or explicit unknown label into `rating_as_of`. Disabled entries are excluded from the frozen search scope. `doctor` checks that the file exists, not whether its companies or ratings are accurate. See [Blind setup](<../../Blind Company Research/ONBOARDING.md>).
+Use the [starter list](<../../Blind Company Research/blind-companies.json>) or the [fictional format example](examples/rated-companies.json) to prepare your own. Bind a reviewed private copy in `sources.rated_companies_path`. `doctor` checks the file exists. Before running, review each entry using [Blind setup](<../../Blind Company Research/run.md#setup>) for rating provenance, dates and packet fields.
 
 ## Legacy compatibility only
 

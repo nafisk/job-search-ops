@@ -1,9 +1,6 @@
 # Shared queue and producer handoffs
 
-
-Follow [operating rules](operations.md). Local commands run from `Application Discovery/support/`.
-
-**Every `--root` is the installation directory containing `installation.json`, not its `state/` child.** The code adds `state/` itself. The name `state` is reserved for this managed child, so choose a different name for your installation directory.
+Run commands from `Application Discovery/support/`. Use the installation directory containing `installation.json` as `--root`. See [state and ownership rules](operations.md#ownership-and-source-boundaries).
 
 Email, portal and rated-company producers propose jobs. Central validates and saves through [local Excel](local-excel.md) or [Google Sheets](sheets-protocol.md), then [reports](report.md) from accepted receipts. Queued, saved and delivered are separate checkpoints.
 
@@ -11,7 +8,7 @@ Email, portal and rated-company producers propose jobs. Central validates and sa
 
 Setup writes `state/approved-policies.json` only from the user's validated profile, binds its workbook ID after verified resource creation, and declares enabled sources and the profile's IANA timezone. Workers must not edit this file or choose their own thresholds. `queue.configure_policies(root, workbook_id, sources, timezone)` validates a supplied policy mapping when used directly. Disabled sources cannot enqueue packets.
 
-Each source (`email`, `portal`, `blind`) has `id`, `version`, `max_required_years`, `allow_unstated_years`, `allowed_tiers`, and `forbidden_title_patterns`. Blind also has `min_rating` and `base_required_years`: core roles must be at or below that base, and stretch roles must state a minimum above the base and at or below the maximum. IDs are installation choices; the supplied setup uses `core` and `rated-companies`. Main and Blind remain separate policies. For example, a verified three-year Blind stretch may be accepted while the main source ceiling remains two years. A five-year role cannot bypass that ceiling by supplying `QUALIFY`.
+Each source (`email`, `portal`, `blind`) has `id`, `version`, `max_required_years`, `allow_unstated_years`, `allowed_tiers`, and `forbidden_title_patterns`. Blind also has `min_rating` and `base_required_years`: core roles must be at or below that base, and stretch roles must state a minimum above the base and at or below the maximum. IDs are installation choices; the supplied setup uses `core` and `rated-companies`. Coordinated Blind uses the shared role filters and its own rating threshold. A standalone Blind policy can admit a three-year stretch while the main source ceiling is two years. A `QUALIFY` decision still has to pass the bound policy.
 
 The code checks that these bindings match, applies numeric ceilings/title exclusions/tier/rating rules, and requires quoted identity, full-requirements, location and availability evidence. Interpreting full duties, applicable degree branches, skills, geography and actual availability remains the assigned evidence reviewer's responsibility. Code does not claim to have read a posting merely because evidence fields are present. The quoted requirements must support `required_years`; null means a completely read qualification section states no numeric minimum, not missing evidence.
 
@@ -116,8 +113,6 @@ Source event IDs must remain stable across replay. An unchanged packet ID must h
 
 A portal proposal can include an optional `referral_contact` for an existing or new role. Verified saves keep contact evidence private and separate from the user's Notes and Referral Contact cells. New contact evidence produces a notice in the [report](report.md). Use [accepted job aliases](referrals.md#check-before-an-application-handoff) for application handoffs.
 
-Queued is not saved. The enqueue receipt contains a packet key, not a Sheets write receipt. Producers do not send a connector write or advance their saved checkpoint.
-
 ## Save and report
 
-After enqueue, only the central owner runs the chosen tracker writer. A producer's queue receipt does not establish that a row was saved. Source packets and tracking saves both feed the [report checkpoint](report.md); receipts arriving after a brief is frozen wait for the next brief.
+An enqueue receipt identifies a packet. The coordinator owns verified tracker saves and saved checkpoints. Discovery and tracking save receipts feed the [brief](report.md). Late receipts wait for the next brief.

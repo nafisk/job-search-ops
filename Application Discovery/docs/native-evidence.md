@@ -1,8 +1,6 @@
 # Native evidence and local commands
 
-Collect actual tool responses for selected capabilities and save them in private evidence storage. Google snapshots require native Drive and Sheets reads. Use file verification for [Local Excel](local-excel.md).
-
-Run local commands from `Application Discovery/support/` in the permanent checkout.
+Run commands from `Application Discovery/support/`. Save native Drive and Sheets responses for Google. For Excel, follow [file verification](local-excel.md).
 
 ## Capture the actual response
 
@@ -11,8 +9,7 @@ and the time actually observed. Keep the native `structuredContent` object or th
 JSON text returned by the tool. For text-only browser or search results, save the
 verbatim output as `{"text": "..."}`. Never replace a response with expected data.
 
-A capability observation has this shape. This is fictional syntax documentation,
-not evidence that any real account was checked:
+Use this fictional example for the observation format.
 
 ```json
 {
@@ -97,7 +94,7 @@ Split large reads into contiguous bounded chunks. Save each raw cell response wi
 ]
 ```
 
-The example response is intentionally incomplete. Setup additionally reads the other header rows and structural/formatting evidence described below. Google may omit trailing empty CellData in its response; the retained request proves which cells were read. **A value-only response is insufficient. Never claim unread cells were empty or truncate history to fit a limit.** Local native payloads have a 128 MiB ceiling; stop for reviewed archival/migration if a complete snapshot exceeds it.
+The example omits the remaining required reads. Google may omit trailing empty CellData. Keep the request to prove which ranges were read. Use full CellData and retain all managed history. If a complete snapshot exceeds 128 MiB, stop for reviewed archival or migration.
 
 Use `sheets.combine_snapshot(metadata, cell_responses, read_ranges, cell_fields)` or the CLI `snapshot` command below. Both accept actual native connector responses, including `structuredContent` wrappers. The assembled JSON's `_read_ranges` and `_cell_fields` must reflect actual requests, never invented coverage.
 
@@ -115,7 +112,7 @@ then read back all settings. Send its `include_spreadsheet_in_response`,
 `response_include_grid_data`, and `response_ranges` arguments along with the batch.
 Retain the actual returned `updatedSpreadsheet` under a `bootstrap_readback`
 native check. This carries column metadata as well as cells, so the verifier can
-check hidden O, frozen headers, filters, status choices, date formats, and summary
+check the hidden **Job Key** column, frozen headers, filters, status choices, date formats and summary
 formulas. Omit the descriptive `readback` key from the actual tool arguments.
 It is not a migration tool for an existing tracker.
 

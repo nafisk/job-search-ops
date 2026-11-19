@@ -1,6 +1,6 @@
 # Set up referral matching and portal searches
 
-Point `sources.referral_companies_path` at your private company list. In coordinated mode, the writer checks this list after screening and deduplication. Use the same list if you also run targeted portal searches.
+Set `sources.referral_companies_path` to your private company list. Coordinated discovery matches employers after deduplication. Targeted portal searches use the same list.
 
 ## Choose companies
 
@@ -52,9 +52,7 @@ Save checked searches to the existing private `portal-registry.json`. Keep compa
 | Browser steps | Set `details.route_kind` to `browser_steps`. Record the observed board URL as `details.entry_url` and the ordered controls as `details.steps`. |
 | Pending | Keep `details.status` as `needs_validation` and record the gap. |
 
-Use [registry validation](../support/toolkit/PORTALS.md#build-the-registry) before an atomic update by the coordinator. Keep any original scope that remains uncovered visible. These entries record what worked during setup. Recurring runs still verify the active scope.
-
-List each company and scope in the private setup summary with its clickable link, browser steps or pending gap. If the user chose an export, copy the usable URLs or browser steps into the **Referral Portals** Targets section. Contacts stay in the private scope and selected watchlist. Later runs start from the saved routes and verify today's scope before reporting results.
+The coordinator [validates the registry](../support/toolkit/PORTALS.md#build-the-registry) before updating it atomically. Include the link, steps or pending gap for each scope in the private setup summary. If an export is selected, copy links or steps to **Referral Portals** Targets, keeping contacts private. Recheck scope each run.
 
 ## Check before an application handoff
 

@@ -1,8 +1,6 @@
 # Set up LinkedIn alerts and keep them out of your inbox
 
-Use this guide for LinkedIn email discovery. Sign in to LinkedIn and verify email delivery. Automated collection uses native Gmail search and full-message reads. [Outlook routing](optional/outlook-alerts.md) is available for mailbox organization.
-
-Keep your current address and route only job alerts to a **Job Alerts** label or folder. A `+jobs` alias still needs a routing rule.
+Keep your address and route LinkedIn alerts to **Job Alerts**. Automated discovery reads Gmail. Use the separate [Outlook guide](optional/outlook-alerts.md) to organize an Outlook mailbox.
 
 ## 1. Check what is already set up
 
@@ -56,10 +54,10 @@ The assistant performs a separate alert-readiness check; `doctor` checks tool re
 
 After initialization, transfer/reference the private draft in `evidence/linkedin-alerts-setup.md`. Record choices, rule/label identities, evidence provenance, received message ID/date, checked time and gaps. Keep planned and tested queries distinct. Store references rather than raw correspondence. Set `sources.gmail_queries` from the chosen label (for example, `label:"Job Alerts"`) and observed sender/subject conditions before freezing config; never invent a sender or silently rewrite an initialized config. A label query may be planned while awaiting delivery, but is not verified until it retrieves a real alert. Retain separate sender/subject queries for missed-label reconciliation once observed. The producer adds bounded time windows. Do not require `in:inbox` or `is:unread`: archived/read alerts must remain discoverable.
 
-An existing deployment may already have equivalent private proof under another name; reuse it and consolidate on the next authorized setup/review. The absence of this new filename alone is not grounds to recreate alerts or change existing schedules. Tool-observed delivery proves routing behavior; it does not turn user-confirmed rule settings into independently read settings.
+Reuse equivalent private proof under an existing filename. Record settings and observed delivery with their own evidence sources.
 
 If no alert has arrived, record **awaiting_first_alert**, with the selected cadence and next check, rather than claiming a verified zero-match source. Check the selected email settings, destination and spam/junk when troubleshooting; do not broaden the filter or disable security controls. Continue independent setup, retain the gap and do not enable a schedule that depends on this unfinished email pilot. Scheduling a follow-up still requires the user's choice.
 
-Hand the evidence path and queries to [Email Discovery](../helpers/email-discovery.md). Daily runs read only; they do not recreate alerts, rules or labels. Finish with the saved searches, destination, routing status, ingestion status and the next action if delivery is pending.
+Give [Email Discovery](../helpers/email-discovery.md) the evidence path and verified queries. Record the saved searches, destination, routing, ingestion status and next action if delivery is pending.
 
 *Official guidance checked October 19, 2026. Inspect current controls and tool schemas during setup; names and capabilities can change.*

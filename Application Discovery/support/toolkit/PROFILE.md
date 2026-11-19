@@ -8,7 +8,7 @@ Version 2 permits null unused `account_identity`, `report_recipient` and `reside
 
 | Field | Meaning |
 | --- | --- |
-| `schema_version`, `profile_id` | Integer `1`; stable lowercase identifier containing letters, digits, hyphens or underscores. |
+| `schema_version`, `profile_id` | Integer `1` or `2`, plus a stable lowercase identifier containing letters, digits, hyphens or underscores. |
 | `identity` | `display_name`, `account_identity`, `report_recipient`. Mail addresses are nonempty address-shaped configuration values; actual ownership requires later live verification. |
 | `timezone` | IANA timezone, checked using Python `zoneinfo`. |
 | `role_policy` | `version`; nonempty `families` and `preferred_levels`; `excluded_duties`, `excluded_levels`, `excluded_employers`; `experience` settings below. Lists are explicit, with no personal defaults. |

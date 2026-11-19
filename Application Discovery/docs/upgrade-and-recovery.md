@@ -1,8 +1,6 @@
 # Upgrade and recovery
 
-Run local commands from `Application Discovery/support/`. Use the existing private state, journals, resource bindings and selected tracker and report tools. Verify the bound identities. Keep connector and browser access separate.
-
-Back up private state privately. Keep the checkout, state, bindings and tracker separate. Preserve durable state when cleaning up dated sessions.
+Run commands from `Application Discovery/support/`. Keep the original private state, bindings, journals and tracker. Verify bound identities and back up state outside dated sessions.
 
 ## Interrupted setup
 
@@ -12,7 +10,7 @@ An empty skeleton is not production ready. The selected backend’s identity/pat
 
 ## Interrupted discovery
 
-Resume exact frozen window/query/page-token or employer/filter cursor and unresolved items. Reuse successful evidence with its original date; record a new check only after an actual new source read. Preserve spent attempts. A new worker or new run label cannot reset a three-attempt operation budget. A broader backlog separation requires a scoped user decision; age alone does not hide failures.
+Resume the frozen window and saved query/page token or employer/filter cursor. Keep unresolved items, spent attempts and original observation dates. Record a new date only after a new read. Ask the user before changing backlog scope.
 
 ## Uncertain Google Sheets write
 
@@ -59,7 +57,7 @@ A saved file and an accepted queue receipt are separate steps. Keep recovery fil
 
 ## Uncertain brief delivery
 
-Retain the frozen receipt set, exact report body, snapshot and delivery intent. For chat, read the configured chat on the next wake and match the actual final assistant message to the frozen body. For email, search/read complete relevant Sent evidence and match exact report identity, recipient and body. A draft, commentary message, timeout or worker assertion is not delivery confirmation. Use the [report delivery command and evidence contract](report.md) to mark delivered only after real readback; otherwise preserve pending state. Newly accepted receipts after brief preparation belong to the next brief.
+Keep the frozen receipts, body, snapshot and intent. Follow the [delivery readback steps](report.md) for the configured chat or Sent mail before marking delivered. Keep the brief pending until the exact delivery is confirmed and carry late receipts into the next brief.
 
 ## Change ordinary preferences
 

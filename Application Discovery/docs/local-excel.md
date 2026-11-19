@@ -3,9 +3,7 @@
 > **Required when selected:** Python 3.10+, a private `.xlsx` path and Node and `@oai/artifact-tool`. See [runtime setup](tools.md#checks-and-maintenance).
 > **Computer use:** None for workbook writes. Keep the file closed in other apps during a write.
 
-Choose `tracker.provider: "local_xlsx"` during [onboarding](../ONBOARDING.md) and set an absolute, private `.xlsx` path. Main, its selected helpers and Blind use this one workbook. Google Drive and Google Sheets are not required. Gmail and Calendar are required only when their corresponding features are selected.
-
-Verify the absolute paths to the supported Node executable and the `node_modules` directory containing `@oai/artifact-tool`. Pass both to the writer. Python manages queue and file checks. `@oai/artifact-tool` imports, edits and exports the workbook.
+Set `tracker.provider` to `local_xlsx` and choose an absolute private workbook path during [onboarding](../ONBOARDING.md). All selected sources share that workbook. Pass verified absolute paths for Node and `node_modules` to the local writer.
 
 The artifact runtime lacks native links, column hiding and `HYPERLINK` calculation. After export, the bridge adds Jobs link relationships, hides Job Key and corrects numeric date caches for exact constant-text formulas. It preserves formulas, other cells and ZIP parts. Reopen with artifact-tool without exporting again, then inspect the file independently. See the Excel [hyperlink](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.hyperlink) and [column visibility](https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.column) fields.
 
@@ -20,7 +18,7 @@ python3 -m job_search_ops local-sync --config /absolute/private/config.json --no
 
 `local-init` creates the tracker from the supplied blank template and records its actual saved-file readback. It refuses to replace an existing unrecognized file. This first version supports this template and its ordinary cell edits; importing arbitrary workbooks, macros, external workbook links, embedded objects, charts, pivots and protected sheets requires a separate migration.
 
-Producers enqueue discoveries as usual. Only the coordinator runs `local-sync`. The existing stable Job Key and source-event rules prevent duplicate jobs and duplicate sightings, preserve manual status/contact/notes, and retain each source's screening policy. Blind uses the same Jobs tab, with its company and coverage data in the same file.
+The coordinator runs `local-sync` for queued findings. The writer applies the [shared job and source-event rules](handoffs.md) and preserves manual status, contact and notes fields.
 
 **Close the workbook before a scheduled run or sync.** Use one writing host, and do not edit the file simultaneously through another app or a synced copy. The writer checks Excel/LibreOffice lock files and the entire original file's hash. Its lock protects this package's writers; it cannot lock out every external editor.
 
@@ -72,5 +70,3 @@ Read the private accepted aliases using [role-state](tracking.md#save-to-google-
 The writer exports a sibling candidate file, reopens it with artifact-tool, and independently reads the actual OOXML. It compares planned values, role-specific links, all other cell contents, untouched cell formatting, frozen panes, merged cells and column widths/visibility. It keeps a backup, checks the original file again, atomically replaces it, and verifies the final bytes before recording success. Literal text beginning with `=` stays literal text. ISO-looking evidence text uses constant-text formulas to prevent automatic date conversion; the exact original text and saved formula result are both checked. Ordinary job dates remain numeric Excel dates.
 
 For an interrupted save or receipt, follow [local Excel recovery](upgrade-and-recovery.md#uncertain-local-excel-write).
-
-Saved-file verification proves the contents of the `.xlsx` file. It is not a claim that a person opened the workbook in Excel. Source completeness, saved jobs and delivered briefs remain separate checks.
